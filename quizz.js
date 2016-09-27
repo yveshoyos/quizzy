@@ -39,6 +39,7 @@ var teams = [{
 	active: false,
 	flash: false
 }];
+var stopTeamActivation;
 
 function activateTeam(conn, controllerIndex, buttonIndex) {
 	// make sure a team can only be activated once
@@ -70,7 +71,7 @@ function teamActivationStep(conn) {
 	// Send teams to app
 	conn.sendText(JSON.stringify({'teams': teams}));
 
-	var stopTeamActivation = buzzer.onPress(function(controllerIndex, buttonIndex) {
+	stopTeamActivation = buzzer.onPress(function(controllerIndex, buttonIndex) {
 		activateTeam(conn, controllerIndex, buttonIndex)
 	});
 
@@ -96,7 +97,7 @@ var server = ws.createServer(function (conn) {
         for (var i=0; i < 4; i++) {
         	buzzer.lightOff(i);
         }
-        stopPress();
+        stopTeamActivation();
     })
 }).listen(8081);
 
