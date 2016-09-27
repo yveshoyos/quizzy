@@ -1,0 +1,36 @@
+<div class="teams row">
+	
+	<div class="team col-md-3" ng-repeat="team in game.teams">
+		<section class="widget widget-xs widget-xs-{{team.id}}" ng-class="{ active: team.active, flash: team.flash }">
+			<div class="widget-inner">
+				<div class="chart-container">
+					<span class="sparkline-line-mini">
+						<img ng-src="images/iconmonstr-generation-{{team.id}}.svg" />	
+					</span>
+				</div>
+				<div class="info-container">
+					<h3 class="title">
+						<span class="figure">{{team.name}}</span>
+						<span class="note">0 points</span></h3>
+				</div>
+			</div>
+		</section>
+	</div>
+
+</div>
+
+<h1 class="action">Appuyez sur l'un des boutons de votre buzzer pour l'activer</h1>
+
+<h2 class="counter">{{game.secondsLeft}}</h2>
+
+<div class="progress m-t-1 b-r-a-0 h-3">
+	<div class="progress-bar"
+	     ng-class="{ start: game.startTeamsActivation }"  
+	     role="progressbar" 
+	     aria-valuenow="60" 
+	     aria-valuemin="0" 
+	     aria-valuemax="100">
+    	<span class="sr-only">60% Complete</span>
+	</div>
+</div>
+

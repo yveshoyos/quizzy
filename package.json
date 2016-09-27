@@ -1,0 +1,22 @@
+{
+  "name": "blindpy",
+  "description": "quizz game using ps2 buzzers",
+  "version": "0.1.0",
+  "author": "Vincent Dieltiens",
+  "repository": {
+    "type": "git",
+    "url": "http://github.com/vincentdieltiens/quizzgame.git"
+  },
+  "dependencies": {
+    "express": "^4.14.0",
+    "express-handlebars": "^3.0.0",
+    "http": "0.0.0",
+    "ip": "^1.1.3",
+    "path": "^0.12.7",
+    "play": "https://github.com/Marak/play.js.git"
+  },
+  "engine": [
+    "node >=0.1.90"
+  ],
+  "main": "lib/hid_device.js"
+}
