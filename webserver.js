@@ -22,6 +22,12 @@ function start() {
 		})
 	});
 
+	app.get('/master', (request, response) => {
+		response.render('master', {
+			ip: ip.address()
+		});
+	})
+
 	app.listen(PORT, (err) => {  
 		if (err) {
 			return console.log('something bad happened', err)

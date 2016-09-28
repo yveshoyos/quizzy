@@ -2,6 +2,7 @@ body, html {
 	padding: 0;
 	margin: 0;
 	background-color: #212121;
+    height: 100%;
 }
 
 .teams {
@@ -184,4 +185,157 @@ h2.counter {
 
 .h-3 {
     height: 3px!important;
+}
+
+.btn-primary {
+    color: #fff;
+    background-color: #2c97de;
+    border-color: #218ad0;
+}
+
+.btn {
+    display: inline-block;
+    margin-bottom: 0;
+    font-weight: 400;
+    text-align: center;
+    vertical-align: middle;
+    -ms-touch-action: manipulation;
+    touch-action: manipulation;
+    cursor: pointer;
+    background-image: none;
+    border: 1px solid transparent;
+    white-space: nowrap;
+    padding: 6px 12px;
+    font-size: 13px;
+    line-height: 1.52857;
+    border-radius: 2px;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+.btn-group-lg>.btn, .btn-lg {
+    padding: 10px 16px;
+    font-size: 14px;
+    line-height: 1.33333;
+    border-radius: 4px;
+}
+
+.vertical-align {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: row;
+  height: 100%;
+}
+
+.step0 {
+    img {
+        width:auto;
+        height:auto;
+        max-width:50%;
+        max-height:50vh;
+    }
+   
+}
+
+.step1 {
+
+    .btn.btn-default {
+        color: #fff;
+        background-color: #2c97de;
+        border-color: #218ad0;
+        width: 80%;
+        margin: 2%;
+        padding-top: 20px;
+        padding-bottom: 20px;
+        font-size: 30px;
+    }
+}
+
+/**
+ *
+ */
+.radial-progress {
+    @circle-size: 300px;
+    @circle-background: transparent;
+    @circle-color: #58bbee;
+    @inset-size: 240px;
+    @inset-color: #ccc;
+    @transition-length: 8s;
+    @shadow: 6px 6px 10px rgba(0,0,0,0.2);
+    @percentage-color: #97a71d;
+    @percentage-font-size: 22px;
+    @percentage-text-width: 57px;
+
+    margin: 50px;
+    margin-top: 150px;
+    margin-left: auto;
+    margin-right: auto;
+    width:  @circle-size;
+    height: @circle-size;
+
+    background-color: @circle-background;
+    border-radius: 50%;
+    .circle {
+        .mask, .fill, .shadow {
+            width:    @circle-size;
+            height:   @circle-size;
+            position: absolute;
+            border-radius: 50%;
+        }
+        .shadow {
+            box-shadow: @shadow inset;
+        }
+        .mask, .fill {
+            -webkit-backface-visibility: hidden;
+            transition: -webkit-transform @transition-length linear;
+            transition: -ms-transform @transition-length linear;
+            transition: transform @transition-length linear;
+            border-radius: 50%;
+        }
+        .mask {
+            clip: rect(0px, @circle-size, @circle-size, @circle-size/2);
+            .fill {
+                clip: rect(0px, @circle-size/2, @circle-size, 0px);
+                background-color: @circle-color;
+            }
+        }
+    }
+    .inset {
+        width:       @inset-size;
+        height:      @inset-size;
+        position:    absolute;
+        margin-left: (@circle-size - @inset-size)/2;
+        margin-top:  (@circle-size - @inset-size)/2;
+
+        background-color: @inset-color;
+        border-radius: 50%;
+        box-shadow: @shadow;
+        font-size: 80px;
+        text-align: center;
+        line-height: 240px;
+    }
+
+    @i: 0;
+    @increment: 180deg / 100;
+    .loop (@i) when (@i <= 100) {
+        &[data-progress="@{i}"] {
+            .circle {
+                .mask.full, .fill {
+                    -webkit-transform: rotate(@increment * @i);
+                    -ms-transform: rotate(@increment * @i);
+                    transform: rotate(@increment * @i);
+                }   
+                .fill.fix {
+                    -webkit-transform: rotate(@increment * @i * 2);
+                    -ms-transform: rotate(@increment * @i * 2);
+                    transform: rotate(@increment * @i * 2);
+                }
+            }
+        }
+        .loop(@i + 1);
+    }
+    .loop(@i);
 }

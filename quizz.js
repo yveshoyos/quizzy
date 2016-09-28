@@ -9,6 +9,8 @@ const Sounds = require('./sounds');
 var device = new HID.HID(0x054c, 0x1000);
 var buzzer = new Buzzer(device)
 
+var gameConn;
+var masterConn;
 
 //
 // Ensure that all buzzers are off
@@ -17,88 +19,152 @@ for (var i=0; i < 4; i++) {
 	buzzer.lightOff(i);
 }
 
-// Intial teams
-var teams = [{
-	name: 'A',
-	id: 'a',
-	active: false,
-	flash: false
-},{
-	name: 'B',
-	id: 'b',
-	active: false,
-	flash: false
-},{
-	name: 'C',
-	id: 'c',
-	active: false,
-	flash: false
-},{
-	name: 'D',
-	id: 'd',
-	active: false,
-	flash: false
-}];
-var stopTeamActivation;
-
-function activateTeam(conn, controllerIndex, buttonIndex) {
-	// make sure a team can only be activated once
-	if (teams[controllerIndex].active) {
-		return;
-	}
-
-	Sounds.play('activate_team');
-
-
-	//activatedTeams++;
-	buzzer.lightOn(controllerIndex);
-	teams[controllerIndex].active = true;
-	teams[controllerIndex].flash = true;
-	conn.sendText(JSON.stringify({
-		'activate_team': teams[controllerIndex]
-	}));
-	teams[controllerIndex].flash = false;
-
-	var activatedTeams = teams.filter(function(team) {
-		return team.active;
-	});
-	if (activatedTeams == 4) {
-		// stop count
-	}
+function Game() {
+	this.gameConn = null;
+	this.masterConn = null;
+	this.mode = null;
+	this.teams = [];
 }
 
-function teamActivationStep(conn) {
-	// Send teams to app
-	conn.sendText(JSON.stringify({'teams': teams}));
+Game.prototype = {
+	start: function() {
+		this.activatedTeams = 0;
+		this.teams = [{
+			name: 'A',
+			id: 'a',
+			active: false,
+			flash: false
+		},{
+			name: 'B',
+			id: 'b',
+			active: false,
+			flash: false
+		},{
+			name: 'C',
+			id: 'c',
+			active: false,
+			flash: false
+		},{
+			name: 'D',
+			id: 'd',
+			active: false,
+			flash: false
+		}];
 
-	stopTeamActivation = buzzer.onPress(function(controllerIndex, buttonIndex) {
-		activateTeam(conn, controllerIndex, buttonIndex)
-	});
+		this.modeStep();
+	},
+	isStarted: function() {
+		return this.teams.length > 0;
+	},
+	setGameConn: function(conn) {
+		this.gameConn = conn;
+	},
+	setMasterConn: function(conn) {
+		this.masterConn = conn;
+	},
+	setMode: function(mode) {
+		this.mode = mode;
+		this.activationStep();
+	},
+	modeStep: function() {
+		this.gameConn.sendText(JSON.stringify({
+			'step': 1
+		}));
 
-	// Make sure we can't activate any
-	setTimeout(function() {
-		stopTeamActivation();		
-	}, 8000);
-}
+		this.masterConn.sendText(JSON.stringify({
+			'step': 1
+		}));
+	},
+	activationStep: function() {
+		var game = this;
+
+		// Send teams to app
+		this.gameConn.sendText(JSON.stringify({
+			'teams': this.teams, 
+			'step': 2
+		}));
+
+		game.stopTeamActivation = buzzer.onPress(function(controllerIndex, buttonIndex) {
+			game.activateTeam(controllerIndex, buttonIndex)
+		});
+
+		// Make sure we can't activate any
+		game.stopTeamActivationTimeout = setTimeout(function() {
+			game.quizzStep();
+		}, 9000);
+	},
+	activateTeam: function(controllerIndex, buttonIndex) {
+		// make sure a team can only be activated once
+		if (this.teams[controllerIndex].active) {
+			return;
+		}
+
+		Sounds.play('activate_team');
+
+		this.activatedTeams++;
+		buzzer.lightOn(controllerIndex);
+		this.teams[controllerIndex].active = true;
+		this.teams[controllerIndex].flash = true;
+		this.gameConn.sendText(JSON.stringify({
+			'activate_team': this.teams[controllerIndex]
+		}));
+		this.teams[controllerIndex].flash = false;
+
+		if (this.activatedTeams == 4) {
+			// stop count
+			this.quizzStep();
+		}
+	},
+	quizzStep: function() {
+		this.stopTeamActivation();
+		if (this.stopTeamActivationTimeout) {
+			clearTimeout(this.stopTeamActivationTimeout);
+		}
+		this.gameConn.sendText(JSON.stringify({
+			'step': 3
+		}));
+	}
+};
+
 
 //
 // Launch websocket server
 //
+var game = new Game();
+var gameMaster = null;
 var server = ws.createServer(function (conn) {
 	
-	teamActivationStep(conn);
-
 	conn.on("text", function (str) {
-        console.log("Received "+str)
-        conn.sendText(str.toUpperCase()+"!!!")
-    })
+		var data = JSON.parse(str);
+
+		if (data.register) {
+			if (data.register == 'game') {
+				gameConn = conn;
+				game.setGameConn(conn);
+			} else if (data.register == 'master') {
+				masterConn = conn;
+				game.setMasterConn(conn);
+			}
+		} else if (data.set_mode) {
+			game.setMode(data.set_mode);
+		}
+
+		if (game.gameConn && game.masterConn) {
+			if (!game.isStarted()) {
+				game.start();
+			}
+		}
+	});
+
     conn.on("close", function (code, reason) {
-        console.log("Connection closed")
         for (var i=0; i < 4; i++) {
         	buzzer.lightOff(i);
         }
-        stopTeamActivation();
-    })
+        if (game && game.stopTeamActivation) {
+        	game.stopTeamActivation();
+        }
+    });
+
 }).listen(8081);
 
 //
