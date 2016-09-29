@@ -15,7 +15,7 @@
 				}, 500);*/
 			}
 
-			var websocket = new WebSocket("ws://vdraspi.local:8081");
+			var websocket = new WebSocket("ws://vdraspi.local:"+window.port);
 			websocket.onopen = function (event) {
 				websocket.send(JSON.stringify({
 					register: 'game'
@@ -24,9 +24,10 @@
 
 			websocket.onmessage = function(event) {
 				var data = JSON.parse(event.data);
+				console.log('game : ', data);
 
-				if (data.teams) {
-					ctrl.teams = data.teams;
+				if (data.set_teams) {
+					ctrl.teams = data.set_teams;
 					ctrl.startTeamsActivation = true;
 					ctrl.progress = 0;
 					
@@ -50,8 +51,8 @@
 					}
 				}
 
-				if (data.step) {
-					ctrl.step  = data.step;
+				if (data.set_step) {
+					ctrl.step  = data.set_step;
 				}
 
 				scope.$digest();
@@ -64,7 +65,7 @@
 		controller: ['$scope', function(scope) {
 			var ctrl = this;
 
-			var websocket = new WebSocket("ws://vdraspi.local:8081");
+			var websocket = new WebSocket("ws://vdraspi.local:"+window.port);
 			websocket.onopen = function (event) {
 				websocket.send(JSON.stringify({
 					register: 'master'
@@ -73,9 +74,10 @@
 
 			websocket.onmessage = function(event) {
 				var data = JSON.parse(event.data);
+				console.log('master : ', data);
 
-				if (data.step) {
-					ctrl.step  = data.step;
+				if (data.set_step) {
+					ctrl.step  = data.set_step;
 				}
 
 				scope.$digest();
@@ -83,7 +85,7 @@
 
 			this.setMode = function(mode) {
 				websocket.send(JSON.stringify({
-					'set_mode': mode
+					set_mode: mode
 				}));
 			}
 		}],

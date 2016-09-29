@@ -1,12 +1,11 @@
 const path = require('path');
-const ip = require("ip");
+//const ip = require("ip");
 const express = require('express');
 const exphbs = require('express-handlebars');
 
-const PORT=8080; 
-const app = express()
+function create(PORT) {
+	const app = express()
 
-function start() {
 	app.engine('.hbs', exphbs({  
 		defaultLayout: 'main',
 		extname: '.hbs',
@@ -16,7 +15,7 @@ function start() {
 	app.set('view engine', '.hbs');
 	app.set('views', path.join(__dirname, 'views'));
 
-	app.get('/', (request, response) => {  
+	/*app.get('/', (request, response) => {  
 		response.render('home', {
 			ip: ip.address()
 		})
@@ -26,7 +25,7 @@ function start() {
 		response.render('master', {
 			ip: ip.address()
 		});
-	})
+	})*/
 
 	app.listen(PORT, (err) => {  
 		if (err) {
@@ -34,8 +33,10 @@ function start() {
 		}
 		console.log(`server is listening on ${PORT}`)
 	});
+
+	return app;
 }
 
 module.exports = {
-	start: start
+	create: create
 };
