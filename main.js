@@ -3,7 +3,7 @@ const Game = require('./game');
 const WebGameUI = require('./web_game_ui');
 const WebMasterUI = require('./web_master_ui');
 const webserver = require('./webserver');
-const Buzzer = require('./ps2_buzzer');
+const Ps2Buzzer = require('./ps2_buzzer');
 
 const PORT=8080;
 
@@ -12,7 +12,7 @@ var buzzer;
 try {
 	HID = require('node-hid');
 	var device = new HID.HID(0x054c, 0x1000);
-	buzzer = new Buzzer(device);
+	buzzer = new Ps2Buzzer(device);
 } catch(e) {
 	throw new Error("No buzzer found : ", e.message);
 	process.exit()

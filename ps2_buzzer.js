@@ -57,7 +57,7 @@ function callHandlers(handlers, controllerIndex, buttonIndex) {
 	}
 }
 
-class Buzzer {
+class Ps2Buzzer {
 	constructor(device) {
 		this.device = device
 		this.lights = [0x0, 0x0, 0x0, 0x0]
@@ -157,4 +157,4 @@ class Buzzer {
 	}
 }
 
-module.exports = Buzzer
+module.exports = Ps2Buzzer
