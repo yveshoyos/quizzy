@@ -1,7 +1,7 @@
 const process = require('process');
 const Game = require('./game');
-const GameUI = require('./game_ui');
-const MasterUI = require('./master_ui');
+const WebGameUI = require('./web_game_ui');
+const WebMasterUI = require('./web_master_ui');
 const webserver = require('./webserver');
 const Buzzer = require('./ps2_buzzer');
 
@@ -18,9 +18,9 @@ try {
 	process.exit()
 }
 
+var game = new Game(buzzer);
+
 // web server used by the gameUI and masterUI webapps
 var webapp = webserver.create(8080);
-
-var game = new Game(buzzer);
-var gameUI = new GameUI(webapp, game, 8081);
-var masterUI = new MasterUI(webapp, game, 8082);
+var gameUI = new WebGameUI(webapp, game, 8081);
+var masterUI = new WebMasterUI(webapp, game, 8082);

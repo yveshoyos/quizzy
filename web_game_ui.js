@@ -4,7 +4,7 @@ const ip = require('ip');
 const ws = require("nodejs-websocket");
 const WebUI = require('./web_ui');
 
-class GameUI extends WebUI {
+class WebGameUI extends WebUI {
 	initWebapp() {
 		this.app.get('/game', (request, response) => {
 			response.render('game', {
@@ -37,4 +37,4 @@ class GameUI extends WebUI {
 	}
 }
 
-module.exports = GameUI;
+module.exports = WebGameUI;

@@ -5,7 +5,7 @@ const ws = require("nodejs-websocket");
 const WebUI = require('./web_ui');
 
 
-class MasterUI extends WebUI {
+class WebMasterUI extends WebUI {
 	initWebapp() {
 		this.app.get('/master', (request, response) => {
 			response.render('master', {
@@ -38,4 +38,4 @@ class MasterUI extends WebUI {
 	}
 }
 
-module.exports = MasterUI;
+module.exports = WebMasterUI;
