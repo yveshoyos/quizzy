@@ -1,7 +1,6 @@
 'use strict';
 
 const webserver = require('./webserver')
-const Buzzer = require('./ps2_buzzer');
 const Sounds = require('./sounds');
 
 class Game {

@@ -3,7 +3,7 @@ const Game = require('./game');
 const GameUI = require('./game_ui');
 const MasterUI = require('./master_ui');
 const webserver = require('./webserver');
-const Buzzer = require('./buzzer');
+const Buzzer = require('./ps2_buzzer');
 
 const PORT=8080;
 
