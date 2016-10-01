@@ -8,14 +8,19 @@
     "url": "http://github.com/vincentdieltiens/quizzgame.git"
   },
   "dependencies": {
+    "definitely-typed": "git+https://github.com/DefinitelyTyped/DefinitelyTyped.git",
     "express": "^4.14.0",
     "express-handlebars": "^3.0.0",
     "http": "0.0.0",
     "path": "^0.12.7",
-    "play": "https://github.com/Marak/play.js.git"
+    "play": "https://github.com/Marak/play.js.git",
+    "ts-node": "^1.3.0"
   },
   "engine": [
     "node >=0.1.90"
   ],
-  "main": "lib/hid_device.js"
+  "main": "lib/hid_device.js",
+  "devDependencies": {
+    "@types/node": "^6.0.41"
+  }
 }

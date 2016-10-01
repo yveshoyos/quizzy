@@ -1,26 +1,23 @@
-const process = require('process');
-const Game = require('./game');
-const WebGameUI = require('./web_game_ui');
-const WebMasterUI = require('./web_master_ui');
-const webserver = require('./webserver');
-const Ps2Buzzer = require('./ps2_buzzer');
-
-const PORT=8080;
-
+/// <reference path="node_modules/definitely-typed/node/node.d.ts" />
+"use strict";
+var webserver = require('./webserver');
+var game_1 = require('./game');
+var web_game_ui_1 = require('./web_game_ui');
+var web_master_ui_1 = require('./web_master_ui');
+var ps2_buzzer_1 = require('./ps2_buzzer');
+var PORT = 8080;
 var HID;
 var buzzer;
 try {
-	HID = require('node-hid');
-	var device = new HID.HID(0x054c, 0x1000);
-	buzzer = new Ps2Buzzer(device);
-} catch(e) {
-	throw new Error("No buzzer found : ", e.message);
-	process.exit()
+    HID = require('node-hid');
+    var device = new HID.HID(0x054c, 0x1000);
+    buzzer = new ps2_buzzer_1.Ps2Buzzer(device);
 }
-
-var game = new Game(buzzer);
-
+catch (e) {
+    throw new Error("No buzzer found : " + e.message);
+}
+var game = new game_1.Game(buzzer);
 // web server used by the gameUI and masterUI webapps
 var webapp = webserver.create(8080);
-var gameUI = new WebGameUI(webapp, game, 8081);
-var masterUI = new WebMasterUI(webapp, game, 8082);
+var gameUI = new web_game_ui_1.WebGameUI(webapp, game, 8081);
+var masterUI = new web_master_ui_1.WebMasterUI(webapp, game, 8082);
