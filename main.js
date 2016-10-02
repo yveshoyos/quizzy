@@ -6,10 +6,9 @@ var web_game_ui_1 = require('./web_game_ui');
 var web_master_ui_1 = require('./web_master_ui');
 var ps2_buzzer_1 = require('./ps2_buzzer');
 var PORT = 8080;
-var HID;
 var buzzer;
 try {
-    HID = require('node-hid');
+    var HID = require('node-hid');
     var device = new HID.HID(0x054c, 0x1000);
     buzzer = new ps2_buzzer_1.Ps2Buzzer(device);
 }

@@ -1,20 +1,26 @@
 /// <reference path="node_modules/definitely-typed/node/node.d.ts" />
 
 import * as sounds from './sounds';
-import { Ps2Buzzer } from './ps2_buzzer';
+import { Buzzer } from './buzzer';
 import { WebGameUI } from './web_game_ui';
 import { WebMasterUI } from './web_master_ui';
+import { GameUI } from './game_ui';
+import { UI } from './ui';
 
-interface Team {
+export interface Team {
 	name: string;
 	id: string;
 	active: boolean;
 	flash: boolean;
 }
 
+export interface Question {
+
+}
+
 export class Game {
-	buzzer: Ps2Buzzer;
-	gameUI: WebGameUI;
+	buzzer: Buzzer;
+	gameUI: GameUI;
 	masterUI: WebMasterUI;
 	started: boolean;
 	activatedTeams: number;
@@ -23,7 +29,7 @@ export class Game {
 	mode: string;
 	stopTeamActivation: Function;
 	stopTeamActivationTimeout: any;
-	constructor(buzzer) {
+	constructor(buzzer:Buzzer) {
 		this.buzzer = buzzer;
 		this.gameUI = null;
 		this.masterUI = null;
@@ -76,7 +82,7 @@ export class Game {
 		// Do something
 	}
 
-	register(type, instance) {
+	register(type: string, instance: any) {
 		if (type == 'game') {
 			this.gameUI = instance;
 		} else if (type == 'master') {
@@ -92,7 +98,7 @@ export class Game {
 		}
 	}
 
-	unregister(type) {
+	unregister(type: string) {
 		if (type == 'game') {
 			this.gameUI = null;
 		} else if (type == 'master') {
@@ -100,9 +106,11 @@ export class Game {
 		}
 	}
 
-	setMode(mode) {
+	setMode(mode: string) {
 		this.mode = mode;
-		this.activationStep();
+		console.log('set mode...');
+		this.gameUI.setMode(this.mode);
+		//this.activationStep();
 	}
 
 	//
@@ -123,7 +131,7 @@ export class Game {
 		this.masterUI.setTeams(this.teams);
 		this.masterUI.setStep(2);
 
-		this.stopTeamActivation = this.buzzer.onPress((controllerIndex, buttonIndex) => {
+		this.stopTeamActivation = this.buzzer.onPress((controllerIndex:number, buttonIndex:number) => {
 			this.activateTeam(controllerIndex);
 		});
 
@@ -132,8 +140,10 @@ export class Game {
 		}, 9000);
 	}
 
-	activateTeam(controllerIndex) {
+	activateTeam(controllerIndex: number) {
 		var team = this.teams[controllerIndex];
+
+		console.log('activateTeam : ', controllerIndex, team);
 
 		// make sure a team can only be activated once
 		if (team.active) {
@@ -162,6 +172,17 @@ export class Game {
 	}
 
 	quizzStep() {
+
+		if (this.activatedTeams <= 0) {
+			console.log('No team : reset game');
+			//this.stop();
+
+			this.step = 0;
+			this.gameUI.setStep(0);
+			this.masterUI.setStep(0);
+			return;
+		}
+
 		// Stop the team activation
 		this.stopTeamActivation();
 		if (this.stopTeamActivationTimeout) {

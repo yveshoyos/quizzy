@@ -26,7 +26,7 @@
 				var data = JSON.parse(event.data);
 				console.log('game : ', data);
 
-				if (data.set_teams) {
+				if (angular.isDefined(data.set_teams)) {
 					ctrl.teams = data.set_teams;
 					ctrl.startTeamsActivation = true;
 					ctrl.progress = 0;
@@ -42,7 +42,7 @@
 					}, 1000);
 				}
 
-				if (data.activate_team) {
+				if (angular.isDefined(data.activate_team)) {
 					for(var i=0; i < ctrl.teams.length; i++) {
 						if (ctrl.teams[i].id == data.activate_team.id) {
 							ctrl.teams[i] = data.activate_team;
@@ -51,7 +51,16 @@
 					}
 				}
 
-				if (data.set_step) {
+				if (angular.isDefined(data.set_mode)) {
+					ctrl.mode = data.set_mode;
+					setTimeout(function() {
+						websocket.send(JSON.stringify({
+							set_activation_step: 1
+						}));
+					}, 400);
+				}
+
+				if (angular.isDefined(data.set_step)) {
 					ctrl.step  = data.set_step;
 				}
 

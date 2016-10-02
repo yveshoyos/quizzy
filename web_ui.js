@@ -21,6 +21,11 @@ var WebUI = (function () {
             set_teams: teams
         }));
     };
+    WebUI.prototype.setMode = function (mode) {
+        this.conn.send(JSON.stringify({
+            set_mode: mode
+        }));
+    };
     WebUI.prototype.setStep = function (step) {
         this.conn.send(JSON.stringify({
             set_step: step

@@ -6,6 +6,7 @@
 
 import * as _ from 'underscore';
 import * as HID from 'node-hid';
+import { Buzzer } from './buzzer';
 
 var signals = [
 	// controller 1
@@ -62,7 +63,7 @@ function callHandlers(handlers, controllerIndex, buttonIndex) {
 	}
 }
 
-export class Ps2Buzzer {
+export class Ps2Buzzer implements Buzzer {
 	device: HID.HID;
 	lights: Array<any>;
 	handlers: Array<any>;
@@ -74,7 +75,7 @@ export class Ps2Buzzer {
 		this.device.on("data", (signal) => {
 			var signalIndex = searchSignalIndex(signal);
 			if (signalIndex >= 0) {
-				var controllerIndex = signalIndex / 5;
+				var controllerIndex = Math.floor(signalIndex / 5);
 				var buttonIndex = signalIndex % 5;
 
 				var key = 'c'+controllerIndex+'b'+buttonIndex;
@@ -118,9 +119,7 @@ export class Ps2Buzzer {
 		this.light(controllerIndexes, 0x0);
 	}
 
-	blink(controllerIndexes, times, duration) {
-		var duration = duration || 150;
-		var times = times || 5;
+	blink(controllerIndexes, times = 5, duration = 150) {
 		var on = true
 		var count = 0;
 		var interval = setInterval(function() {

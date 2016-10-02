@@ -29,12 +29,14 @@ var WebMasterUI = (function (_super) {
         this.ws = ws.createServer(function (conn) {
             _this.conn = conn;
             conn.on("text", function (str) {
+                console.log('master receive : ', str);
                 var data = JSON.parse(str);
                 if (data.register) {
                     console.log('register master');
                     _this.game.register('master', _this);
                 }
                 if (data.set_mode) {
+                    console.log('set mode dude');
                     _this.game.setMode(data.set_mode);
                 }
             });

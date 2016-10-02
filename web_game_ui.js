@@ -34,8 +34,9 @@ var WebGameUI = (function (_super) {
                     console.log('register game');
                     _this.game.register('game', _this);
                 }
-                if (data.set_mode) {
-                    _this.game.setMode(data.set_mode);
+                if (data.set_activation_step) {
+                    //this.game.setMode(data.set_mode)
+                    _this.game.activationStep();
                 }
             });
             conn.on("close", function (code, reason) {

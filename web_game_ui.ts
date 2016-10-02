@@ -24,7 +24,7 @@ export class WebGameUI extends WebUI {
 	initWebsocket() {
 		this.ws = ws.createServer((conn) => {
 			this.conn = conn;
-			conn.on("text", (str) => {
+			conn.on("text", (str:string) => {
 				var data = JSON.parse(str);
 
 				if (data.register) {
@@ -32,12 +32,13 @@ export class WebGameUI extends WebUI {
 					this.game.register('game', this);
 				}
 
-				if (data.set_mode) {
-					this.game.setMode(data.set_mode)
+				if (data.set_activation_step) {
+					//this.game.setMode(data.set_mode)
+					this.game.activationStep();
 				}
 			});
 
-			conn.on("close", (code, reason) => {
+			conn.on("close", (code:number, reason:string) => {
 				this.game.unregister('game');
 			});
 		}).listen(this.port);

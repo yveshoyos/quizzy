@@ -75,7 +75,9 @@ var Game = (function () {
     };
     Game.prototype.setMode = function (mode) {
         this.mode = mode;
-        this.activationStep();
+        console.log('set mode...');
+        this.gameUI.setMode(this.mode);
+        //this.activationStep();
     };
     //
     // Steps
@@ -101,6 +103,7 @@ var Game = (function () {
     };
     Game.prototype.activateTeam = function (controllerIndex) {
         var team = this.teams[controllerIndex];
+        console.log('activateTeam : ', controllerIndex, team);
         // make sure a team can only be activated once
         if (team.active) {
             return;
@@ -121,6 +124,14 @@ var Game = (function () {
         }
     };
     Game.prototype.quizzStep = function () {
+        if (this.activatedTeams <= 0) {
+            console.log('No team : reset game');
+            //this.stop();
+            this.step = 0;
+            this.gameUI.setStep(0);
+            this.masterUI.setStep(0);
+            return;
+        }
         // Stop the team activation
         this.stopTeamActivation();
         if (this.stopTeamActivationTimeout) {

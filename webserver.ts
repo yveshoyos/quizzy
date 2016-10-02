@@ -1,6 +1,6 @@
 /// <reference path="node_modules/definitely-typed/node/node.d.ts" />
 /// <reference path="node_modules/definitely-typed/express/express.d.ts" />
-/// <reference path="node_modules/definitely-typed/promise/promise.d.ts" />
+/// <reference path="node_modules/definitely-typed/es6-promise/es6-promise.d.ts" />
 /// <reference path="node_modules/definitely-typed/express-handlebars/express-handlebars.d.ts" />
 
 'use strict';
@@ -9,7 +9,7 @@ import * as path from 'path';
 import * as express from 'express';
 import * as exphbs from 'express-handlebars';
 
-export function create(PORT) {
+export function create(PORT: number) {
 	const app = express()
 
 	app.engine('.hbs', exphbs({  

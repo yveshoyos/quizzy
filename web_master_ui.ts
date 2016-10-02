@@ -25,7 +25,8 @@ export class WebMasterUI extends WebUI {
 	initWebsocket() {
 		this.ws = ws.createServer((conn) => {
 			this.conn = conn;
-			conn.on("text", (str) => {
+			conn.on("text", (str:string) => {
+				console.log('master receive : ', str)
 				var data = JSON.parse(str);
 
 				if (data.register) {
@@ -34,11 +35,12 @@ export class WebMasterUI extends WebUI {
 				}
 
 				if (data.set_mode) {
-					this.game.setMode(data.set_mode)
+					console.log('set mode dude')
+					this.game.setMode(data.set_mode);
 				}
 			});
 
-			conn.on("close", (code, reason) => {
+			conn.on("close", (code:number, reason:string) => {
 				this.game.unregister('master');
 			});
 		}).listen(this.port);

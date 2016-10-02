@@ -61,7 +61,7 @@ var Ps2Buzzer = (function () {
         this.device.on("data", function (signal) {
             var signalIndex = searchSignalIndex(signal);
             if (signalIndex >= 0) {
-                var controllerIndex = signalIndex / 5;
+                var controllerIndex = Math.floor(signalIndex / 5);
                 var buttonIndex = signalIndex % 5;
                 var key = 'c' + controllerIndex + 'b' + buttonIndex;
                 callHandlers(_this.handlers[key], controllerIndex, buttonIndex);
@@ -97,8 +97,8 @@ var Ps2Buzzer = (function () {
         this.light(controllerIndexes, 0x0);
     };
     Ps2Buzzer.prototype.blink = function (controllerIndexes, times, duration) {
-        var duration = duration || 150;
-        var times = times || 5;
+        if (times === void 0) { times = 5; }
+        if (duration === void 0) { duration = 150; }
         var on = true;
         var count = 0;
         var interval = setInterval(function () {

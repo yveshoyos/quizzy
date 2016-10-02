@@ -6,14 +6,15 @@
 
 import * as ws from 'nodejs-websocket';
 import * as express from 'express';
-import { Game } from './game';
+import { Game, Team, Question } from './game';
+import { GameUI } from './game_ui';
 
-export abstract class WebUI {
+export abstract class WebUI implements GameUI {
 	app: express.Express;
 	game: Game;
 	port: number;
 	conn: ws.Connection;
-	constructor(expressApp, game, websocketPort) {
+	constructor(expressApp: express.Express, game: Game, websocketPort: number) {
 		this.app = expressApp;
 		this.game = game;
 		this.port = websocketPort;
@@ -23,35 +24,41 @@ export abstract class WebUI {
 		this.initWebsocket();
 	}
 
-	abstract initWebapp();
-	abstract initWebsocket();
+	abstract initWebapp(): void;
+	abstract initWebsocket(): void;
 
 	/**
 	 * Set the main game
 	 */
-	setGame(game) {
+	setGame(game: Game) {
 		this.game = game;
 	}
 
-	setTeams(teams) {
+	setTeams(teams: Array<Team>) {
 		this.conn.send(JSON.stringify({
 			set_teams: teams
 		}));
 	}
 
-	setStep(step) {
+	setMode(mode: string) {
+		this.conn.send(JSON.stringify({
+			set_mode: mode
+		}));
+	}
+
+	setStep(step: number) {
 		this.conn.send(JSON.stringify({
 			set_step: step
 		}));
 	}
 
-	activateTeam(team) {
+	activateTeam(team: Team) {
 		this.conn.send(JSON.stringify({
 			activate_team: team
 		}));
 	}
 
-	setQuestion(question) {
+	setQuestion(question: Question) {
 		this.conn.send(JSON.stringify({
 			set_question: question
 		}));
