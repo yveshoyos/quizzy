@@ -5,7 +5,6 @@ import { Buzzer } from './buzzer';
 import { WebGameUI } from './web_game_ui';
 import { WebMasterUI } from './web_master_ui';
 import { GameUI } from './game_ui';
-import { UI } from './ui';
 
 export interface Team {
 	name: string;
