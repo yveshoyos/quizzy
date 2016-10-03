@@ -53,7 +53,7 @@ function searchSignalIndex(signal): number {
 	return -1;
 }
 
-function callHandlers(handlers, controllerIndex, buttonIndex) {
+function callHandlers(handlers:Array<Function>, controllerIndex:number, buttonIndex:number) {
 	if (!handlers) {
 		return;
 	}
@@ -66,7 +66,7 @@ function callHandlers(handlers, controllerIndex, buttonIndex) {
 export class Ps2Buzzer implements Buzzer {
 	device: HID.HID;
 	lights: Array<any>;
-	handlers: Array<any>;
+	handlers: Array<Array<Function>>;
 	constructor(device) {
 		this.device = device
 		this.lights = [0x0, 0x0, 0x0, 0x0]
@@ -87,6 +87,10 @@ export class Ps2Buzzer implements Buzzer {
 				callHandlers(this.handlers['all'], controllerIndex, buttonIndex);
 			}
 		});
+	}
+
+	ready(callback: Function) {
+		callback();
 	}
 
 	light(controllerIndexes, value) {
@@ -139,7 +143,7 @@ export class Ps2Buzzer implements Buzzer {
 		}, duration);
 	}
 
-	onPress(callback: Function, controllerIndex: number = undefined, buttonIndex: number = undefined) {
+	onPress(callback: Function, controllerIndex: number = undefined, buttonIndex: number = undefined): Function {
 		var key = 'all';
 		if (controllerIndex != undefined || buttonIndex != undefined) {
 			key = '';

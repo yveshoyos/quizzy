@@ -3,14 +3,17 @@
 var sounds = require('./sounds');
 var Game = (function () {
     function Game(buzzer) {
+        var _this = this;
         this.buzzer = buzzer;
         this.gameUI = null;
         this.masterUI = null;
         this.started = false;
-        // Make sur all buzzer are off
-        for (var i = 0; i < 4; i++) {
-            this.buzzer.lightOff(i);
-        }
+        this.buzzer.ready(function () {
+            // Make sur all buzzer are off
+            for (var i = 0; i < 4; i++) {
+                _this.buzzer.lightOff(i);
+            }
+        });
     }
     Game.prototype.start = function () {
         console.log('start game');

@@ -35,10 +35,12 @@ export class Game {
 		this.masterUI = null;
 		this.started = false;
 
-		// Make sur all buzzer are off
-		for (var i=0; i < 4; i++) {
-			this.buzzer.lightOff(i);
-		}
+		this.buzzer.ready(() => {
+			// Make sur all buzzer are off
+			for (var i=0; i < 4; i++) {
+				this.buzzer.lightOff(i);
+			}
+		});
 	}
 
 	start() {

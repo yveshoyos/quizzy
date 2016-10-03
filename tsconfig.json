@@ -7,8 +7,12 @@
         "target": "es6",
         "sourceMap": true
     },
+    "compileOnSave": true,
     "files": [
-        "main.ts"
+        "main.ts",
+        "buzzer.ts",
+        "ps2_buzzer.ts",
+        "web_buzzer.ts"
     ],
     "exclude": [
         "node_modules",
