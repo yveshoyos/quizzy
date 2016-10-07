@@ -8,6 +8,7 @@ import { WebMasterUI } from './web_master_ui';
 import { Ps2Buzzer } from './ps2_buzzer';
 import { Buzzer } from './buzzer';
 import { WebBuzzer } from './web_buzzer';
+import { GPIOBuzzer, GPIODomePushButton } from './gpio_buzzer';
 import * as process from 'process';
 import * as minimist from 'minimist';
 
@@ -18,7 +19,8 @@ const PORT=8080;
 // 	- buzzer : "web" or "ps2"
 //
 interface Args extends minimist.ParsedArgs {
-	buzzer:string
+	buzzer:string,
+	buttons:string
 }
 var argv:Args = minimist(process.argv.slice(2)) as Args;
 argv.buzzer = argv.buzzer || 'ps2';
@@ -37,6 +39,17 @@ switch(argv.buzzer) {
 		} catch(e) {
         		throw new Error("No buzzer found : "+e.message);
 		}								
+		break;
+	case 'gpio':
+		var buttons:Array<GPIODomePushButton> = [];
+		var b = JSON.parse(argv.buttons);
+		for(var i=0; i < b.length; i++) {
+			buttons.push({
+				button: b[i][0],
+				led: b[i][1]
+			});
+		}
+		buzzer = new GPIOBuzzer(buttons);
 		break;
 	case 'web':
 		buzzer = new WebBuzzer(webapp, 8083);

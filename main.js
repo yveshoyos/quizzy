@@ -7,6 +7,7 @@ var web_game_ui_1 = require('./web_game_ui');
 var web_master_ui_1 = require('./web_master_ui');
 var ps2_buzzer_1 = require('./ps2_buzzer');
 var web_buzzer_1 = require('./web_buzzer');
+var gpio_buzzer_1 = require('./gpio_buzzer');
 var process = require('process');
 var minimist = require('minimist');
 var PORT = 8080;
@@ -27,6 +28,17 @@ switch (argv.buzzer) {
         catch (e) {
             throw new Error("No buzzer found : " + e.message);
         }
+        break;
+    case 'gpio':
+        var buttons = [];
+        var b = JSON.parse(argv.buttons);
+        for (var i = 0; i < b.length; i++) {
+            buttons.push({
+                button: b[i][0],
+                led: b[i][1]
+            });
+        }
+        buzzer = new gpio_buzzer_1.GPIOBuzzer(buttons);
         break;
     case 'web':
         buzzer = new web_buzzer_1.WebBuzzer(webapp, 8083);
