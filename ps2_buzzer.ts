@@ -166,4 +166,8 @@ export class Ps2Buzzer implements Buzzer {
 			}
 		};
 	}
+
+	controllersCount():number {
+		return 4;
+	}
 }

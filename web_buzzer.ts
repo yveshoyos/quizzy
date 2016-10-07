@@ -125,5 +125,9 @@ export class WebBuzzer implements Buzzer {
 			});
 		}).listen(this.port);
 	}
+
+	controllersCount():number {
+		return 4;
+	}
 }
 

@@ -9,8 +9,9 @@ var Game = (function () {
         this.masterUI = null;
         this.started = false;
         this.buzzer.ready(function () {
+            var max = _this.buzzer.controllersCount();
             // Make sur all buzzer are off
-            for (var i = 0; i < 4; i++) {
+            for (var i = 0; i < max; i++) {
                 _this.buzzer.lightOff(i);
             }
         });

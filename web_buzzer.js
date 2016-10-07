@@ -105,6 +105,9 @@ var WebBuzzer = (function () {
             });
         }).listen(this.port);
     };
+    WebBuzzer.prototype.controllersCount = function () {
+        return 4;
+    };
     return WebBuzzer;
 }());
 exports.WebBuzzer = WebBuzzer;

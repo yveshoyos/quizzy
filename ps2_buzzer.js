@@ -144,6 +144,9 @@ var Ps2Buzzer = (function () {
             }
         };
     };
+    Ps2Buzzer.prototype.controllersCount = function () {
+        return 4;
+    };
     return Ps2Buzzer;
 }());
 exports.Ps2Buzzer = Ps2Buzzer;

@@ -54,12 +54,23 @@ var GPIOBuzzer = (function () {
             }
         };
     };
+    GPIOBuzzer.prototype.controllersCount = function () {
+        return this.buttons.length;
+    };
     return GPIOBuzzer;
 }());
 exports.GPIOBuzzer = GPIOBuzzer;
 function light(controllerIndexes, value) {
-    for (var i = 0; i < controllerIndexes.length; i++) {
-        rpio.write(this.buttons[i].led, value);
+    console.log('light : ', controllerIndexes, value);
+    if (typeof (controllerIndexes) == 'number') {
+        console.log('LED : ', this.buttons[controllerIndexes].led);
+        rpio.write(this.buttons[controllerIndexes].led, value);
+    }
+    else {
+        for (var i = 0; i < controllerIndexes.length; i++) {
+            console.log('LED : ', this.buttons[i].led);
+            rpio.write(this.buttons[i].led, value);
+        }
     }
 }
 function openPins() {

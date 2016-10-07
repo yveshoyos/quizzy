@@ -69,12 +69,24 @@ export class GPIOBuzzer implements Buzzer {
 			}
 		};
 	}
+
+	controllersCount():number {
+		return this.buttons.length;
+	}
 }
 
-function light(controllerIndexes:Array<number>, value:number) {
-	for(var i=0; i < controllerIndexes.length; i++) {
-		rpio.write(this.buttons[i].led, value);
+function light(controllerIndexes, value:number) {
+	console.log('light : ', controllerIndexes, value)
+	if (typeof(controllerIndexes) == 'number') {
+		console.log('LED : ', this.buttons[controllerIndexes].led)
+		rpio.write(this.buttons[controllerIndexes].led, value);
+	} else {
+		for(var i=0; i < controllerIndexes.length; i++) {
+			console.log('LED : ', this.buttons[i].led)
+			rpio.write(this.buttons[i].led, value);
+		}
 	}
+	
 }
 
 function openPins() {
