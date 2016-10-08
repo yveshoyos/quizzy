@@ -34,6 +34,9 @@ var WebBuzzer = (function () {
         }
         this.readyCallbacks.push(callback);
     };
+    WebBuzzer.prototype.leave = function () {
+        this.ws.close();
+    };
     WebBuzzer.prototype.lightOn = function (controllerIndexes) {
         this.conn.send(JSON.stringify({
             'lights': controllerIndexes,

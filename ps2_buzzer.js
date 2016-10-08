@@ -74,6 +74,9 @@ var Ps2Buzzer = (function () {
     Ps2Buzzer.prototype.ready = function (callback) {
         callback();
     };
+    Ps2Buzzer.prototype.leave = function () {
+        this.light([0, 1, 2, 3], 0x00);
+    };
     Ps2Buzzer.prototype.light = function (controllerIndexes, value) {
         if (value != 0x00 && value != 0xFF) {
             throw new Error("light should have a value of 0x0 or 0xFF");

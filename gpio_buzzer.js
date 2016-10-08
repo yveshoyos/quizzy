@@ -5,12 +5,14 @@ var rpio = require('rpio');
 var GPIOBuzzer = (function () {
     function GPIOBuzzer(buttons) {
         this.buttons = buttons;
-        console.log('construct...');
         openPins.call(this);
         this.handlers = {};
     }
     GPIOBuzzer.prototype.ready = function (callback) {
         callback();
+    };
+    GPIOBuzzer.prototype.leave = function () {
+        closePins.call(this);
     };
     GPIOBuzzer.prototype.lightOn = function (controllerIndexes) {
         light.call(this, controllerIndexes, rpio.HIGH);
@@ -93,6 +95,18 @@ function openPins() {
             }
         });
     });
+}
+function closePins() {
+    console.log('close pins : ', this.buttons);
+    for (var i = 0; i < this.buttons.length; i++) {
+        var pin = this.buttons[i];
+        console.log('close : ', pin);
+        rpio.write(pin.led, rpio.LOW);
+        rpio.close(pin.led);
+        console.log('close ??');
+        rpio.close(pin.button);
+    }
+    console.log('endclose');
 }
 function callHandlers(handlers, controllerIndex, buttonIndex) {
     if (!handlers) {

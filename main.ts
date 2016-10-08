@@ -61,3 +61,30 @@ var game = new Game(buzzer);
 // web server used by the gameUI and masterUI webapps
 var gameUI = new WebGameUI(webapp, game, 8081);
 var masterUI = new WebMasterUI(webapp, game, 8082);
+
+//buzzer.leave();
+
+function exitHandler(options, err) {
+	console.log('exit : ', options, err)
+	if (options.ctrlc) {
+		console.log('cleanup...');
+		buzzer.leave();
+		process.exit();
+	}
+
+	if (err) {
+		console.log(err.stack);
+	}
+	
+	if (options.exit) {
+		console.log('exit...');
+		
+	}
+}
+
+//do something when app is closing
+process.on('exit', exitHandler.bind(null,{yep:true}));
+//catches ctrl+c event
+process.on('SIGINT', exitHandler.bind(null, {ctrlc:true}));
+//catches uncaught exceptions
+process.on('uncaughtException', exitHandler.bind(null, {exit:true}));

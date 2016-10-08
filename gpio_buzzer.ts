@@ -19,13 +19,16 @@ export class GPIOBuzzer implements Buzzer {
 	handlers: IDictionnary<Array<Function>>;
 	constructor(buttons:Array<GPIODomePushButton>) {
 		this.buttons = buttons;
-		console.log('construct...');
 		openPins.call(this);
 		this.handlers = {};
 	}
 
 	ready(callback: Function) {
 		callback();
+	}
+
+	leave() {
+		closePins.call(this);
 	}
 
 	lightOn(controllerIndexes) {
@@ -109,6 +112,19 @@ function openPins() {
 		});
 		
 	});
+}
+
+function closePins() {
+	console.log('close pins : ', this.buttons);
+	for(var i=0; i < this.buttons.length; i++) {
+		var pin = this.buttons[i];
+		console.log('close : ', pin);
+		rpio.write(pin.led, rpio.LOW);
+		rpio.close(pin.led);
+		console.log('close ??')
+		rpio.close(pin.button);
+	}
+	console.log('endclose')
 }
 
 function callHandlers(handlers:Array<Function>, controllerIndex:number, buttonIndex:number) {

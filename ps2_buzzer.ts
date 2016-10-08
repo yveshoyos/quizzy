@@ -93,6 +93,10 @@ export class Ps2Buzzer implements Buzzer {
 		callback();
 	}
 
+	leave() {
+		this.light([0, 1, 2, 3], 0x00);
+	}
+
 	light(controllerIndexes, value) {
 		if (value != 0x00 && value != 0xFF) {
 			throw new Error("light should have a value of 0x0 or 0xFF")

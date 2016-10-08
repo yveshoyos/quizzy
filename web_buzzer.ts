@@ -48,6 +48,10 @@ export class WebBuzzer implements Buzzer {
 		this.readyCallbacks.push(callback);
 	}
 
+	leave(): void {
+		this.ws.close();
+	}
+
 	lightOn(controllerIndexes:any) {
 		this.conn.send(JSON.stringify({
 			'lights': controllerIndexes,
