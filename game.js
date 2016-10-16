@@ -27,22 +27,10 @@ var Game = (function () {
         });
     }
     Game.prototype.start = function () {
-        var _this = this;
         this.started = true;
         this.activatedTeams = 0;
         this.step = 0;
         this.initTeam();
-        var directory = './questions';
-        var ql = new question_loader_1.QuestionLoader();
-        this.questions = null;
-        ql.load(directory, "random", function (questions) {
-            _this.questions = questions;
-            _this.questions.map(function (question) {
-                if (question.type == 'blind') {
-                    loadMp3Informations(question, function () { });
-                }
-            });
-        });
         this.modeStep();
     };
     Game.prototype.initTeam = function () {
@@ -96,6 +84,7 @@ var Game = (function () {
     Game.prototype.setMode = function (mode) {
         this.mode = mode;
         console.log('set mode...');
+        this.loadQuestions(mode);
         this.gameUI.setMode(this.mode);
         //this.activationStep();
     };
@@ -224,6 +213,20 @@ var Game = (function () {
         this.answerWaitingForValidation = null;
         this.gameUI.setQuestion(question);
         this.masterUI.setQuestion(question);
+    };
+    Game.prototype.loadQuestions = function (mode) {
+        var _this = this;
+        var directory = './questions';
+        var ql = new question_loader_1.QuestionLoader();
+        this.questions = null;
+        ql.load(directory, mode, function (questions) {
+            _this.questions = questions;
+            _this.questions.map(function (question) {
+                if (question.type == 'blind') {
+                    loadMp3Informations(question, function () { });
+                }
+            });
+        });
     };
     return Game;
 }());

@@ -61,18 +61,6 @@ export class Game {
 		this.activatedTeams = 0;
 		this.step = 0;
 		this.initTeam();
-
-		var directory = './questions';
-		var ql = new QuestionLoader();
-		this.questions = null;
-		ql.load(directory, "random", (questions:QuestionList) => {
-			this.questions = questions;
-			this.questions.map((question: Question) => {
-				if (question.type == 'blind') {
-					loadMp3Informations(question, () => {});
-				}
-			});
-		});
 		this.modeStep();
 	}
 
@@ -130,6 +118,7 @@ export class Game {
 	setMode(mode: string) {
 		this.mode = mode;
 		console.log('set mode...');
+		this.loadQuestions(mode);
 		this.gameUI.setMode(this.mode);
 		//this.activationStep();
 	}
@@ -212,10 +201,7 @@ export class Game {
 		}
 	}
 
-
-
 	quizzStep() {
-
 		if (this.activatedTeams <= 0) {
 			this.step = 0;
 			this.gameUI.setStep(0);
@@ -291,6 +277,20 @@ export class Game {
 		this.masterUI.setQuestion(question);
 
 		
+	}
+
+	loadQuestions(mode) {
+		var directory = './questions';
+		var ql = new QuestionLoader();
+		this.questions = null;
+		ql.load(directory, mode, (questions:QuestionList) => {
+			this.questions = questions;
+			this.questions.map((question: Question) => {
+				if (question.type == 'blind') {
+					loadMp3Informations(question, () => {});
+				}
+			});
+		});
 	}
 
 }
