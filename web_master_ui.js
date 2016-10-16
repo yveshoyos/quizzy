@@ -39,6 +39,10 @@ var WebMasterUI = (function (_super) {
                     console.log('set mode dude');
                     _this.game.setMode(data.set_mode);
                 }
+                if (data.add_points) {
+                    console.log('add points');
+                    _this.game.addPoints(data.add_points);
+                }
             });
             conn.on("close", function (code, reason) {
                 _this.game.unregister('master');

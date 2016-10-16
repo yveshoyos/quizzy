@@ -38,6 +38,11 @@ export class WebMasterUI extends WebUI {
 					console.log('set mode dude')
 					this.game.setMode(data.set_mode);
 				}
+
+				if (data.add_points) {
+					console.log('add points')
+					this.game.addPoints(data.add_points);
+				}
 			});
 
 			conn.on("close", (code:number, reason:string) => {

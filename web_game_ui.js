@@ -1,5 +1,6 @@
 /// <reference path="node_modules/definitely-typed/node/node.d.ts" />
 /// <reference path="node_modules/definitely-typed/ip/ip.d.ts" />
+/// <reference path="qrcode-js.d.ts" />
 /// <reference path="nodejs-websocket.d.ts" />
 'use strict';
 var __extends = (this && this.__extends) || function (d, b) {
@@ -9,6 +10,7 @@ var __extends = (this && this.__extends) || function (d, b) {
 };
 var ip = require('ip');
 var ws = require('nodejs-websocket');
+var qrCode = require('qrcode-js');
 var web_ui_1 = require('./web_ui');
 var WebGameUI = (function (_super) {
     __extends(WebGameUI, _super);
@@ -18,9 +20,12 @@ var WebGameUI = (function (_super) {
     WebGameUI.prototype.initWebapp = function () {
         var _this = this;
         this.app.get('/game', function (request, response) {
+            // engine, defaultConfiguration, options, request, response
+            var url = qrCode.toDataURL('http://' + ip.address() + ':' + request.socket.localPort + '/master?', 4);
             response.render('game', {
                 ip: ip.address(),
-                port: _this.port
+                port: _this.port,
+                qrCodeUrl: url
             });
         });
     };

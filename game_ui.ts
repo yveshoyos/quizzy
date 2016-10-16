@@ -1,15 +1,20 @@
-import { Game, Team, Question } from './game';
+import { Game, Team } from './game';
+import { Question } from './question';
 
 export interface GameUI {
-	setGame(game: Game);
+	setGame(game: Game): void;
 
-	setTeams(teams: Array<Team>);
+	setTeams(teams: Array<Team>): void;
 
-	setMode(teams: string);
+	setMode(teams: string): void;
 
-	setStep(step: number);
+	setStep(step: number): void;
 
-	activateTeam(team: Team);
+	activateTeam(team: Team, active: boolean): void;
 
-	setQuestion(question: Question);
+	updateTeam(team: Team): void;
+
+	setQuestion(question: Question): void;
+
+	setAnswered(controllerIndex: number, answered: boolean): void;
 }

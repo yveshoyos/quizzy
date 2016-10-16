@@ -1,11 +1,13 @@
 /// <reference path="node_modules/definitely-typed/node/node.d.ts" />
 /// <reference path="node_modules/definitely-typed/ip/ip.d.ts" />
+/// <reference path="qrcode-js.d.ts" />
 /// <reference path="nodejs-websocket.d.ts" />
 
 'use strict';
 
 import * as ip from 'ip';
 import * as ws from 'nodejs-websocket';
+import * as qrCode from 'qrcode-js';
 import { WebUI } from './web_ui';
 
 export class WebGameUI extends WebUI {
@@ -13,11 +15,15 @@ export class WebGameUI extends WebUI {
 	ws: ws.Server;
 	conn: ws.Connection;
 	initWebapp() {
+
 		this.app.get('/game', (request, response) => {
+			// engine, defaultConfiguration, options, request, response
+			var url = qrCode.toDataURL('http://'+ip.address()+':'+request.socket.localPort+'/master?', 4);
 			response.render('game', {
 				ip: ip.address(),
-				port: this.port
-			})
+				port: this.port,
+				qrCodeUrl: url
+			});
 		});
 	}
 

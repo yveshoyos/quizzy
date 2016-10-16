@@ -6,7 +6,8 @@
 
 import * as ws from 'nodejs-websocket';
 import * as express from 'express';
-import { Game, Team, Question } from './game';
+import { Game, Team } from './game';
+import { Question } from './question';
 import { GameUI } from './game_ui';
 
 export abstract class WebUI implements GameUI {
@@ -52,15 +53,30 @@ export abstract class WebUI implements GameUI {
 		}));
 	}
 
-	activateTeam(team: Team) {
+	activateTeam(team: Team, active: boolean) {
 		this.conn.send(JSON.stringify({
 			activate_team: team
+		}));
+	}
+
+	updateTeam(team: Team) {
+		this.conn.send(JSON.stringify({
+			update_team: team
 		}));
 	}
 
 	setQuestion(question: Question) {
 		this.conn.send(JSON.stringify({
 			set_question: question
+		}));
+	}
+
+	setAnswered(controllerIndex: number, answered: boolean) {
+		this.conn.send(JSON.stringify({
+			set_answered: {
+				controllerIndex: controllerIndex,
+				answered: answered
+			}
 		}));
 	}
 }

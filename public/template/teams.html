@@ -11,7 +11,7 @@
 				<div class="info-container">
 					<h3 class="title">
 						<span class="figure">{{team.name}}</span>
-						<span class="note">0 points</span></h3>
+						<span class="note">{{team.points}} points</span></h3>
 				</div>
 			</div>
 		</section>
@@ -19,12 +19,12 @@
 
 </div>
 
-{{game.step}}
-
 <div class="step0 row vertical-align" ng-show="game.step == 0">
 	<div class="col-xs-12 center-text text-center">
 			<img src="/images/Quiz.png" />
 	</div>
+
+	<img id="qrCode" ng-src="{{game.qrCodeUrl}}" style="width:300px" />
 </div>
 
 <!--<div class="step1 row vertical-align" ng-show="game.step == 1">
@@ -62,5 +62,14 @@
 	<h1 class="action">Appuyez sur l'un des boutons de votre buzzer pour l'activer</h1>
 </div>
 <div class="step3" ng-show="game.step == 3">
-	Step 3
+	<div class="question">
+		<h2>Theme : {{game.question.category}}</h2>
+		
+		<div class="" ng-show="game.question.type == 'blind'">
+			<div class="progress">
+				<div class="progress-bar"></div>
+			</div>
+		</div>
+
+	</div>
 </div>

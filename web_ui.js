@@ -31,14 +31,27 @@ var WebUI = (function () {
             set_step: step
         }));
     };
-    WebUI.prototype.activateTeam = function (team) {
+    WebUI.prototype.activateTeam = function (team, active) {
         this.conn.send(JSON.stringify({
             activate_team: team
+        }));
+    };
+    WebUI.prototype.updateTeam = function (team) {
+        this.conn.send(JSON.stringify({
+            update_team: team
         }));
     };
     WebUI.prototype.setQuestion = function (question) {
         this.conn.send(JSON.stringify({
             set_question: question
+        }));
+    };
+    WebUI.prototype.setAnswered = function (controllerIndex, answered) {
+        this.conn.send(JSON.stringify({
+            set_answered: {
+                controllerIndex: controllerIndex,
+                answered: answered
+            }
         }));
     };
     return WebUI;
