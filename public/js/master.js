@@ -70,6 +70,7 @@
 
 				if (angular.isDefined(data.set_answered)) {
 					ctrl.start = false;
+					ctrl.answered = data.set_answered;
 					var bar = document.querySelector('.progress-bar');
 					var computedStyle = window.getComputedStyle(bar),
 					width = computedStyle.getPropertyValue('width');
@@ -91,12 +92,14 @@
 				console.log('setPoints')
 				// Make sure someone has buzzed
 				if (!ctrl.answered) {
+					console.log('no answer')
 					return;
 				}
 
 				/*var team = ctrl.teams[ctrl.answered.controllerIndex];
 				team.points += value;*/
 
+				console.log('add points')
 				websocket.send(JSON.stringify({
 					add_points: value
 				}));
