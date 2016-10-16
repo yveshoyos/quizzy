@@ -12,14 +12,7 @@ import { WebMasterUI } from './web_master_ui';
 import { GameUI } from './game_ui';
 import { QuestionLoader, QuestionList } from './question_loader';
 import { Question, BlindQuestion, DeafQuestion } from './question';
-
-export interface Team {
-	name: string;
-	id: string;
-	active: boolean;
-	flash: boolean;
-	points: number;
-}
+import { Team } from './team';
 
 export class Game {
 	buzzer: Buzzer;
@@ -124,6 +117,7 @@ export class Game {
 	}
 
 	addPoints(points:number) {
+		console.log('addPoints')
 		var controllerIndex = this.answerWaitingForValidation;
 		var team = this.teams[controllerIndex];
 

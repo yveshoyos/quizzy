@@ -21,3 +21,4 @@ TODO
 5. Really playing music :)
 6. Best QRCode position
 7. Display icons for game, master and buzzer and highlight when available
+8. make master button disabled if no answers

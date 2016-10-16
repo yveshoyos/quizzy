@@ -1,4 +1,5 @@
-import { Game, Team } from './game';
+import { Game } from './game';
+import { Team } from './team';
 import { Question } from './question';
 
 export interface GameUI {

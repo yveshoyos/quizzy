@@ -89,6 +89,7 @@ var Game = (function () {
         //this.activationStep();
     };
     Game.prototype.addPoints = function (points) {
+        console.log('addPoints');
         var controllerIndex = this.answerWaitingForValidation;
         var team = this.teams[controllerIndex];
         team.points += points;

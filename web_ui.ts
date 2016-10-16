@@ -6,7 +6,8 @@
 
 import * as ws from 'nodejs-websocket';
 import * as express from 'express';
-import { Game, Team } from './game';
+import { Game } from './game';
+import { Team } from './team';
 import { Question } from './question';
 import { GameUI } from './game_ui';
 
