@@ -56,11 +56,11 @@ switch(argv.buzzer) {
 		break;
 }
 
-var game = new Game(buzzer);
 
 // web server used by the gameUI and masterUI webapps
-var gameUI = new WebGameUI(webapp, game, 8081);
-var masterUI = new WebMasterUI(webapp, game, 8082);
+var gameUI = new WebGameUI(webapp, 8081);
+var masterUI = new WebMasterUI(webapp, 8082);
+var game = new Game(buzzer, gameUI, masterUI);
 
 //buzzer.leave();
 
@@ -68,7 +68,7 @@ function exitHandler(options, err) {
 	console.log('exit : ', options, err)
 	if (options.ctrlc) {
 		console.log('cleanup...');
-		buzzer.leave();
+		//buzzer.leave();
 		process.exit();
 	}
 

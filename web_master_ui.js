@@ -33,10 +33,12 @@ var WebMasterUI = (function (_super) {
                 var data = JSON.parse(str);
                 if (data.register) {
                     console.log('register master');
-                    _this.game.register('master', _this);
+                    //this.game.register('master', this);
+                    _this.eventListeners['ready'].forEach(function (f) {
+                        f();
+                    });
                 }
                 if (data.set_mode) {
-                    console.log('set mode dude');
                     _this.game.setMode(data.set_mode);
                 }
                 if (data.add_points) {
@@ -45,7 +47,10 @@ var WebMasterUI = (function (_super) {
                 }
             });
             conn.on("close", function (code, reason) {
-                _this.game.unregister('master');
+                //this.game.unregister('master');
+                _this.eventListeners['leave'].forEach(function (f) {
+                    f();
+                });
             });
         }).listen(this.port);
     };

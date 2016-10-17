@@ -17,7 +17,7 @@ import { Team } from './team';
 export class Game {
 	buzzer: Buzzer;
 	gameUI: GameUI;
-	masterUI: WebMasterUI;
+	masterUI: GameUI;
 	started: boolean;
 	activatedTeams: number;
 	step: number;
@@ -30,23 +30,76 @@ export class Game {
 	answers: Array<Array<number>>;
 	answerWaitingForValidation: number;
 
-	constructor(buzzer:Buzzer) {
+	constructor(buzzer:Buzzer, gameUI: GameUI, masterUI: GameUI) {
 		this.buzzer = buzzer;
-		this.gameUI = null;
-		this.masterUI = null;
+		this.gameUI = gameUI;
+		this.masterUI = masterUI;
+
 		this.started = false;
 		this.questions = null;
 		this.answers = [];
 		this.questionIndex = -1;
 		this.answerWaitingForValidation = null;
 
-		this.buzzer.ready(() => {
+		/** 
+		 * Ready
+		 */
+		var buzzerReady = false, gameReady = false, masterReady = false;
+		this.buzzer.addEventListener('ready', () => {
+			console.log('buzzer ready...')
 			var max = this.buzzer.controllersCount();
 			// Make sur all buzzer are off
 			for (var i=0; i < max; i++) {
 				this.buzzer.lightOff(i);
 			}
+
+			buzzerReady = true;
+			this.ready(buzzerReady, gameReady, masterReady);
 		});
+
+		this.gameUI.addEventListener('ready', () => {
+			this.gameUI.setGame(this);
+			gameReady = true;
+			this.ready(buzzerReady, gameReady, masterReady);
+		});
+
+		this.masterUI.addEventListener('ready', () => {
+			this.masterUI.setGame(this);
+			masterReady = true;
+			this.ready(buzzerReady, gameReady, masterReady);
+		});
+
+		/**
+		 * Leave
+		 */
+		this.buzzer.addEventListener('leave', () => {
+			buzzerReady = false;
+			this.leave();
+		});
+
+		this.gameUI.addEventListener('leave', () => {
+			gameReady = false;
+			this.leave();
+		});
+
+		this.masterUI.addEventListener('leave', () => {
+			masterReady = false;
+			this.leave();
+		});
+	}
+
+	ready(buzzerReady: boolean, gameReady: boolean, masterReady: boolean) {
+		if (buzzerReady && gameReady && masterReady) {
+			if (!this.isStarted()) {
+				this.start();
+			} else {
+				//this.restart();
+			}
+		}
+	}
+
+	leave() {
+
 	}
 
 	start() {
@@ -85,7 +138,7 @@ export class Game {
 	}
 
 	register(type: string, instance: any) {
-		if (type == 'game') {
+		/*if (type == 'game') {
 			this.gameUI = instance;
 		} else if (type == 'master') {
 			this.masterUI = instance;
@@ -97,15 +150,15 @@ export class Game {
 			console.log('set currentStep')
 			instance.setTeams(this.teams);
 			instance.setStep(this.step);
-		}
+		}*/
 	}
 
 	unregister(type: string) {
-		if (type == 'game') {
+		/*if (type == 'game') {
 			this.gameUI = null;
 		} else if (type == 'master') {
 			this.masterUI = null;
-		}
+		}*/
 	}
 
 	setMode(mode: string) {

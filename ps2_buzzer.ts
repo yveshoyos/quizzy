@@ -67,8 +67,10 @@ export class Ps2Buzzer implements Buzzer {
 	device: HID.HID;
 	lights: Array<any>;
 	handlers: Array<Array<Function>>;
+	eventListeners: { 'ready': Array<Function>, 'leave': Array<Function> };
 	constructor(device) {
 		this.device = device
+		this.eventListeners = { 'ready': [], 'leave': [] };
 		this.lights = [0x0, 0x0, 0x0, 0x0]
 
 		this.handlers = [];
@@ -89,8 +91,16 @@ export class Ps2Buzzer implements Buzzer {
 		});
 	}
 
-	ready(callback: Function) {
-		callback();
+	addEventListener(event: string, callback: Function) {
+		this.eventListeners[event].push(callback);
+		if (event == 'ready') {
+			callback();
+		}
+	}
+
+	removeEventListener(event: string, callback: Function) {
+		var index = this.eventListeners[event].indexOf(callback);
+		this.eventListeners[event].splice(index, 1);
 	}
 
 	leave() {

@@ -2,14 +2,23 @@
 /// <reference path="nodejs-websocket.d.ts" />
 'use strict';
 var WebUI = (function () {
-    function WebUI(expressApp, game, websocketPort) {
+    function WebUI(expressApp, websocketPort) {
         this.app = expressApp;
-        this.game = game;
         this.port = websocketPort;
         this.conn = null;
+        this.eventListeners = { 'ready': [], 'leave': [] };
         this.initWebapp();
         this.initWebsocket();
     }
+    WebUI.prototype.addEventListener = function (event, callback) {
+        this.eventListeners[event].push(callback);
+    };
+    WebUI.prototype.removeEventListener = function (event, callback) {
+        var index = this.eventListeners[event].indexOf(callback);
+        this.eventListeners[event].splice(index, 1);
+    };
+    WebUI.prototype.leave = function () {
+    };
     /**
      * Set the main game
      */

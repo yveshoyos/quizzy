@@ -3,6 +3,12 @@ import { Team } from './team';
 import { Question } from './question';
 
 export interface GameUI {
+	addEventListener(event: string, callback: Function);
+
+	removeEventListener(event: string, callback: Function);
+
+	leave(): void;
+
 	setGame(game: Game): void;
 
 	setTeams(teams: Array<Team>): void;

@@ -14,8 +14,8 @@ export class WebGameUI extends WebUI {
 	app: any;
 	ws: ws.Server;
 	conn: ws.Connection;
-	initWebapp() {
 
+	initWebapp() {
 		this.app.get('/game', (request, response) => {
 			// engine, defaultConfiguration, options, request, response
 			var url = qrCode.toDataURL('http://'+ip.address()+':'+request.socket.localPort+'/master?', 4);
@@ -35,7 +35,10 @@ export class WebGameUI extends WebUI {
 
 				if (data.register) {
 					console.log('register game');
-					this.game.register('game', this);
+					this.eventListeners['ready'].forEach((f) => {
+						f();
+					});
+					//this.game.register('game', this);
 				}
 
 				if (data.set_activation_step) {
@@ -45,7 +48,10 @@ export class WebGameUI extends WebUI {
 			});
 
 			conn.on("close", (code:number, reason:string) => {
-				this.game.unregister('game');
+				//this.game.unregister('game');
+				this.eventListeners['leave'].forEach((f) => {
+						f();
+					});
 			});
 		}).listen(this.port);
 	}

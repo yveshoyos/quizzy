@@ -4,12 +4,20 @@ var rpio = require('rpio');
 ;
 var GPIOBuzzer = (function () {
     function GPIOBuzzer(buttons) {
+        this.eventListeners = { 'ready': [], 'leave': [] };
         this.buttons = buttons;
         openPins.call(this);
         this.handlers = {};
     }
-    GPIOBuzzer.prototype.ready = function (callback) {
-        callback();
+    GPIOBuzzer.prototype.addEventListener = function (event, callback) {
+        this.eventListeners[event].push(callback);
+        if (event == 'ready') {
+            callback();
+        }
+    };
+    GPIOBuzzer.prototype.removeEventListener = function (event, callback) {
+        var index = this.eventListeners[event].indexOf(callback);
+        this.eventListeners[event].splice(index, 1);
     };
     GPIOBuzzer.prototype.leave = function () {
         closePins.call(this);

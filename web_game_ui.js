@@ -37,7 +37,9 @@ var WebGameUI = (function (_super) {
                 var data = JSON.parse(str);
                 if (data.register) {
                     console.log('register game');
-                    _this.game.register('game', _this);
+                    _this.eventListeners['ready'].forEach(function (f) {
+                        f();
+                    });
                 }
                 if (data.set_activation_step) {
                     //this.game.setMode(data.set_mode)
@@ -45,7 +47,10 @@ var WebGameUI = (function (_super) {
                 }
             });
             conn.on("close", function (code, reason) {
-                _this.game.unregister('game');
+                //this.game.unregister('game');
+                _this.eventListeners['leave'].forEach(function (f) {
+                    f();
+                });
             });
         }).listen(this.port);
     };

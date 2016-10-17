@@ -26,26 +26,28 @@ export class WebBuzzer implements Buzzer {
 	app: express.Express;
 	port: number;
 	handlers: Array<Array<Function>>;
-	readyCallbacks: Array<Function>;
+	eventListeners: { 'ready': Array<Function>, 'leave': Array<Function> };
 	constructor(app:express.Express, port:number=8083) {
 		this.port = port;
 		this.app = app;
-		this.readyCallbacks = [];
 		this.handlers = [];
+
+		this.eventListeners = { 'ready': [], 'leave': [] };
 		
 		this.initWebapp()
 		this.initWebsocket()
 	}
 
-	ready(callback: Function) {
-		if (this.conn) {
-			this.readyCallbacks.map(() => {
-				this.readyCallbacks.forEach((f) => {
-					f();
-				});
-			});
+	addEventListener(event: string, callback: Function) {
+		this.eventListeners[event].push(callback);
+		if (event == 'ready' && this.conn) {
+			callback();
 		}
-		this.readyCallbacks.push(callback);
+	}
+
+	removeEventListener(event: string, callback: Function) {
+		var index = this.eventListeners[event].indexOf(callback);
+		this.eventListeners[event].splice(index, 1);
 	}
 
 	leave(): void {
@@ -103,11 +105,11 @@ export class WebBuzzer implements Buzzer {
 	}
 
 	initWebsocket() {
-		console.log('Buzzer : listening ws on ', this.port);
+		console.log('WebBuzzer : listening ws on '+this.port);
 		this.ws = ws.createServer((conn) => {
 			this.conn = conn;
 
-			this.readyCallbacks.forEach((f) => {
+			this.eventListeners['ready'].forEach((f) => {
 				f();
 			});
 

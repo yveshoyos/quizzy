@@ -1,6 +1,7 @@
 export interface Buzzer {
-	ready(callabck: Function): void;
-	leave():void;
+	addEventListener(event: string, callabck: Function): void
+	removeEventListener(event: string, callback: Function): void;
+	leave(): void;
 	lightOn(controllerIndexes:number): void;
 	lightOff(controllerIndexes:number): void;
 	blink(controllerIndexes:Array<number>, times?:number, duration?:number): void;

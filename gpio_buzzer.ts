@@ -17,14 +17,24 @@ interface IDictionnary<T> {
 export class GPIOBuzzer implements Buzzer {
 	buttons: Array<GPIODomePushButton>;
 	handlers: IDictionnary<Array<Function>>;
+	eventListeners: { 'ready': Array<Function>, 'leave': Array<Function> };
 	constructor(buttons:Array<GPIODomePushButton>) {
+		this.eventListeners = { 'ready': [], 'leave': [] };
 		this.buttons = buttons;
 		openPins.call(this);
 		this.handlers = {};
 	}
 
-	ready(callback: Function) {
-		callback();
+	addEventListener(event: string, callback: Function) {
+		this.eventListeners[event].push(callback);
+		if (event == 'ready') {
+			callback();
+		}
+	}
+
+	removeEventListener(event: string, callback: Function) {
+		var index = this.eventListeners[event].indexOf(callback);
+		this.eventListeners[event].splice(index, 1);
 	}
 
 	leave() {

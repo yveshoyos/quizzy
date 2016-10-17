@@ -44,16 +44,16 @@ switch (argv.buzzer) {
         buzzer = new web_buzzer_1.WebBuzzer(webapp, 8083);
         break;
 }
-var game = new game_1.Game(buzzer);
 // web server used by the gameUI and masterUI webapps
-var gameUI = new web_game_ui_1.WebGameUI(webapp, game, 8081);
-var masterUI = new web_master_ui_1.WebMasterUI(webapp, game, 8082);
+var gameUI = new web_game_ui_1.WebGameUI(webapp, 8081);
+var masterUI = new web_master_ui_1.WebMasterUI(webapp, 8082);
+var game = new game_1.Game(buzzer, gameUI, masterUI);
 //buzzer.leave();
 function exitHandler(options, err) {
     console.log('exit : ', options, err);
     if (options.ctrlc) {
         console.log('cleanup...');
-        buzzer.leave();
+        //buzzer.leave();
         process.exit();
     }
     if (err) {

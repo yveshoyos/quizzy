@@ -8,24 +8,67 @@ var fs = require('fs');
 var mp3Duration = require('mp3-duration');
 var question_loader_1 = require('./question_loader');
 var Game = (function () {
-    function Game(buzzer) {
+    function Game(buzzer, gameUI, masterUI) {
         var _this = this;
         this.buzzer = buzzer;
-        this.gameUI = null;
-        this.masterUI = null;
+        this.gameUI = gameUI;
+        this.masterUI = masterUI;
         this.started = false;
         this.questions = null;
         this.answers = [];
         this.questionIndex = -1;
         this.answerWaitingForValidation = null;
-        this.buzzer.ready(function () {
+        /**
+         * Ready
+         */
+        var buzzerReady = false, gameReady = false, masterReady = false;
+        this.buzzer.addEventListener('ready', function () {
+            console.log('buzzer ready...');
             var max = _this.buzzer.controllersCount();
             // Make sur all buzzer are off
             for (var i = 0; i < max; i++) {
                 _this.buzzer.lightOff(i);
             }
+            buzzerReady = true;
+            _this.ready(buzzerReady, gameReady, masterReady);
+        });
+        this.gameUI.addEventListener('ready', function () {
+            _this.gameUI.setGame(_this);
+            gameReady = true;
+            _this.ready(buzzerReady, gameReady, masterReady);
+        });
+        this.masterUI.addEventListener('ready', function () {
+            _this.masterUI.setGame(_this);
+            masterReady = true;
+            _this.ready(buzzerReady, gameReady, masterReady);
+        });
+        /**
+         * Leave
+         */
+        this.buzzer.addEventListener('leave', function () {
+            buzzerReady = false;
+            _this.leave();
+        });
+        this.gameUI.addEventListener('leave', function () {
+            gameReady = false;
+            _this.leave();
+        });
+        this.masterUI.addEventListener('leave', function () {
+            masterReady = false;
+            _this.leave();
         });
     }
+    Game.prototype.ready = function (buzzerReady, gameReady, masterReady) {
+        if (buzzerReady && gameReady && masterReady) {
+            if (!this.isStarted()) {
+                this.start();
+            }
+            else {
+            }
+        }
+    };
+    Game.prototype.leave = function () {
+    };
     Game.prototype.start = function () {
         this.started = true;
         this.activatedTeams = 0;
@@ -58,28 +101,26 @@ var Game = (function () {
         // Do something
     };
     Game.prototype.register = function (type, instance) {
-        if (type == 'game') {
+        /*if (type == 'game') {
             this.gameUI = instance;
-        }
-        else if (type == 'master') {
+        } else if (type == 'master') {
             this.masterUI = instance;
         }
+
         if (!this.isStarted() && this.masterUI && this.gameUI) {
             this.start();
-        }
-        else if (this.isStarted()) {
-            console.log('set currentStep');
+        } else if (this.isStarted()) {
+            console.log('set currentStep')
             instance.setTeams(this.teams);
             instance.setStep(this.step);
-        }
+        }*/
     };
     Game.prototype.unregister = function (type) {
-        if (type == 'game') {
+        /*if (type == 'game') {
             this.gameUI = null;
-        }
-        else if (type == 'master') {
+        } else if (type == 'master') {
             this.masterUI = null;
-        }
+        }*/
     };
     Game.prototype.setMode = function (mode) {
         this.mode = mode;

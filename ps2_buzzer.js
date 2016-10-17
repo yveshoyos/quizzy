@@ -56,6 +56,7 @@ var Ps2Buzzer = (function () {
     function Ps2Buzzer(device) {
         var _this = this;
         this.device = device;
+        this.eventListeners = { 'ready': [], 'leave': [] };
         this.lights = [0x0, 0x0, 0x0, 0x0];
         this.handlers = [];
         this.device.on("data", function (signal) {
@@ -71,8 +72,15 @@ var Ps2Buzzer = (function () {
             }
         });
     }
-    Ps2Buzzer.prototype.ready = function (callback) {
-        callback();
+    Ps2Buzzer.prototype.addEventListener = function (event, callback) {
+        this.eventListeners[event].push(callback);
+        if (event == 'ready') {
+            callback();
+        }
+    };
+    Ps2Buzzer.prototype.removeEventListener = function (event, callback) {
+        var index = this.eventListeners[event].indexOf(callback);
+        this.eventListeners[event].splice(index, 1);
     };
     Ps2Buzzer.prototype.leave = function () {
         this.light([0, 1, 2, 3], 0x00);

@@ -18,21 +18,20 @@ var WebBuzzer = (function () {
         if (port === void 0) { port = 8083; }
         this.port = port;
         this.app = app;
-        this.readyCallbacks = [];
         this.handlers = [];
+        this.eventListeners = { 'ready': [], 'leave': [] };
         this.initWebapp();
         this.initWebsocket();
     }
-    WebBuzzer.prototype.ready = function (callback) {
-        var _this = this;
-        if (this.conn) {
-            this.readyCallbacks.map(function () {
-                _this.readyCallbacks.forEach(function (f) {
-                    f();
-                });
-            });
+    WebBuzzer.prototype.addEventListener = function (event, callback) {
+        this.eventListeners[event].push(callback);
+        if (event == 'ready' && this.conn) {
+            callback();
         }
-        this.readyCallbacks.push(callback);
+    };
+    WebBuzzer.prototype.removeEventListener = function (event, callback) {
+        var index = this.eventListeners[event].indexOf(callback);
+        this.eventListeners[event].splice(index, 1);
     };
     WebBuzzer.prototype.leave = function () {
         this.ws.close();
@@ -87,10 +86,10 @@ var WebBuzzer = (function () {
     };
     WebBuzzer.prototype.initWebsocket = function () {
         var _this = this;
-        console.log('Buzzer : listening ws on ', this.port);
+        console.log('WebBuzzer : listening ws on ' + this.port);
         this.ws = ws.createServer(function (conn) {
             _this.conn = conn;
-            _this.readyCallbacks.forEach(function (f) {
+            _this.eventListeners['ready'].forEach(function (f) {
                 f();
             });
             conn.on("text", function (str) {

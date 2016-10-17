@@ -31,11 +31,13 @@ export class WebMasterUI extends WebUI {
 
 				if (data.register) {
 					console.log('register master');
-					this.game.register('master', this);
+					//this.game.register('master', this);
+					this.eventListeners['ready'].forEach((f) => {
+						f();
+					});
 				}
 
 				if (data.set_mode) {
-					console.log('set mode dude')
 					this.game.setMode(data.set_mode);
 				}
 
@@ -46,7 +48,10 @@ export class WebMasterUI extends WebUI {
 			});
 
 			conn.on("close", (code:number, reason:string) => {
-				this.game.unregister('master');
+				//this.game.unregister('master');
+				this.eventListeners['leave'].forEach((f) => {
+						f();
+					});
 			});
 		}).listen(this.port);
 	}

@@ -11,23 +11,41 @@ import { Team } from './team';
 import { Question } from './question';
 import { GameUI } from './game_ui';
 
+interface eventListeners {
+
+}
+
 export abstract class WebUI implements GameUI {
 	app: express.Express;
 	game: Game;
 	port: number;
 	conn: ws.Connection;
-	constructor(expressApp: express.Express, game: Game, websocketPort: number) {
+	eventListeners: { 'ready': Array<Function>, 'leave': Array<Function> };
+
+	constructor(expressApp: express.Express, websocketPort: number) {
 		this.app = expressApp;
-		this.game = game;
 		this.port = websocketPort;
 		this.conn = null;
-
+		this.eventListeners = { 'ready': [], 'leave': [] };
 		this.initWebapp();
 		this.initWebsocket();
 	}
 
 	abstract initWebapp(): void;
 	abstract initWebsocket(): void;
+
+	addEventListener(event: string, callback: Function) {
+		this.eventListeners[event].push(callback);
+	}
+
+	removeEventListener(event: string, callback: Function) {
+		var index = this.eventListeners[event].indexOf(callback);
+		this.eventListeners[event].splice(index, 1);
+	}
+
+	leave() {
+		
+	}
 
 	/**
 	 * Set the main game
