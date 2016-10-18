@@ -137,30 +137,6 @@ export class Game {
 		// Do something
 	}
 
-	register(type: string, instance: any) {
-		/*if (type == 'game') {
-			this.gameUI = instance;
-		} else if (type == 'master') {
-			this.masterUI = instance;
-		}
-
-		if (!this.isStarted() && this.masterUI && this.gameUI) {
-			this.start();
-		} else if (this.isStarted()) {
-			console.log('set currentStep')
-			instance.setTeams(this.teams);
-			instance.setStep(this.step);
-		}*/
-	}
-
-	unregister(type: string) {
-		/*if (type == 'game') {
-			this.gameUI = null;
-		} else if (type == 'master') {
-			this.masterUI = null;
-		}*/
-	}
-
 	setMode(mode: string) {
 		this.mode = mode;
 		console.log('set mode...');
