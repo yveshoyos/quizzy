@@ -30,12 +30,14 @@ export class Game {
 	answers: Array<Array<number>>;
 	answerWaitingForValidation: number;
 	actors: { buzzer: boolean, game: boolean, master: boolean };
+	teamActivationDuration: number;
 
 	constructor(buzzer:Buzzer, gameUI: GameUI, masterUI: GameUI) {
 		this.buzzer = buzzer;
 		this.gameUI = gameUI;
 		this.masterUI = masterUI;
 		this.actors = { buzzer: false, game: false, master: false };
+		this.teamActivationDuration = 60;
 
 		this.started = false;
 		this.questions = null;
@@ -166,34 +168,11 @@ export class Game {
 		this.masterUI.setStep(1);
 	}
 
-	//
-	// Question step
-	//
-
-	addPoints(points:number) {
-		console.log('addPoints')
-		var controllerIndex = this.answerWaitingForValidation;
-		var team = this.teams[controllerIndex];
-
-		team.points += points;
-		team.active = false;
-		team.flash = true;
-
-		this.gameUI.updateTeam(team);
-		this.masterUI.updateTeam(team);
-
-		team.flash = false;
-
-		this.nextQuestion();
-	}
-
-
-	//
-	// Steps
-	//
-	
 	activationStep() {
 		this.step = 2;
+
+		this.gameUI.setTeamActivationDuration(this.teamActivationDuration);
+		this.masterUI.setTeamActivationDuration(this.teamActivationDuration);
 
 		// Send the teams to uis
 		this.gameUI.setTeams(this.teams);
@@ -210,38 +189,7 @@ export class Game {
 		// Go to next step after a timeout
 		this.stopTeamActivationTimeout = setTimeout(() => {
 			this.quizzStep();
-		}, 9000);
-	}
-
-	activateTeam(controllerIndex: number) {
-		var team = this.teams[controllerIndex];
-
-		console.log('activateTeam : ', controllerIndex, team);
-
-		// make sure a team can only be activated once
-		if (team.active) {
-			return;
-		}
-
-		sounds.play('activate_team');
-
-		// Count the activated teams
-		this.activatedTeams++;
-
-		// Light the buzzer on
-		this.buzzer.lightOn(controllerIndex);
-
-		// Activate the team
-		team.active = true;
-		team.flash = true;
-		this.gameUI.activateTeam(team, true);
-		this.masterUI.activateTeam(team, true);
-		team.flash = false; // Just flash during activation
-
-		// If all teams are activated, go to next step
-		if (this.activatedTeams == this.buzzer.controllersCount()) {
-			this.quizzStep();
-		}
+		}, this.teamActivationDuration * 1000);
 	}
 
 	quizzStep() {
@@ -284,6 +232,67 @@ export class Game {
 			}
 		});
 	}
+
+	//
+	// Question step
+	//
+
+	addPoints(points:number) {
+		console.log('addPoints')
+		var controllerIndex = this.answerWaitingForValidation;
+		var team = this.teams[controllerIndex];
+
+		team.points += points;
+		team.active = false;
+		team.flash = true;
+
+		this.gameUI.updateTeam(team);
+		this.masterUI.updateTeam(team);
+
+		team.flash = false;
+
+		this.nextQuestion();
+	}
+
+
+	//
+	// Steps
+	//
+	
+	
+
+	activateTeam(controllerIndex: number) {
+		var team = this.teams[controllerIndex];
+
+		console.log('activateTeam : ', controllerIndex, team);
+
+		// make sure a team can only be activated once
+		if (team.active) {
+			return;
+		}
+
+		sounds.play('activate_team');
+
+		// Count the activated teams
+		this.activatedTeams++;
+
+		// Light the buzzer on
+		this.buzzer.lightOn(controllerIndex);
+
+		// Activate the team
+		team.active = true;
+		team.flash = true;
+		this.gameUI.activateTeam(team, true);
+		this.masterUI.activateTeam(team, true);
+		team.flash = false; // Just flash during activation
+
+		// If all teams are activated, go to next step
+		if (this.activatedTeams == this.buzzer.controllersCount()) {
+			this.quizzStep();
+		}
+	}
+
+	
 
 	buzzed(controllerIndex: number) {
 		var team = this.teams[controllerIndex];

@@ -15,6 +15,8 @@ export interface GameUI {
 
 	setTeams(teams: Array<Team>): void;
 
+	setTeamActivationDuration(duration: number): void
+
 	setMode(teams: string): void;
 
 	setStep(step: number): void;

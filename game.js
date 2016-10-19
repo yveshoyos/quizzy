@@ -14,6 +14,7 @@ var Game = (function () {
         this.gameUI = gameUI;
         this.masterUI = masterUI;
         this.actors = { buzzer: false, game: false, master: false };
+        this.teamActivationDuration = 60;
         this.started = false;
         this.questions = null;
         this.answers = [];
@@ -124,27 +125,11 @@ var Game = (function () {
         this.gameUI.setStep(1);
         this.masterUI.setStep(1);
     };
-    //
-    // Question step
-    //
-    Game.prototype.addPoints = function (points) {
-        console.log('addPoints');
-        var controllerIndex = this.answerWaitingForValidation;
-        var team = this.teams[controllerIndex];
-        team.points += points;
-        team.active = false;
-        team.flash = true;
-        this.gameUI.updateTeam(team);
-        this.masterUI.updateTeam(team);
-        team.flash = false;
-        this.nextQuestion();
-    };
-    //
-    // Steps
-    //
     Game.prototype.activationStep = function () {
         var _this = this;
         this.step = 2;
+        this.gameUI.setTeamActivationDuration(this.teamActivationDuration);
+        this.masterUI.setTeamActivationDuration(this.teamActivationDuration);
         // Send the teams to uis
         this.gameUI.setTeams(this.teams);
         this.masterUI.setTeams(this.teams);
@@ -157,30 +142,7 @@ var Game = (function () {
         // Go to next step after a timeout
         this.stopTeamActivationTimeout = setTimeout(function () {
             _this.quizzStep();
-        }, 9000);
-    };
-    Game.prototype.activateTeam = function (controllerIndex) {
-        var team = this.teams[controllerIndex];
-        console.log('activateTeam : ', controllerIndex, team);
-        // make sure a team can only be activated once
-        if (team.active) {
-            return;
-        }
-        sounds.play('activate_team');
-        // Count the activated teams
-        this.activatedTeams++;
-        // Light the buzzer on
-        this.buzzer.lightOn(controllerIndex);
-        // Activate the team
-        team.active = true;
-        team.flash = true;
-        this.gameUI.activateTeam(team, true);
-        this.masterUI.activateTeam(team, true);
-        team.flash = false; // Just flash during activation
-        // If all teams are activated, go to next step
-        if (this.activatedTeams == this.buzzer.controllersCount()) {
-            this.quizzStep();
-        }
+        }, this.teamActivationDuration * 1000);
     };
     Game.prototype.quizzStep = function () {
         var _this = this;
@@ -218,6 +180,47 @@ var Game = (function () {
                 console.log('already answered :(');
             }
         });
+    };
+    //
+    // Question step
+    //
+    Game.prototype.addPoints = function (points) {
+        console.log('addPoints');
+        var controllerIndex = this.answerWaitingForValidation;
+        var team = this.teams[controllerIndex];
+        team.points += points;
+        team.active = false;
+        team.flash = true;
+        this.gameUI.updateTeam(team);
+        this.masterUI.updateTeam(team);
+        team.flash = false;
+        this.nextQuestion();
+    };
+    //
+    // Steps
+    //
+    Game.prototype.activateTeam = function (controllerIndex) {
+        var team = this.teams[controllerIndex];
+        console.log('activateTeam : ', controllerIndex, team);
+        // make sure a team can only be activated once
+        if (team.active) {
+            return;
+        }
+        sounds.play('activate_team');
+        // Count the activated teams
+        this.activatedTeams++;
+        // Light the buzzer on
+        this.buzzer.lightOn(controllerIndex);
+        // Activate the team
+        team.active = true;
+        team.flash = true;
+        this.gameUI.activateTeam(team, true);
+        this.masterUI.activateTeam(team, true);
+        team.flash = false; // Just flash during activation
+        // If all teams are activated, go to next step
+        if (this.activatedTeams == this.buzzer.controllersCount()) {
+            this.quizzStep();
+        }
     };
     Game.prototype.buzzed = function (controllerIndex) {
         var team = this.teams[controllerIndex];

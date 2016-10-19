@@ -48,7 +48,7 @@
 
 			this.isMaster = function() {
 				return game.type == 'master';
-			}
+			};
 
 			websocket.onopen = function (event) {
 				websocket.send(JSON.stringify({
@@ -83,7 +83,7 @@
 				if (angular.isDefined(data.set_teams)) {
 					game.teams = data.set_teams;
 					game.progress = 0;
-					game.secondsLeft = 8;
+					game.secondsLeft = game.teamActivationDuration-1;
 					game.startTeamsActivation = true;
 					
 					var interval = setInterval(function() {
@@ -96,6 +96,18 @@
 							clearInterval(interval);
 						}
 					}, 1000);
+				}
+
+				if (angular.isDefined(data.team_activation_duration)) {
+					game.teamActivationDuration = data.team_activation_duration;
+					console.log('==>', $element[0].querySelector('.radial-progress .circle .mask'));
+					$element[0].querySelectorAll('.radial-progress .circle .mask').forEach(function(el) {
+						el.style.transitionDuration = data.team_activation_duration+'s';
+					});
+					$element[0].querySelectorAll('.radial-progress .circle .fill').forEach(function(el) {
+						el.style.transitionDuration = data.team_activation_duration+'s';
+					});
+					//$element[0].querySelector('.progress-bar').style.transitionDuration =  data.team_activation_duration+'s';
 				}
 
 				if (angular.isDefined(data.activate_team)) {

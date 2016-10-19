@@ -72,6 +72,12 @@ export abstract class WebUI implements GameUI {
 		});
 	}
 
+	setTeamActivationDuration(duration: number) {
+		this._send({
+			team_activation_duration: duration
+		});
+	}
+
 	setMode(mode: string) {
 		this._send({
 			set_mode: mode

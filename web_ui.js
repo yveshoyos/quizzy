@@ -40,6 +40,11 @@ var WebUI = (function () {
             set_teams: teams
         });
     };
+    WebUI.prototype.setTeamActivationDuration = function (duration) {
+        this._send({
+            team_activation_duration: duration
+        });
+    };
     WebUI.prototype.setMode = function (mode) {
         this._send({
             set_mode: mode
