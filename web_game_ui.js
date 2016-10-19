@@ -35,19 +35,20 @@ var WebGameUI = (function (_super) {
             _this.conn = conn;
             conn.on("text", function (str) {
                 var data = JSON.parse(str);
-                if (data.register) {
+                if ('register' in data) {
                     console.log('register game');
                     _this.eventListeners['ready'].forEach(function (f) {
                         f();
                     });
                 }
-                if (data.set_activation_step) {
+                if ('set_activation_step' in data) {
                     //this.game.setMode(data.set_mode)
                     _this.game.activationStep();
                 }
             });
             conn.on("close", function (code, reason) {
                 //this.game.unregister('game');
+                _this.conn = null;
                 _this.eventListeners['leave'].forEach(function (f) {
                     f();
                 });

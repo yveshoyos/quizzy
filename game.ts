@@ -29,17 +29,20 @@ export class Game {
 	questionIndex: number;
 	answers: Array<Array<number>>;
 	answerWaitingForValidation: number;
+	actors: { buzzer: boolean, game: boolean, master: boolean };
 
 	constructor(buzzer:Buzzer, gameUI: GameUI, masterUI: GameUI) {
 		this.buzzer = buzzer;
 		this.gameUI = gameUI;
 		this.masterUI = masterUI;
+		this.actors = { buzzer: false, game: false, master: false };
 
 		this.started = false;
 		this.questions = null;
 		this.answers = [];
 		this.questionIndex = -1;
 		this.answerWaitingForValidation = null;
+
 
 		/** 
 		 * Ready
@@ -53,59 +56,71 @@ export class Game {
 				this.buzzer.lightOff(i);
 			}
 
-			buzzerReady = true;
-			this.ready(buzzerReady, gameReady, masterReady);
+			this.actors.buzzer = true;
+			this.ready();
 		});
 
 		this.gameUI.addEventListener('ready', () => {
+			this.actors.game = true;
 			this.gameUI.setGame(this);
-			gameReady = true;
-			this.ready(buzzerReady, gameReady, masterReady);
+			this.ready();
 		});
 
 		this.masterUI.addEventListener('ready', () => {
+			this.actors.master = true;
 			this.masterUI.setGame(this);
-			masterReady = true;
-			this.ready(buzzerReady, gameReady, masterReady);
+			this.ready();
 		});
 
 		/**
 		 * Leave
 		 */
 		this.buzzer.addEventListener('leave', () => {
-			buzzerReady = false;
+			this.actors.buzzer = false;
 			this.leave();
 		});
 
 		this.gameUI.addEventListener('leave', () => {
-			gameReady = false;
+			this.actors.game = false;
 			this.leave();
 		});
 
 		this.masterUI.addEventListener('leave', () => {
-			masterReady = false;
+			this.actors.master = false;
 			this.leave();
 		});
 	}
 
-	ready(buzzerReady: boolean, gameReady: boolean, masterReady: boolean) {
-		if (buzzerReady && gameReady && masterReady) {
+	ready() {
+		this.gameUI.setActors(this.actors);
+		this.masterUI.setActors(this.actors);
+
+		if (this.actors.buzzer && this.actors.game && this.actors.master) {
 			if (!this.isStarted()) {
 				this.start();
 			} else {
 				//this.restart();
+				this.gameUI.setStep(this.step);
+				this.masterUI.setStep(this.step);
+
+				if (this.mode) {
+					this.gameUI.setMode(this.mode);
+					this.masterUI.setMode(this.mode);
+				}
+				
 			}
 		}
 	}
 
 	leave() {
-
+		this.gameUI.setActors(this.actors);
+		this.masterUI.setActors(this.actors);
 	}
 
 	start() {
+		this.step = 0;
 		this.started = true;
 		this.activatedTeams = 0;
-		this.step = 0;
 		this.initTeam();
 		this.modeStep();
 	}
@@ -134,16 +149,26 @@ export class Game {
 		if (!this.isStarted()) {
 			return;
 		}
-		// Do something
 	}
 
+	//
+	// Mode step
+	//
 	setMode(mode: string) {
 		this.mode = mode;
-		console.log('set mode...');
 		this.loadQuestions(mode);
 		this.gameUI.setMode(this.mode);
-		//this.activationStep();
 	}
+
+	modeStep() {
+		this.step = 1;
+		this.gameUI.setStep(1);
+		this.masterUI.setStep(1);
+	}
+
+	//
+	// Question step
+	//
 
 	addPoints(points:number) {
 		console.log('addPoints')
@@ -166,12 +191,7 @@ export class Game {
 	//
 	// Steps
 	//
-	modeStep() {
-		this.step = 1;
-		this.gameUI.setStep(1);
-		this.masterUI.setStep(1);
-	}
-
+	
 	activationStep() {
 		this.step = 2;
 
@@ -226,9 +246,7 @@ export class Game {
 
 	quizzStep() {
 		if (this.activatedTeams <= 0) {
-			this.step = 0;
-			this.gameUI.setStep(0);
-			this.masterUI.setStep(0);
+			this.modeStep();
 			return;
 		}
 
@@ -286,6 +304,12 @@ export class Game {
 	nextQuestion() {
 		console.log('nextQuestion');
 		this.questionIndex++;
+
+		if (this.questionIndex == this.questions.length()) {
+			console.log('ennnnnnnd')
+			this.end();
+		}
+
 		this.answers[this.questionIndex] = new Array(this.buzzer.controllersCount())
 			.join()
 			.split(',')
@@ -298,8 +322,10 @@ export class Game {
 		this.answerWaitingForValidation = null;
 		this.gameUI.setQuestion(question);
 		this.masterUI.setQuestion(question);
+	}
 
-		
+	end() {
+		console.log('Finiiiiiiiiii');
 	}
 
 	loadQuestions(mode) {

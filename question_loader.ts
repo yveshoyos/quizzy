@@ -40,6 +40,10 @@ export class QuestionList {
 		return this.questions[this.index]; 
 	}
 
+	length():number {
+		return this.questions.length;
+	}
+
 	map(callback: (value:Question) => void) {
 		this.questions.forEach(callback);
 	}

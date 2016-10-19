@@ -29,7 +29,7 @@ export class WebMasterUI extends WebUI {
 				console.log('master receive : ', str)
 				var data = JSON.parse(str);
 
-				if (data.register) {
+				if ('register' in data) {
 					console.log('register master');
 					//this.game.register('master', this);
 					this.eventListeners['ready'].forEach((f) => {
@@ -37,11 +37,11 @@ export class WebMasterUI extends WebUI {
 					});
 				}
 
-				if (data.set_mode) {
+				if ('set_mode' in data) {
 					this.game.setMode(data.set_mode);
 				}
 
-				if (data.add_points) {
+				if ('add_points' in data) {
 					console.log('add points')
 					this.game.addPoints(data.add_points);
 				}
@@ -49,9 +49,10 @@ export class WebMasterUI extends WebUI {
 
 			conn.on("close", (code:number, reason:string) => {
 				//this.game.unregister('master');
+				this.conn = null;
 				this.eventListeners['leave'].forEach((f) => {
-						f();
-					});
+					f();
+				});
 			});
 		}).listen(this.port);
 	}

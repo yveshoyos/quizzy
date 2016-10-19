@@ -3,11 +3,112 @@ body, html {
 	margin: 0;
 	background-color: #212121;
     height: 100%;
+    font-family: -apple-system,"Helvetica Neue",Helvetica,"Segoe UI",Arial,sans-serif;
 }
 
 .container-fluid {
     height: 100%;
 }
+
+/**
+ *
+ *
+ */
+.parts {
+    text-align: center;
+    vertical-align: top;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+
+    svg {
+        width: 50%;
+        stroke: none;
+
+        path, polygon {
+            fill: #312f2f;
+            stroke: none;
+        }
+       
+        &.active {
+            path, polygon {
+                fill: #eee;
+            }
+        }
+    }
+
+    div:first-child {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: row;
+    }
+
+    div:nth-child(2) {
+        font-size: 20px;
+        color: #999;
+    }
+}
+
+.error {
+    position: absolute;
+    background: rgba(0, 0, 0, .8);
+    color: red;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: row;
+    z-index: 1;
+
+    .box {
+        background-color: #cc3e4a;
+        color: #fff;
+        width: 300px;
+        height: 150px;
+        border-radius: 5px;
+        font-size: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+}
+
+.question {
+    color: #ccc;
+    font-size: 24px;
+    width: 100%;
+}
+
+.vertical-align {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: row;
+}
+
+.step3 {
+    height: calc(~"100% - 130px");
+}
+
+#qrCode {
+    height: 200px;
+    margin: 0 auto;
+}
+
+/**
+ *
+ *
+ *
+ */
 
 .teams {
 
@@ -234,14 +335,6 @@ h2.counter {
 
 .btn-point {
     width: 100%;
-}
-
-.vertical-align {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-direction: row;
-  height: 100%;
 }
 
 .step0 {

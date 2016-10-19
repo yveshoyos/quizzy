@@ -22,7 +22,7 @@ var Question = (function () {
         var extension = path.extname(file);
         var filename = path.basename(file, extension);
         var dir = path.basename(path.dirname(file));
-        var regex = /^(\d+)\.\s*(.*?)\s*--\s*(.*?)(\s*\((\d+)\))?$/i;
+        var regex = /^(\d+)\.\s*(.*?)\s*--\s*(.*?)(?:\s*\((\d+)\))?$/i;
         var infos = filename.match(regex);
         //var infos:Array<string> = filename.split('--');
         var m = mime.lookup(file).split('/');
@@ -34,9 +34,9 @@ var Question = (function () {
             q = new DeafQuestion();
         }
         q.file = file;
-        q.name = infos[2].trim();
-        q.author = infos[1].trim();
-        q.year = (infos[3]) ? infos[3].trim() : '',
+        q.name = infos[3].trim();
+        q.author = infos[2].trim();
+        q.year = (infos[4]) ? infos[4].trim() : '',
             q.category = dir;
         return q;
     };

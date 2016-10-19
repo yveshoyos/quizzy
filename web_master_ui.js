@@ -31,23 +31,24 @@ var WebMasterUI = (function (_super) {
             conn.on("text", function (str) {
                 console.log('master receive : ', str);
                 var data = JSON.parse(str);
-                if (data.register) {
+                if ('register' in data) {
                     console.log('register master');
                     //this.game.register('master', this);
                     _this.eventListeners['ready'].forEach(function (f) {
                         f();
                     });
                 }
-                if (data.set_mode) {
+                if ('set_mode' in data) {
                     _this.game.setMode(data.set_mode);
                 }
-                if (data.add_points) {
+                if ('add_points' in data) {
                     console.log('add points');
                     _this.game.addPoints(data.add_points);
                 }
             });
             conn.on("close", function (code, reason) {
                 //this.game.unregister('master');
+                _this.conn = null;
                 _this.eventListeners['leave'].forEach(function (f) {
                     f();
                 });

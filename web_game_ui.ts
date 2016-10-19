@@ -33,7 +33,7 @@ export class WebGameUI extends WebUI {
 			conn.on("text", (str:string) => {
 				var data = JSON.parse(str);
 
-				if (data.register) {
+				if ('register' in data) {
 					console.log('register game');
 					this.eventListeners['ready'].forEach((f) => {
 						f();
@@ -41,7 +41,7 @@ export class WebGameUI extends WebUI {
 					//this.game.register('game', this);
 				}
 
-				if (data.set_activation_step) {
+				if ('set_activation_step' in data) {
 					//this.game.setMode(data.set_mode)
 					this.game.activationStep();
 				}
@@ -49,9 +49,10 @@ export class WebGameUI extends WebUI {
 
 			conn.on("close", (code:number, reason:string) => {
 				//this.game.unregister('game');
+				this.conn = null;
 				this.eventListeners['leave'].forEach((f) => {
-						f();
-					});
+					f();
+				});
 			});
 		}).listen(this.port);
 	}

@@ -9,6 +9,8 @@ export interface GameUI {
 
 	leave(): void;
 
+	setActors(actors: { buzzer: boolean, game: boolean, master: boolean }): void;
+
 	setGame(game: Game): void;
 
 	setTeams(teams: Array<Team>): void;

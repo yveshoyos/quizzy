@@ -128,6 +128,10 @@ export class WebBuzzer implements Buzzer {
 			});
 
 			conn.on("close", (code:number, reason:string) => {
+				this.conn = null;
+				this.eventListeners['leave'].forEach((f) => {
+					f();
+				});
 			});
 		}).listen(this.port);
 	}

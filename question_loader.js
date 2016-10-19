@@ -29,6 +29,9 @@ var QuestionList = (function () {
         this.index++;
         return this.questions[this.index];
     };
+    QuestionList.prototype.length = function () {
+        return this.questions.length;
+    };
     QuestionList.prototype.map = function (callback) {
         this.questions.forEach(callback);
     };

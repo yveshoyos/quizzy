@@ -1,8 +1,16 @@
 (function(angular) {
 	angular.module('master', [])
 	.component('master', {
-		controllerAs: 'master',
+		controllerAs: 'game',
 		controller: ['$scope', function(scope) {
+			var game = this;
+
+			game.actors = {
+				game: false,
+				buzzers: false,
+				master: false
+			};
+
 			var ctrl = this;
 			ctrl.step = 0;
 			ctrl.answered = false;
@@ -17,6 +25,11 @@
 			websocket.onmessage = function(event) {
 				var data = JSON.parse(event.data);
 				console.log('master : ', data);
+
+				if (angular.isDefined(data.set_actors)) {
+					console.log('set actors')
+					game.actors = data.set_actors;
+				}
 
 				if (angular.isDefined(data.set_teams)) {
 					ctrl.teams = data.set_teams;
@@ -105,6 +118,6 @@
 				}));
 			};
 		}],
-		templateUrl: 'template/master.html'
+		templateUrl: 'template/teams.html'
 	})
 })(angular);

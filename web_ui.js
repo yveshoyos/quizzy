@@ -19,49 +19,59 @@ var WebUI = (function () {
     };
     WebUI.prototype.leave = function () {
     };
+    WebUI.prototype._send = function (data) {
+        if (this.conn) {
+            this.conn.send(JSON.stringify(data));
+        }
+    };
     /**
      * Set the main game
      */
     WebUI.prototype.setGame = function (game) {
         this.game = game;
     };
+    WebUI.prototype.setActors = function (actors) {
+        this._send({
+            set_actors: actors
+        });
+    };
     WebUI.prototype.setTeams = function (teams) {
-        this.conn.send(JSON.stringify({
+        this._send({
             set_teams: teams
-        }));
+        });
     };
     WebUI.prototype.setMode = function (mode) {
-        this.conn.send(JSON.stringify({
+        this._send({
             set_mode: mode
-        }));
+        });
     };
     WebUI.prototype.setStep = function (step) {
-        this.conn.send(JSON.stringify({
+        this._send({
             set_step: step
-        }));
+        });
     };
     WebUI.prototype.activateTeam = function (team, active) {
-        this.conn.send(JSON.stringify({
+        this._send({
             activate_team: team
-        }));
+        });
     };
     WebUI.prototype.updateTeam = function (team) {
-        this.conn.send(JSON.stringify({
+        this._send({
             update_team: team
-        }));
+        });
     };
     WebUI.prototype.setQuestion = function (question) {
-        this.conn.send(JSON.stringify({
+        this._send({
             set_question: question
-        }));
+        });
     };
     WebUI.prototype.setAnswered = function (controllerIndex, answered) {
-        this.conn.send(JSON.stringify({
+        this._send({
             set_answered: {
                 controllerIndex: controllerIndex,
                 answered: answered
             }
-        }));
+        });
     };
     return WebUI;
 }());

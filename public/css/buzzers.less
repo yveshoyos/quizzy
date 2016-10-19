@@ -1,15 +1,17 @@
-.buzzers > div {
-	display: inline-block;
-	width: 25%;
+.buzzers {
+	height: 100%;
+	display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: row;
 }
 
 .buzzer {
 	border-radius: 50%;
-	width: 200px;
-	height: 200px;
+	width: calc(~"25vw - 10px");
+	height: calc(~"25vw - 10px");
 	margin-right: auto;
 	margin-left: auto;
-	margin-top: 100px;
 	position: relative;
 }
 
@@ -40,4 +42,12 @@
 
 .buzzers > div:nth-child(4) .buzzer {
         background-color: orange;
+}
+
+.vertical-align {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: row;
 }

@@ -13,6 +13,7 @@ var Game = (function () {
         this.buzzer = buzzer;
         this.gameUI = gameUI;
         this.masterUI = masterUI;
+        this.actors = { buzzer: false, game: false, master: false };
         this.started = false;
         this.questions = null;
         this.answers = [];
@@ -29,50 +30,61 @@ var Game = (function () {
             for (var i = 0; i < max; i++) {
                 _this.buzzer.lightOff(i);
             }
-            buzzerReady = true;
-            _this.ready(buzzerReady, gameReady, masterReady);
+            _this.actors.buzzer = true;
+            _this.ready();
         });
         this.gameUI.addEventListener('ready', function () {
+            _this.actors.game = true;
             _this.gameUI.setGame(_this);
-            gameReady = true;
-            _this.ready(buzzerReady, gameReady, masterReady);
+            _this.ready();
         });
         this.masterUI.addEventListener('ready', function () {
+            _this.actors.master = true;
             _this.masterUI.setGame(_this);
-            masterReady = true;
-            _this.ready(buzzerReady, gameReady, masterReady);
+            _this.ready();
         });
         /**
          * Leave
          */
         this.buzzer.addEventListener('leave', function () {
-            buzzerReady = false;
+            _this.actors.buzzer = false;
             _this.leave();
         });
         this.gameUI.addEventListener('leave', function () {
-            gameReady = false;
+            _this.actors.game = false;
             _this.leave();
         });
         this.masterUI.addEventListener('leave', function () {
-            masterReady = false;
+            _this.actors.master = false;
             _this.leave();
         });
     }
-    Game.prototype.ready = function (buzzerReady, gameReady, masterReady) {
-        if (buzzerReady && gameReady && masterReady) {
+    Game.prototype.ready = function () {
+        this.gameUI.setActors(this.actors);
+        this.masterUI.setActors(this.actors);
+        if (this.actors.buzzer && this.actors.game && this.actors.master) {
             if (!this.isStarted()) {
                 this.start();
             }
             else {
+                //this.restart();
+                this.gameUI.setStep(this.step);
+                this.masterUI.setStep(this.step);
+                if (this.mode) {
+                    this.gameUI.setMode(this.mode);
+                    this.masterUI.setMode(this.mode);
+                }
             }
         }
     };
     Game.prototype.leave = function () {
+        this.gameUI.setActors(this.actors);
+        this.masterUI.setActors(this.actors);
     };
     Game.prototype.start = function () {
+        this.step = 0;
         this.started = true;
         this.activatedTeams = 0;
-        this.step = 0;
         this.initTeam();
         this.modeStep();
     };
@@ -98,37 +110,23 @@ var Game = (function () {
         if (!this.isStarted()) {
             return;
         }
-        // Do something
     };
-    Game.prototype.register = function (type, instance) {
-        /*if (type == 'game') {
-            this.gameUI = instance;
-        } else if (type == 'master') {
-            this.masterUI = instance;
-        }
-
-        if (!this.isStarted() && this.masterUI && this.gameUI) {
-            this.start();
-        } else if (this.isStarted()) {
-            console.log('set currentStep')
-            instance.setTeams(this.teams);
-            instance.setStep(this.step);
-        }*/
-    };
-    Game.prototype.unregister = function (type) {
-        /*if (type == 'game') {
-            this.gameUI = null;
-        } else if (type == 'master') {
-            this.masterUI = null;
-        }*/
-    };
+    //
+    // Mode step
+    //
     Game.prototype.setMode = function (mode) {
         this.mode = mode;
-        console.log('set mode...');
         this.loadQuestions(mode);
         this.gameUI.setMode(this.mode);
-        //this.activationStep();
     };
+    Game.prototype.modeStep = function () {
+        this.step = 1;
+        this.gameUI.setStep(1);
+        this.masterUI.setStep(1);
+    };
+    //
+    // Question step
+    //
     Game.prototype.addPoints = function (points) {
         console.log('addPoints');
         var controllerIndex = this.answerWaitingForValidation;
@@ -144,11 +142,6 @@ var Game = (function () {
     //
     // Steps
     //
-    Game.prototype.modeStep = function () {
-        this.step = 1;
-        this.gameUI.setStep(1);
-        this.masterUI.setStep(1);
-    };
     Game.prototype.activationStep = function () {
         var _this = this;
         this.step = 2;
@@ -192,9 +185,7 @@ var Game = (function () {
     Game.prototype.quizzStep = function () {
         var _this = this;
         if (this.activatedTeams <= 0) {
-            this.step = 0;
-            this.gameUI.setStep(0);
-            this.masterUI.setStep(0);
+            this.modeStep();
             return;
         }
         // Stop the team activation
@@ -244,6 +235,10 @@ var Game = (function () {
     Game.prototype.nextQuestion = function () {
         console.log('nextQuestion');
         this.questionIndex++;
+        if (this.questionIndex == this.questions.length()) {
+            console.log('ennnnnnnd');
+            this.end();
+        }
         this.answers[this.questionIndex] = new Array(this.buzzer.controllersCount())
             .join()
             .split(',')
@@ -255,6 +250,9 @@ var Game = (function () {
         this.answerWaitingForValidation = null;
         this.gameUI.setQuestion(question);
         this.masterUI.setQuestion(question);
+    };
+    Game.prototype.end = function () {
+        console.log('Finiiiiiiiiii');
     };
     Game.prototype.loadQuestions = function (mode) {
         var _this = this;

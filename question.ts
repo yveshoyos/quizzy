@@ -29,7 +29,7 @@ export class Question {
 		var filename = path.basename(file, extension);
 		var dir = path.basename(path.dirname(file));
 
-		var regex = /^(\d+)\.\s*(.*?)\s*--\s*(.*?)(\s*\((\d+)\))?$/i
+		var regex = /^(\d+)\.\s*(.*?)\s*--\s*(.*?)(?:\s*\((\d+)\))?$/i
 		var infos:Array<any> = filename.match(regex);
 		
 		//var infos:Array<string> = filename.split('--');
@@ -43,9 +43,9 @@ export class Question {
 		}
 
 		q.file = file;
-		q.name = infos[2].trim();
-		q.author = infos[1].trim();
-		q.year = (infos[3]) ? infos[3].trim() : '',
+		q.name = infos[3].trim();
+		q.author = infos[2].trim();
+		q.year = (infos[4]) ? infos[4].trim() : '',
 		q.category = dir;
 
 		return q;

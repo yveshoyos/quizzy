@@ -104,6 +104,10 @@ var WebBuzzer = (function () {
                 }
             });
             conn.on("close", function (code, reason) {
+                _this.conn = null;
+                _this.eventListeners['leave'].forEach(function (f) {
+                    f();
+                });
             });
         }).listen(this.port);
     };

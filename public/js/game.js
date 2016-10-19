@@ -1,71 +1,123 @@
 (function(angular) {
 	angular.module('game', [])
-	.component('game', {
+	.component('ui', {
+		bindings: {
+			type: '@'
+		},
 		controllerAs: 'game',
 		controller: ['$scope', '$element', function(scope, $element) {
-			var ctrl = this;
-			ctrl.first = true;
-			ctrl.step = 0;
+			var game = this;
+			var websocket = new WebSocket("ws://"+window.ip+":"+window.port);
 
-			console.log('===>', qrCodeUrl);
-			//$element.find('#qrCode').attr('src', window.qrCodeUrl);
-			ctrl.qrCodeUrl = window.qrCodeUrl;
+			// Initialisation
+			game.actors = {
+				game: false,
+				buzzers: false,
+				master: false
+			};
+			game.error = false;
+			game.progress = 0;
+			game.secondsLeft = 0;
+			game.step = 0;
+			game.ip = window.ip;
+			game.qrCodeUrl = window.qrCodeUrl;
 
-			function active() {
-				/*document.querySelector('.widget-xs-a').classList.add('flash');
-				document.querySelector('.widget-xs-a').classList.add('active');
-				setTimeout(function() {
-					document.querySelector('.widget-xs-a').classList.remove('flash');
-				}, 500);*/
-			}
-
-			var websocket = new WebSocket("ws://vdraspi.local:"+window.port);
-			websocket.onopen = function (event) {
+			this.setMode = function(mode) {
 				websocket.send(JSON.stringify({
-					register: 'game'
+					set_mode: mode
 				}));
 			};
+
+			this.setPoints = function(value) {
+				// Only the master is authorized to set the points
+				if (!game.isMaster()) {
+					console.log('not auth')
+					return;
+				}
+
+				// Master can only set points when an answer is given
+				if (!game.answered) {
+					return;
+				}
+
+				console.log('adddddd')
+				websocket.send(JSON.stringify({
+					add_points: value
+				}));
+			};
+
+			this.isMaster = function() {
+				return game.type == 'master';
+			}
+
+			websocket.onopen = function (event) {
+				websocket.send(JSON.stringify({
+					register: game.type
+				}));
+			};
+
+			websocket.onerror = function(error) {
+				game.error = true;
+				scope.$digest();
+			}
+
+			websocket.onclose = function(event) {
+				game.error = true;
+				scope.$digest();
+			}
 
 			websocket.onmessage = function(event) {
 				var data = JSON.parse(event.data);
 				console.log('game : ', data);
 
+				// Actors
+				if (angular.isDefined(data.set_actors)) {
+					game.actors = data.set_actors;
+				}
+
+				// Steps
+				if (angular.isDefined(data.set_step)) {
+					game.step  = data.set_step;
+				}
+
 				if (angular.isDefined(data.set_teams)) {
-					ctrl.teams = data.set_teams;
-					ctrl.startTeamsActivation = true;
-					ctrl.progress = 0;
+					game.teams = data.set_teams;
+					game.progress = 0;
+					game.secondsLeft = 8;
+					game.startTeamsActivation = true;
 					
-					ctrl.secondsLeft = 8;
 					var interval = setInterval(function() {
-						ctrl.secondsLeft--;
-						ctrl.progress = 100;//Math.floor((8-ctrl.secondsLeft)/8 * 100);
+						game.progress = 100;
+						game.secondsLeft--;
 						scope.$digest();
-						if (ctrl.secondsLeft <= 0) {
+
+						// prevent secondsLeft to be negative
+						if (game.secondsLeft <= 0) {
 							clearInterval(interval);
 						}
 					}, 1000);
 				}
 
 				if (angular.isDefined(data.activate_team)) {
-					for(var i=0; i < ctrl.teams.length; i++) {
-						if (ctrl.teams[i].id == data.activate_team.id) {
-							ctrl.teams[i] = data.activate_team;
+					for(var i=0; i < game.teams.length; i++) {
+						if (game.teams[i].id == data.activate_team.id) {
+							game.teams[i] = data.activate_team;
 							break;
 						}
 					}
 				}
 
 				if (angular.isDefined(data.update_team)) {
-					for(var i=0; i < ctrl.teams.length; i++) {
-						if (ctrl.teams[i].id == data.update_team.id) {
-							ctrl.teams[i] = data.update_team;
+					for(var i=0; i < game.teams.length; i++) {
+						if (game.teams[i].id == data.update_team.id) {
+							game.teams[i] = data.update_team;
 							break;
 						}
 					}
 				}
 
 				if (angular.isDefined(data.set_mode)) {
-					ctrl.mode = data.set_mode;
+					game.mode = data.set_mode;
 					setTimeout(function() {
 						websocket.send(JSON.stringify({
 							set_activation_step: 1
@@ -73,12 +125,9 @@
 					}, 400);
 				}
 
-				if (angular.isDefined(data.set_step)) {
-					ctrl.step  = data.set_step;
-				}
-
 				if (angular.isDefined(data.set_question)) {
-					ctrl.question = data.set_question;
+					game.question = data.set_question;
+					game.answered = false;
 					var bar = document.querySelector('.progress-bar');
 					bar.style.width = '0%';
 
@@ -86,11 +135,11 @@
 						bar.classList.add('animated');
 						bar.style.width = '100%';
 					}, 100);
-					
 				}
 
 				if (angular.isDefined(data.set_answered)) {
-					ctrl.start = false;
+					game.start = false;
+					game.answered = true;
 					var bar = document.querySelector('.progress-bar');
 					var computedStyle = window.getComputedStyle(bar),
 					width = computedStyle.getPropertyValue('width');

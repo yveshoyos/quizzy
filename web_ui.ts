@@ -47,6 +47,12 @@ export abstract class WebUI implements GameUI {
 		
 	}
 
+	_send(data) {
+		if (this.conn) {
+			this.conn.send(JSON.stringify(data));
+		}
+	}
+
 	/**
 	 * Set the main game
 	 */
@@ -54,48 +60,54 @@ export abstract class WebUI implements GameUI {
 		this.game = game;
 	}
 
+	setActors(actors: { buzzer: boolean, game: boolean, master: boolean }): void {
+		this._send({
+			set_actors: actors
+		});
+	}
+
 	setTeams(teams: Array<Team>) {
-		this.conn.send(JSON.stringify({
+		this._send({
 			set_teams: teams
-		}));
+		});
 	}
 
 	setMode(mode: string) {
-		this.conn.send(JSON.stringify({
+		this._send({
 			set_mode: mode
-		}));
+		});
 	}
 
 	setStep(step: number) {
-		this.conn.send(JSON.stringify({
+		this._send({
 			set_step: step
-		}));
+		});
 	}
 
 	activateTeam(team: Team, active: boolean) {
-		this.conn.send(JSON.stringify({
+		this._send({
 			activate_team: team
-		}));
+		});
 	}
 
 	updateTeam(team: Team) {
-		this.conn.send(JSON.stringify({
+		this._send({
 			update_team: team
-		}));
+		});
 	}
 
 	setQuestion(question: Question) {
-		this.conn.send(JSON.stringify({
+		this._send({
 			set_question: question
-		}));
+		});
 	}
 
 	setAnswered(controllerIndex: number, answered: boolean) {
-		this.conn.send(JSON.stringify({
+		this._send({
 			set_answered: {
 				controllerIndex: controllerIndex,
 				answered: answered
 			}
-		}));
+		});
 	}
 }
