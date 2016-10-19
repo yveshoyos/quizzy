@@ -75,6 +75,14 @@ var Game = (function () {
                     this.gameUI.setMode(this.mode);
                     this.masterUI.setMode(this.mode);
                 }
+                this.teams.forEach(function (team) {
+                    team.active = false;
+                });
+                this.gameUI.setTeams(this.teams);
+                this.masterUI.setTeams(this.teams);
+                if (this.questionIndex >= 0) {
+                    this.setQuestion(this.questions.get(this.questionIndex));
+                }
             }
         }
     };
@@ -235,6 +243,11 @@ var Game = (function () {
         this.gameUI.setAnswered(controllerIndex, true);
         this.masterUI.setAnswered(controllerIndex, true);
     };
+    Game.prototype.setQuestion = function (question) {
+        this.answerWaitingForValidation = null;
+        this.gameUI.setQuestion(question);
+        this.masterUI.setQuestion(question);
+    };
     Game.prototype.nextQuestion = function () {
         console.log('nextQuestion');
         this.questionIndex++;
@@ -250,9 +263,7 @@ var Game = (function () {
         });
         // Send the next question to uis
         var question = this.questions.next();
-        this.answerWaitingForValidation = null;
-        this.gameUI.setQuestion(question);
-        this.masterUI.setQuestion(question);
+        this.setQuestion(question);
     };
     Game.prototype.end = function () {
         console.log('Finiiiiiiiiii');

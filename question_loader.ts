@@ -34,6 +34,10 @@ export class QuestionList {
 			});
 		}
 	}
+
+	get(index: number) {
+		return this.questions[index];
+	}
 	
 	next():Question {
 		this.index++;

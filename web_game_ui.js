@@ -43,7 +43,9 @@ var WebGameUI = (function (_super) {
                 }
                 if ('set_activation_step' in data) {
                     //this.game.setMode(data.set_mode)
-                    _this.game.activationStep();
+                    if (_this.game.step <= 1) {
+                        _this.game.activationStep();
+                    }
                 }
             });
             conn.on("close", function (code, reason) {

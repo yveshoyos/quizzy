@@ -110,6 +110,15 @@ export class Game {
 					this.masterUI.setMode(this.mode);
 				}
 				
+				this.teams.forEach(function(team) {
+					team.active = false;
+				});
+				this.gameUI.setTeams(this.teams);
+				this.masterUI.setTeams(this.teams);
+
+				if (this.questionIndex >= 0) {
+					this.setQuestion(this.questions.get(this.questionIndex));
+				}
 			}
 		}
 	}
@@ -310,6 +319,12 @@ export class Game {
 		this.masterUI.setAnswered(controllerIndex, true);
 	}
 
+	setQuestion(question: Question) {
+		this.answerWaitingForValidation = null;
+		this.gameUI.setQuestion(question);
+		this.masterUI.setQuestion(question);
+	}
+
 	nextQuestion() {
 		console.log('nextQuestion');
 		this.questionIndex++;
@@ -328,9 +343,7 @@ export class Game {
 
 		// Send the next question to uis
 		var question:Question = this.questions.next();
-		this.answerWaitingForValidation = null;
-		this.gameUI.setQuestion(question);
-		this.masterUI.setQuestion(question);
+		this.setQuestion(question);
 	}
 
 	end() {

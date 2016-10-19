@@ -13,6 +13,7 @@ TODO
 3. reload or quit of master/game/buzzer
 5. Really playing music :)
 8. make master button disabled if no answers
+9. timeout music play.
 
 DONE
 ----

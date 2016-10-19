@@ -25,6 +25,9 @@ var QuestionList = (function () {
             });
         }
     };
+    QuestionList.prototype.get = function (index) {
+        return this.questions[index];
+    };
     QuestionList.prototype.next = function () {
         this.index++;
         return this.questions[this.index];
