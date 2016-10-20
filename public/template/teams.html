@@ -163,19 +163,23 @@
 		<div calss="row" ng-show="game.isMaster()">
 			<div class="col-xs-3 text-center">
 				<button class="btn btn-default btn-point btn-danger" 
-				        ng-click="game.setPoints(-1)">-1</button>
+				        ng-click="game.setPoints(-1)"
+				        ng-disabled="!game.answered">-1</button>
 			</div>
 			<div class="col-xs-3 text-center">
 				<button class="btn btn-default btn-point btn-warning" 
-				        ng-click="game.setPoints(0)">0</button>
+				        ng-click="game.setPoints(0)"
+				        ng-disabled="!game.answered">0</button>
 			</div>
 			<div class="col-xs-3 text-center">
 				<button class="btn btn-default btn-point btn-primary" 
-				        ng-click="game.setPoints(1)">+1</button>
+				        ng-click="game.setPoints(1)"
+				        ng-disabled="!game.answered">+1</button>
 			</div>
 			<div class="col-xs-3 text-center">
 				<button class="btn btn-default btn-point btn-success" 
-				        ng-click="game.setPoints(2)">+2</button>
+				        ng-click="game.setPoints(2)"
+				        ng-disabled="!game.answered">+2</button>
 			</div> 
 		</div>
 

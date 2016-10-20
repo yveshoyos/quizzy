@@ -21,6 +21,7 @@
 			game.step = 0;
 			game.ip = window.ip;
 			game.qrCodeUrl = window.qrCodeUrl;
+			game.answered = false;
 
 			this.setMode = function(mode) {
 				websocket.send(JSON.stringify({
