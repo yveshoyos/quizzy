@@ -70,6 +70,8 @@ export class Ps2Buzzer implements Buzzer {
 	eventListeners: { 'ready': Array<Function>, 'leave': Array<Function> };
 	constructor(device) {
 		this.device = device
+
+
 		this.eventListeners = { 'ready': [], 'leave': [] };
 		this.lights = [0x0, 0x0, 0x0, 0x0]
 
@@ -89,6 +91,12 @@ export class Ps2Buzzer implements Buzzer {
 				callHandlers(this.handlers['all'], controllerIndex, buttonIndex);
 			}
 		});
+
+		this.device.on("error", () => {
+			this.eventListeners['leave'].forEach((f) => {
+				f();
+			});
+		});
 	}
 
 	addEventListener(event: string, callback: Function) {
@@ -105,6 +113,7 @@ export class Ps2Buzzer implements Buzzer {
 
 	leave() {
 		this.light([0, 1, 2, 3], 0x00);
+		this.device.close();
 	}
 
 	light(controllerIndexes, value) {

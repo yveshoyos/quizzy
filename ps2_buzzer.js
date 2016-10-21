@@ -71,6 +71,11 @@ var Ps2Buzzer = (function () {
                 callHandlers(_this.handlers['all'], controllerIndex, buttonIndex);
             }
         });
+        this.device.on("error", function () {
+            _this.eventListeners['leave'].forEach(function (f) {
+                f();
+            });
+        });
     }
     Ps2Buzzer.prototype.addEventListener = function (event, callback) {
         this.eventListeners[event].push(callback);
@@ -84,6 +89,7 @@ var Ps2Buzzer = (function () {
     };
     Ps2Buzzer.prototype.leave = function () {
         this.light([0, 1, 2, 3], 0x00);
+        this.device.close();
     };
     Ps2Buzzer.prototype.light = function (controllerIndexes, value) {
         if (value != 0x00 && value != 0xFF) {

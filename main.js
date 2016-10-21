@@ -18,11 +18,12 @@ argv.buzzer = argv.buzzer || 'ps2';
 //
 var buzzer;
 var webapp = webserver.create(8080);
+var device;
 switch (argv.buzzer) {
     case 'ps2':
         try {
             var HID = require('node-hid');
-            var device = new HID.HID(0x054c, 0x1000);
+            device = new HID.HID(0x054c, 0x1000);
             buzzer = new ps2_buzzer_1.Ps2Buzzer(device);
         }
         catch (e) {
@@ -49,23 +50,17 @@ var gameUI = new web_game_ui_1.WebGameUI(webapp, 8081);
 var masterUI = new web_master_ui_1.WebMasterUI(webapp, 8082);
 var game = new game_1.Game(buzzer, gameUI, masterUI);
 //buzzer.leave();
-function exitHandler(options, err) {
-    console.log('exit : ', options, err);
-    if (options.ctrlc) {
-        console.log('cleanup...');
-        //buzzer.leave();
-        process.exit();
-    }
-    if (err) {
-        console.log(err.stack);
-    }
-    if (options.exit) {
-        console.log('exit...');
-    }
-}
-//do something when app is closing
-process.on('exit', exitHandler.bind(null, { yep: true }));
-//catches ctrl+c event
-process.on('SIGINT', exitHandler.bind(null, { ctrlc: true }));
-//catches uncaught exceptions
-process.on('uncaughtException', exitHandler.bind(null, { exit: true }));
+process.stdin.resume();
+process.on('exit', function (code) {
+    console.log('process exit');
+    buzzer.leave();
+    process.exit(code);
+});
+process.on('SIGINT', function () {
+    console.log('\nCTRL+C...');
+    process.exit(0);
+});
+process.on('uncaughtException', function (err) {
+    console.dir(err, { depth: null });
+    process.exit(1);
+});

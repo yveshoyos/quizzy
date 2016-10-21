@@ -103,10 +103,12 @@
 					game.teamActivationDuration = data.team_activation_duration;
 					console.log('==>', $element[0].querySelector('.radial-progress .circle .mask'));
 					$element[0].querySelectorAll('.radial-progress .circle .mask').forEach(function(el) {
-						el.style.transitionDuration = data.team_activation_duration+'s';
+						el.style['transition-duration'] = data.team_activation_duration+'s';
+						el.style['-webkit-transition-duration'] = data.team_activation_duration+'s';
 					});
 					$element[0].querySelectorAll('.radial-progress .circle .fill').forEach(function(el) {
-						el.style.transitionDuration = data.team_activation_duration+'s';
+						el.style['transition-duration'] = data.team_activation_duration+'s';
+						el.style['-webkit-transition-duration'] = data.team_activation_duration+'s';
 					});
 					//$element[0].querySelector('.progress-bar').style.transitionDuration =  data.team_activation_duration+'s';
 				}

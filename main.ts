@@ -30,11 +30,12 @@ argv.buzzer = argv.buzzer || 'ps2';
 //
 var buzzer:Buzzer;
 var webapp = webserver.create(8080);
+var device;
 switch(argv.buzzer) {
 	case 'ps2':
 		try {
         		var HID = require('node-hid');
-        		var device = new HID.HID(0x054c, 0x1000);
+        		device = new HID.HID(0x054c, 0x1000);
         		buzzer = new Ps2Buzzer(device);
 		} catch(e) {
         		throw new Error("No buzzer found : "+e.message);
@@ -64,27 +65,19 @@ var game = new Game(buzzer, gameUI, masterUI);
 
 //buzzer.leave();
 
-function exitHandler(options, err) {
-	console.log('exit : ', options, err)
-	if (options.ctrlc) {
-		console.log('cleanup...');
-		//buzzer.leave();
-		process.exit();
-	}
+process.stdin.resume ();
+process.on('exit', (code:number) => {
+	console.log('process exit');
+	buzzer.leave();
+	process.exit(code);
+});
+process.on('SIGINT', () => {
+	console.log('\nCTRL+C...');
+	process.exit(0);
+});
+process.on('uncaughtException', (err) => {
+	console.dir(err, { depth: null });
+	process.exit(1);
+});
 
-	if (err) {
-		console.log(err.stack);
-	}
-	
-	if (options.exit) {
-		console.log('exit...');
-		
-	}
-}
 
-//do something when app is closing
-process.on('exit', exitHandler.bind(null,{yep:true}));
-//catches ctrl+c event
-process.on('SIGINT', exitHandler.bind(null, {ctrlc:true}));
-//catches uncaught exceptions
-process.on('uncaughtException', exitHandler.bind(null, {exit:true}));

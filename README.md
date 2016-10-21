@@ -15,6 +15,8 @@ TODO
 8. make master button disabled if no answers
 9. timeout music play.
 10. does not go to next music if points are <= 
+11. Sound on buzz for answer
+12. Wrong buzz answer sound
 
 DONE
 ----

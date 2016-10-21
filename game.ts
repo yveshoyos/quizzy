@@ -78,6 +78,7 @@ export class Game {
 		 * Leave
 		 */
 		this.buzzer.addEventListener('leave', () => {
+			console.log('leave buzzer')
 			this.actors.buzzer = false;
 			this.leave();
 		});
@@ -235,6 +236,8 @@ export class Game {
 			}
 			var qAnswers = this.answers[this.questionIndex];
 			if (qAnswers[controllerIndex] == -1) {
+				sounds.play('answer');
+
 				this.buzzed(controllerIndex);
 			} else {
 				console.log('already answered :(')

@@ -48,6 +48,7 @@ var Game = (function () {
          * Leave
          */
         this.buzzer.addEventListener('leave', function () {
+            console.log('leave buzzer');
             _this.actors.buzzer = false;
             _this.leave();
         });
@@ -182,6 +183,7 @@ var Game = (function () {
             }
             var qAnswers = _this.answers[_this.questionIndex];
             if (qAnswers[controllerIndex] == -1) {
+                sounds.play('answer');
                 _this.buzzed(controllerIndex);
             }
             else {
