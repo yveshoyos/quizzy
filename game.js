@@ -35,6 +35,7 @@ var Game = (function () {
             _this.ready();
         });
         this.gameUI.addEventListener('ready', function () {
+            sounds.play('actors');
             _this.actors.game = true;
             _this.gameUI.setGame(_this);
             _this.ready();
@@ -48,7 +49,6 @@ var Game = (function () {
          * Leave
          */
         this.buzzer.addEventListener('leave', function () {
-            console.log('leave buzzer');
             _this.actors.buzzer = false;
             _this.leave();
         });
@@ -136,6 +136,7 @@ var Game = (function () {
     };
     Game.prototype.activationStep = function () {
         var _this = this;
+        sounds.stop('actors');
         this.step = 2;
         this.gameUI.setTeamActivationDuration(this.teamActivationDuration);
         this.masterUI.setTeamActivationDuration(this.teamActivationDuration);

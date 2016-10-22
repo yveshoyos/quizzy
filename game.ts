@@ -46,6 +46,7 @@ export class Game {
 		this.answerWaitingForValidation = null;
 
 
+
 		/** 
 		 * Ready
 		 */
@@ -63,6 +64,7 @@ export class Game {
 		});
 
 		this.gameUI.addEventListener('ready', () => {
+			sounds.play('actors')
 			this.actors.game = true;
 			this.gameUI.setGame(this);
 			this.ready();
@@ -78,7 +80,6 @@ export class Game {
 		 * Leave
 		 */
 		this.buzzer.addEventListener('leave', () => {
-			console.log('leave buzzer')
 			this.actors.buzzer = false;
 			this.leave();
 		});
@@ -179,6 +180,7 @@ export class Game {
 	}
 
 	activationStep() {
+		sounds.stop('actors')
 		this.step = 2;
 
 		this.gameUI.setTeamActivationDuration(this.teamActivationDuration);
