@@ -47,6 +47,10 @@ export class WebMasterUI extends WebUI {
 				}
 			});
 
+			conn.on("error", function() {
+				console.log('errrrrr');
+			})
+
 			conn.on("close", (code:number, reason:string) => {
 				//this.game.unregister('master');
 				this.conn = null;

@@ -1,11 +1,151 @@
 (function(angular) {
+
 	angular.module('game', [])
+	.service('Sounds', function() {
+	 	function Sounds(active) {
+	 		this.active = (angular.isDefined(active)) ? active : true;
+	 		this.sounds = {};
+		}
+
+		Sounds.prototype = {
+			constructor: Sounds,
+			add: function(type, mp3) {
+				if (!this.active) {
+					return;
+				}
+
+				this.sounds[type] = {
+					howl: new Howl({
+						src: [mp3],
+						preload: true
+					}),
+					ids: {}
+				};
+			},
+			play: function(type, delay) {
+				if (!this.active) {
+					return;
+				}
+				
+				var id = new Date().valueOf();
+				var delay = angular.isDefined(delay) ? delay : 0;
+				var callback = angular.isDefined(callback) ? callback : function() {};
+
+				var sound = this.sounds[type];
+				if (!sound) {
+					return;
+				}
+				
+				if (delay > 0) {
+					sound.ids[id] = {
+						timeout: setTimeout(function() {
+							sound.ids[id].howlId = sound.howl.play();
+							sound.ids[id].timeout = null;
+						}, delay)
+					};
+				} else {
+					sound.ids[id] = {
+						howlId: sound.howl.play()
+					};
+				}
+				return id;
+			},
+			stop: function(type, id) {
+				if (!this.active) {
+					return;
+				}
+
+				var id = angular.isDefined(id) ? id : null;
+				var sound = this.sounds[type];
+				if (!sound) {
+					return;
+				}
+
+				if (id) {
+					var play = sound.ids[id];
+					if (play.timeout) {
+						clearTimeout(play.timeout);
+					} else {
+						sound.howl.stop(play.id);
+					}
+				} else {
+					for(var id in sound.ids) {
+						var play = sounds.ids[id];
+						if (play.timeout) {
+							clearTimeout(play.timeout);
+						} else {
+							sound.howl.stop(play.id);
+						}
+					}
+				}
+			},
+			fade: function(type, duration, id) {
+				if (!this.active) {
+					return;
+				}
+
+				var id = angular.isDefined(id) ? id : null;
+				var duration = angular.isDefined(duration) ? duration : 0;
+				var sound = this.sounds[type];
+				if (!sound) {
+					return;
+				}
+
+				if (id) {
+					var play = sound.ids[id];
+					if (play.timeout) {
+						clearTimeout(play.timeout);
+					} else {
+						sound.howl.fade(1, 0, duration, play.id);
+						setTimeout(function() {
+							sound.howl.stop(play.id);
+						}, duration);
+					}
+				} else {
+					for(var id in sound.ids) {
+						var play = sound.ids[id];
+						if (play.timeout) {
+							clearTimeout(play.timeout);
+						} else {
+							sound.howl.fade(1, 0, duration, play.id);
+							setTimeout(function() {
+								sound.howl.stop(play.id);
+							}, duration);
+						}
+					}
+				}
+			},
+			playing: function(type, id) {
+				if (!this.active) {
+					return false;
+				}
+
+				var sound = this.sounds[type];
+				if (!sound) {
+					return;
+				}
+
+				if (id) {
+					var play = sound.ids[id];
+					if (play.howlId) {
+						return sound.howl.playing(play.howlId);
+					}
+				} else {
+					return sound.howl.playing();
+				}
+
+				
+			}
+		}
+
+		return Sounds;
+	})
 	.component('ui', {
 		bindings: {
 			type: '@'
 		},
 		controllerAs: 'game',
-		controller: ['$scope', '$element', function(scope, $element) {
+		controller: ['$scope', '$element', 'Sounds', function(scope, $element, Sounds) {
 			var game = this;
 			var websocket = new WebSocket("ws://"+window.ip+":"+window.port);
 
@@ -22,6 +162,15 @@
 			game.ip = window.ip;
 			game.qrCodeUrl = window.qrCodeUrl;
 			game.answered = false;
+			
+			this.isMaster = function() {
+				return game.type == 'master';
+			};
+
+			//
+			game.sounds = new Sounds(!game.isMaster());
+			game.sounds.add('actors', '/sounds/Cinema_Sins_Background_Song.mp3');
+			game.sounds.add('buzz', '/sounds/buzz.mp3');
 
 			this.setMode = function(mode) {
 				websocket.send(JSON.stringify({
@@ -32,7 +181,6 @@
 			this.setPoints = function(value) {
 				// Only the master is authorized to set the points
 				if (!game.isMaster()) {
-					console.log('not auth')
 					return;
 				}
 
@@ -41,17 +189,22 @@
 					return;
 				}
 
-				console.log('adddddd')
 				websocket.send(JSON.stringify({
 					add_points: value
 				}));
 			};
 
-			this.isMaster = function() {
-				return game.type == 'master';
-			};
+			function turnOffSounds() {
+				if (game.sounds.playing('actors')) {
+					console.log('is playin')
+					game.sounds.fade('actors', 1000);
+				}
+			}
 
 			websocket.onopen = function (event) {
+				console.log('open')
+				game.sounds.play('actors', 500);
+				
 				websocket.send(JSON.stringify({
 					register: game.type
 				}));
@@ -59,11 +212,13 @@
 
 			websocket.onerror = function(error) {
 				game.error = true;
+				turnOffSounds();
 				scope.$digest();
 			}
 
 			websocket.onclose = function(event) {
 				game.error = true;
+				turnOffSounds();
 				scope.$digest();
 			}
 
@@ -116,6 +271,7 @@
 				if (angular.isDefined(data.activate_team)) {
 					for(var i=0; i < game.teams.length; i++) {
 						if (game.teams[i].id == data.activate_team.id) {
+							game.sounds.play('buzz');
 							game.teams[i] = data.activate_team;
 							break;
 						}
@@ -134,6 +290,8 @@
 				if (angular.isDefined(data.set_mode)) {
 					game.mode = data.set_mode;
 					setTimeout(function() {
+						game.sounds.fade('actors', 1000);
+						
 						websocket.send(JSON.stringify({
 							set_activation_step: 1
 						}));
@@ -155,6 +313,7 @@
 				if (angular.isDefined(data.set_answered)) {
 					game.start = false;
 					game.answered = true;
+					game.sounds.play('buzz');
 					var bar = document.querySelector('.progress-bar');
 					var computedStyle = window.getComputedStyle(bar),
 					width = computedStyle.getPropertyValue('width');

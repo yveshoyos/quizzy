@@ -46,6 +46,9 @@ var WebMasterUI = (function (_super) {
                     _this.game.addPoints(data.add_points);
                 }
             });
+            conn.on("error", function () {
+                console.log('errrrrr');
+            });
             conn.on("close", function (code, reason) {
                 //this.game.unregister('master');
                 _this.conn = null;
