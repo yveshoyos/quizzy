@@ -3,9 +3,9 @@ import { Team } from './team';
 import { Question } from './question';
 
 export interface GameUI {
-	addEventListener(event: string, callback: Function);
+	addEventListener(event: string, callback: Function): void;
 
-	removeEventListener(event: string, callback: Function);
+	removeEventListener(event: string, callback: Function): void;
 
 	leave(): void;
 
@@ -28,4 +28,12 @@ export interface GameUI {
 	setQuestion(question: Question): void;
 
 	setAnswered(controllerIndex: number, answered: boolean): void;
+
+
+	//
+	setQuestions(questions: Array<Question>): void;
+
+	startQuestion(index: number): void;
+
+	validateAnswer(points: number): void;
 }

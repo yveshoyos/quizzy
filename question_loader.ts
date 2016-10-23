@@ -48,6 +48,10 @@ export class QuestionList {
 		return this.questions.length;
 	}
 
+	all():Array<Question> {
+		return this.questions;
+	}
+
 	map(callback: (value:Question) => void) {
 		this.questions.forEach(callback);
 	}

@@ -133,8 +133,6 @@
 				} else {
 					return sound.howl.playing();
 				}
-
-				
 			}
 		}
 
@@ -145,9 +143,10 @@
 			type: '@'
 		},
 		controllerAs: 'game',
-		controller: ['$scope', '$element', 'Sounds', function(scope, $element, Sounds) {
+		controller: ['$scope', '$element', '$q', 'Sounds', function(scope, $element, $q, Sounds) {
 			var game = this;
 			var websocket = new WebSocket("ws://"+window.ip+":"+window.port);
+			var howls = [];
 
 			// Initialisation
 			game.actors = {
@@ -162,10 +161,15 @@
 			game.ip = window.ip;
 			game.qrCodeUrl = window.qrCodeUrl;
 			game.answered = false;
+			game.currentQuestionIndex = -1;
 			
 			this.isMaster = function() {
 				return game.type == 'master';
 			};
+
+			this.isGame = function() {
+				return game.type == 'game';
+			}
 
 			//
 			game.sounds = new Sounds(!game.isMaster());
@@ -178,7 +182,7 @@
 				}));
 			};
 
-			this.setPoints = function(value) {
+			this.validateAnswer = function(points, correct) {
 				// Only the master is authorized to set the points
 				if (!game.isMaster()) {
 					return;
@@ -190,15 +194,44 @@
 				}
 
 				websocket.send(JSON.stringify({
-					add_points: value
+					validate_answer: {
+						points: points,
+						correct: correct
+					}
 				}));
+			};
+
+			this.reload = function() {
+				window.location.reload();
 			};
 
 			function turnOffSounds() {
 				if (game.sounds.playing('actors')) {
-					console.log('is playin')
 					game.sounds.fade('actors', 1000);
 				}
+			}
+
+			function preloadQuestion(index) {
+				console.log('preloadQuestion : ', index, game.questions[index].file)
+				var deferred = $q.defer();
+
+				howls[index] = new Howl({
+					src: game.questions[index].file,
+					preload: true,
+					html5: true,
+					onload: function() {
+						deferred.resolve(howls[index]);
+						scope.$digest();
+					}
+				});
+
+				return deferred.promise;
+			}
+
+			function startQuestion(index) {
+				websocket.send(JSON.stringify({
+					start_question: index
+				}));
 			}
 
 			websocket.onopen = function (event) {
@@ -256,7 +289,7 @@
 
 				if (angular.isDefined(data.team_activation_duration)) {
 					game.teamActivationDuration = data.team_activation_duration;
-					console.log('==>', $element[0].querySelector('.radial-progress .circle .mask'));
+					
 					$element[0].querySelectorAll('.radial-progress .circle .mask').forEach(function(el) {
 						el.style['transition-duration'] = data.team_activation_duration+'s';
 						el.style['-webkit-transition-duration'] = data.team_activation_duration+'s';
@@ -290,8 +323,6 @@
 				if (angular.isDefined(data.set_mode)) {
 					game.mode = data.set_mode;
 					setTimeout(function() {
-						game.sounds.fade('actors', 1000);
-						
 						websocket.send(JSON.stringify({
 							set_activation_step: 1
 						}));
@@ -311,6 +342,10 @@
 				}
 
 				if (angular.isDefined(data.set_answered)) {
+					if (!game.isMaster()) {
+						howls[game.currentQuestionIndex].pause();
+					}
+
 					game.start = false;
 					game.answered = true;
 					game.sounds.play('buzz');
@@ -320,6 +355,46 @@
 					bar.style.width = width;
 					bar.classList.remove('animated');
 					scope.$digest();
+				}
+
+				if (angular.isDefined(data.questions)) {
+					// turn off music of start game
+					game.sounds.fade('actors', 1000);
+
+					// Load question and reset index
+					game.currentQuestionIndex = -1;
+					game.questions = data.questions;
+
+					if (game.isGame()) {
+						// Preload the first question and start when ready
+						preloadQuestion(game.currentQuestionIndex+1).then(function() {
+							console.log('question loaded')
+							game.currentQuestionIndex++;
+							startQuestion(game.currentQuestionIndex);
+						});
+					}
+				}
+
+				if (angular.isDefined(data.start_question)) {
+					game.currentQuestionIndex = data.start_question;
+
+					var question = game.questions[game.currentQuestionIndex];
+					// Set the question and remove old answer
+					game.question = question;
+					game.answered = false;
+					
+					// Set progress bar to 0 and start loading bar
+					var bar = document.querySelector('.progress-bar');
+					bar.style.width = '0%';
+
+					setTimeout(function() {
+						if (game.isGame()) {
+							howls[game.currentQuestionIndex].play();
+						}
+						
+						bar.classList.add('animated');
+						bar.style.width = '100%';
+					}, 100);
 				}
 
 				scope.$digest();

@@ -78,6 +78,22 @@ var WebUI = (function () {
             }
         });
     };
+    //
+    WebUI.prototype.setQuestions = function (questions) {
+        this._send({
+            questions: questions
+        });
+    };
+    WebUI.prototype.startQuestion = function (index) {
+        this._send({
+            start_question: index
+        });
+    };
+    WebUI.prototype.validateAnswer = function (points) {
+        this._send({
+            validate_answer: points
+        });
+    };
     return WebUI;
 }());
 exports.WebUI = WebUI;

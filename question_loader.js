@@ -35,6 +35,9 @@ var QuestionList = (function () {
     QuestionList.prototype.length = function () {
         return this.questions.length;
     };
+    QuestionList.prototype.all = function () {
+        return this.questions;
+    };
     QuestionList.prototype.map = function (callback) {
         this.questions.forEach(callback);
     };

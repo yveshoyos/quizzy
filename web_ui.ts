@@ -116,4 +116,23 @@ export abstract class WebUI implements GameUI {
 			}
 		});
 	}
+
+	//
+	setQuestions(questions: Array<Question>): void {
+		this._send({
+			questions: questions
+		});
+	}
+
+	startQuestion(index: number): void {
+		this._send({
+			start_question: index
+		});
+	}
+
+	validateAnswer(points: number): void {
+		this._send({
+			validate_answer: points
+		});
+	}
 }

@@ -45,8 +45,6 @@ export class Game {
 		this.questionIndex = -1;
 		this.answerWaitingForValidation = null;
 
-
-
 		/** 
 		 * Ready
 		 */
@@ -223,14 +221,13 @@ export class Game {
 			this.masterUI.updateTeam(team);
 		});
 
+		this.gameUI.setQuestions(this.questions.all());
+		this.masterUI.setQuestions(this.questions.all());
+
 		// Go to step 3 : showing questions
 		this.step = 3;
 		this.gameUI.setStep(3);
 		this.masterUI.setStep(3);
-
-		// Load the first question
-		this.questionIndex = -1;
-		this.nextQuestion();
 
 		this.buzzer.onPress((controllerIndex:number, buttonIndex:number) => {
 			if (this.questionIndex == -1 || this.answerWaitingForValidation != null) {
@@ -245,6 +242,19 @@ export class Game {
 				console.log('already answered :(')
 			}
 		});
+	}
+
+	startQuestion(questionIndex: number) {
+		this.questionIndex = questionIndex;
+		this.answers[this.questionIndex] = new Array(this.buzzer.controllersCount())
+			.join()
+			.split(',')
+			.map(() => {
+				return -1;
+			});
+		this.answerWaitingForValidation = null;
+		this.masterUI.startQuestion(questionIndex);
+		this.gameUI.startQuestion(questionIndex);
 	}
 
 	//

@@ -87,7 +87,7 @@
 </div>
 
 <div class="error" ng-show="game.error">
-	<div class="box">
+	<div class="box" ng-click="game.reload()">
 		Problème de connexion au jeu
 	</div>
 </div>
@@ -174,22 +174,22 @@
 		<div calss="row" ng-show="game.isMaster()">
 			<div class="col-xs-3 text-center">
 				<button class="btn btn-default btn-point btn-danger" 
-				        ng-click="game.setPoints(-1)"
+				        ng-click="game.validateAnswer(-1, false)"
 				        ng-disabled="!game.answered">-1</button>
 			</div>
 			<div class="col-xs-3 text-center">
 				<button class="btn btn-default btn-point btn-warning" 
-				        ng-click="game.setPoints(0)"
+				        ng-click="game.validateAnswer(0, false)"
 				        ng-disabled="!game.answered">0</button>
 			</div>
 			<div class="col-xs-3 text-center">
 				<button class="btn btn-default btn-point btn-primary" 
-				        ng-click="game.setPoints(1)"
+				        ng-click="game.validateAnswer(1, true)"
 				        ng-disabled="!game.answered">+1</button>
 			</div>
 			<div class="col-xs-3 text-center">
 				<button class="btn btn-default btn-point btn-success" 
-				        ng-click="game.setPoints(2)"
+				        ng-click="game.validateAnswer(2, true)"
 				        ng-disabled="!game.answered">+2</button>
 			</div> 
 		</div>

@@ -47,6 +47,12 @@ export class WebGameUI extends WebUI {
 						this.game.activationStep();
 					}
 				}
+
+				if ('start_question' in data) {
+					this.game.startQuestion(data.start_question);
+				}
+
+				
 			});
 
 			conn.on("close", (code:number, reason:string) => {

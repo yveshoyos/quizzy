@@ -171,13 +171,12 @@ var Game = (function () {
             _this.gameUI.updateTeam(team);
             _this.masterUI.updateTeam(team);
         });
+        this.gameUI.setQuestions(this.questions.all());
+        this.masterUI.setQuestions(this.questions.all());
         // Go to step 3 : showing questions
         this.step = 3;
         this.gameUI.setStep(3);
         this.masterUI.setStep(3);
-        // Load the first question
-        this.questionIndex = -1;
-        this.nextQuestion();
         this.buzzer.onPress(function (controllerIndex, buttonIndex) {
             if (_this.questionIndex == -1 || _this.answerWaitingForValidation != null) {
                 return;
@@ -191,6 +190,18 @@ var Game = (function () {
                 console.log('already answered :(');
             }
         });
+    };
+    Game.prototype.startQuestion = function (questionIndex) {
+        this.questionIndex = questionIndex;
+        this.answers[this.questionIndex] = new Array(this.buzzer.controllersCount())
+            .join()
+            .split(',')
+            .map(function () {
+            return -1;
+        });
+        this.answerWaitingForValidation = null;
+        this.masterUI.startQuestion(questionIndex);
+        this.gameUI.startQuestion(questionIndex);
     };
     //
     // Question step
