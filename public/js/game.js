@@ -1,143 +1,6 @@
 (function(angular) {
 
-	angular.module('game', [])
-	.service('Sounds', function() {
-	 	function Sounds(active) {
-	 		this.active = (angular.isDefined(active)) ? active : true;
-	 		this.sounds = {};
-		}
-
-		Sounds.prototype = {
-			constructor: Sounds,
-			add: function(type, mp3) {
-				if (!this.active) {
-					return;
-				}
-
-				this.sounds[type] = {
-					howl: new Howl({
-						src: [mp3],
-						preload: true
-					}),
-					ids: {}
-				};
-			},
-			play: function(type, delay) {
-				if (!this.active) {
-					return;
-				}
-				
-				var id = new Date().valueOf();
-				var delay = angular.isDefined(delay) ? delay : 0;
-				var callback = angular.isDefined(callback) ? callback : function() {};
-
-				var sound = this.sounds[type];
-				if (!sound) {
-					return;
-				}
-				
-				if (delay > 0) {
-					sound.ids[id] = {
-						timeout: setTimeout(function() {
-							sound.ids[id].howlId = sound.howl.play();
-							sound.ids[id].timeout = null;
-						}, delay)
-					};
-				} else {
-					sound.ids[id] = {
-						howlId: sound.howl.play()
-					};
-				}
-				return id;
-			},
-			stop: function(type, id) {
-				if (!this.active) {
-					return;
-				}
-
-				var id = angular.isDefined(id) ? id : null;
-				var sound = this.sounds[type];
-				if (!sound) {
-					return;
-				}
-
-				if (id) {
-					var play = sound.ids[id];
-					if (play.timeout) {
-						clearTimeout(play.timeout);
-					} else {
-						sound.howl.stop(play.id);
-					}
-				} else {
-					for(var id in sound.ids) {
-						var play = sounds.ids[id];
-						if (play.timeout) {
-							clearTimeout(play.timeout);
-						} else {
-							sound.howl.stop(play.id);
-						}
-					}
-				}
-			},
-			fade: function(type, duration, id) {
-				if (!this.active) {
-					return;
-				}
-
-				var id = angular.isDefined(id) ? id : null;
-				var duration = angular.isDefined(duration) ? duration : 0;
-				var sound = this.sounds[type];
-				if (!sound) {
-					return;
-				}
-
-				if (id) {
-					var play = sound.ids[id];
-					if (play.timeout) {
-						clearTimeout(play.timeout);
-					} else {
-						sound.howl.fade(1, 0, duration, play.id);
-						setTimeout(function() {
-							sound.howl.stop(play.id);
-						}, duration);
-					}
-				} else {
-					for(var id in sound.ids) {
-						var play = sound.ids[id];
-						if (play.timeout) {
-							clearTimeout(play.timeout);
-						} else {
-							sound.howl.fade(1, 0, duration, play.id);
-							setTimeout(function() {
-								sound.howl.stop(play.id);
-							}, duration);
-						}
-					}
-				}
-			},
-			playing: function(type, id) {
-				if (!this.active) {
-					return false;
-				}
-
-				var sound = this.sounds[type];
-				if (!sound) {
-					return;
-				}
-
-				if (id) {
-					var play = sound.ids[id];
-					if (play.howlId) {
-						return sound.howl.playing(play.howlId);
-					}
-				} else {
-					return sound.howl.playing();
-				}
-			}
-		}
-
-		return Sounds;
-	})
+	angular.module('game', ['sounds'])
 	.component('ui', {
 		bindings: {
 			type: '@'
@@ -196,7 +59,7 @@
 				websocket.send(JSON.stringify({
 					validate_answer: {
 						points: points,
-						correct: correct
+						success: correct
 					}
 				}));
 			};
@@ -209,29 +72,6 @@
 				if (game.sounds.playing('actors')) {
 					game.sounds.fade('actors', 1000);
 				}
-			}
-
-			function preloadQuestion(index) {
-				console.log('preloadQuestion : ', index, game.questions[index].file)
-				var deferred = $q.defer();
-
-				howls[index] = new Howl({
-					src: game.questions[index].file,
-					preload: true,
-					html5: true,
-					onload: function() {
-						deferred.resolve(howls[index]);
-						scope.$digest();
-					}
-				});
-
-				return deferred.promise;
-			}
-
-			function startQuestion(index) {
-				websocket.send(JSON.stringify({
-					start_question: index
-				}));
 			}
 
 			websocket.onopen = function (event) {
@@ -261,30 +101,16 @@
 
 				// Actors
 				if (angular.isDefined(data.set_actors)) {
-					game.actors = data.set_actors;
+					setActors(data.set_actors);
 				}
 
 				// Steps
 				if (angular.isDefined(data.set_step)) {
-					game.step  = data.set_step;
+					setStep(data.set_step);
 				}
 
 				if (angular.isDefined(data.set_teams)) {
-					game.teams = data.set_teams;
-					game.progress = 0;
-					game.secondsLeft = game.teamActivationDuration-1;
-					game.startTeamsActivation = true;
-					
-					var interval = setInterval(function() {
-						game.progress = 100;
-						game.secondsLeft--;
-						scope.$digest();
-
-						// prevent secondsLeft to be negative
-						if (game.secondsLeft <= 0) {
-							clearInterval(interval);
-						}
-					}, 1000);
+					setTeams(data.set_teams);
 				}
 
 				if (angular.isDefined(data.team_activation_duration)) {
@@ -302,34 +128,18 @@
 				}
 
 				if (angular.isDefined(data.activate_team)) {
-					for(var i=0; i < game.teams.length; i++) {
-						if (game.teams[i].id == data.activate_team.id) {
-							game.sounds.play('buzz');
-							game.teams[i] = data.activate_team;
-							break;
-						}
-					}
+					activateTeam(data.activate_team);
 				}
 
 				if (angular.isDefined(data.update_team)) {
-					for(var i=0; i < game.teams.length; i++) {
-						if (game.teams[i].id == data.update_team.id) {
-							game.teams[i] = data.update_team;
-							break;
-						}
-					}
+					updateTeam(data.update_team);
 				}
 
 				if (angular.isDefined(data.set_mode)) {
-					game.mode = data.set_mode;
-					setTimeout(function() {
-						websocket.send(JSON.stringify({
-							set_activation_step: 1
-						}));
-					}, 400);
+					setMode(data.set_mode);
 				}
 
-				if (angular.isDefined(data.set_question)) {
+				/*if (angular.isDefined(data.set_question)) {
 					game.question = data.set_question;
 					game.answered = false;
 					var bar = document.querySelector('.progress-bar');
@@ -339,66 +149,254 @@
 						bar.classList.add('animated');
 						bar.style.width = '100%';
 					}, 100);
-				}
+				}*/
 
 				if (angular.isDefined(data.set_answered)) {
-					if (!game.isMaster()) {
-						howls[game.currentQuestionIndex].pause();
-					}
-
-					game.start = false;
-					game.answered = true;
-					game.sounds.play('buzz');
-					var bar = document.querySelector('.progress-bar');
-					var computedStyle = window.getComputedStyle(bar),
-					width = computedStyle.getPropertyValue('width');
-					bar.style.width = width;
-					bar.classList.remove('animated');
-					scope.$digest();
+					setAnswered(data.set_answered);
 				}
 
 				if (angular.isDefined(data.questions)) {
-					// turn off music of start game
-					game.sounds.fade('actors', 1000);
-
-					// Load question and reset index
-					game.currentQuestionIndex = -1;
-					game.questions = data.questions;
-
-					if (game.isGame()) {
-						// Preload the first question and start when ready
-						preloadQuestion(game.currentQuestionIndex+1).then(function() {
-							console.log('question loaded')
-							game.currentQuestionIndex++;
-							startQuestion(game.currentQuestionIndex);
-						});
-					}
+					setQuestions(data.questions);
 				}
 
 				if (angular.isDefined(data.start_question)) {
-					game.currentQuestionIndex = data.start_question;
+					startQuestion(data.start_question);
+				}
 
-					var question = game.questions[game.currentQuestionIndex];
-					// Set the question and remove old answer
-					game.question = question;
-					game.answered = false;
-					
-					// Set progress bar to 0 and start loading bar
-					var bar = document.querySelector('.progress-bar');
-					bar.style.width = '0%';
+				if (angular.isDefined(data.continue_question)) {
+					continueQuestion(data.continue_question);
+				}
 
-					setTimeout(function() {
-						if (game.isGame()) {
-							howls[game.currentQuestionIndex].play();
-						}
-						
-						bar.classList.add('animated');
-						bar.style.width = '100%';
-					}, 100);
+				if (angular.isDefined(data.validate_answer)) {
+					validateAnswer(data.validate_answer);			
 				}
 
 				scope.$digest();
 			};
+
+			function setStep(step) {
+				game.step  = step;
+			}
+
+			function setActors(actors) {
+				game.actors = actors;
+			}
+
+			function setTeams(teams) {
+				// Register teams
+				game.teams = teams;
+
+				// Reset registration progress 
+				game.progress = 0;
+				game.secondsLeft = game.teamActivationDuration-1;
+
+				// 
+				game.startTeamsActivation = true;
+				
+				// At each second, update the second left and stop at 0
+				var interval = setInterval(function() {
+					game.progress = 100;
+					game.secondsLeft--;
+					scope.$digest();
+
+					// prevent secondsLeft to be negative
+					if (game.secondsLeft <= 0) {
+						clearInterval(interval);
+					}
+				}, 1000);
+			}
+
+			function activateTeam(team) {
+				var index = findTeamIndex(team.id);
+				if (index == -1) {
+					return;
+				}
+
+				game.sounds.play('buzz');
+				game.teams[index] = team;
+			}
+
+			function updateTeam(team) {
+				var index = findTeamIndex(team.id);
+				game.teams[index] = team;
+			}
+
+			function findTeamIndex(id) {
+				for(var i=0; i < game.teams.length; i++) {
+					if (game.teams[i].id == id) {
+						return i;
+					}
+				}
+				return -1;
+			}
+
+			function setMode(mode) {
+				game.mode = mode;
+				setTimeout(function() {
+					websocket.send(JSON.stringify({
+						set_activation_step: 1
+					}));
+				}, 400);
+			}
+
+			function setAnswered(answered) {
+				// Only the master plays the songs
+				if (!game.isMaster()) {
+					// Pauses the music
+					howls[game.currentQuestionIndex].pause();
+				}
+
+				// Play the buzz
+				game.sounds.play('buzz');
+
+				game.start = false;
+				game.answered = true;
+
+				
+				// Get the progress bar and pause the progress
+				var bar = document.querySelector('.progress-bar');
+				pauseProgress(bar);
+
+				// 
+				scope.$digest();
+			}
+
+			function preloadQuestion(index) {
+				console.log('preloadQuestion : ', index, game.questions[index])
+				var deferred = $q.defer();
+
+				howls[index] = new Howl({
+					src: game.questions[index].file,
+					preload: true,
+					html5: true,
+					onload: function() {
+						deferred.resolve(howls[index]);
+						scope.$digest();
+					}
+				});
+
+				return deferred.promise;
+			}
+
+			function setQuestions(questions) {
+				// turn off music of start game
+				game.sounds.fade('actors', 1000);
+
+				// Load question
+				game.questions = questions;
+
+				if (game.isGame()) {
+					// Preload the first question and start when ready
+					beginQuestion(0);
+				}
+			}
+
+			function beginQuestion(index) {
+				console.log('beginQuestion : ', index)
+				//Unload previous question
+				if (howls[index-1]) {
+					howls[index-1].unload();
+				}
+
+				preloadQuestion(index).then(function() {
+					broadcastStartQuestion(index);
+				});
+			}
+
+			function continueQuestion(index) {
+				game.answered = false;
+
+				var bar = document.querySelector('.progress-bar');
+				continueProgress(bar);
+
+				howls[index].play();
+				howls[index].fade(0, 1, 1000);
+				scope.$digest();
+			}
+
+			function broadcastStartQuestion(index) {
+				websocket.send(JSON.stringify({
+					start_question: index
+				}));
+			}
+
+			function broadcastContinueQuestion(index) {
+				websocket.send(JSON.stringify({
+					continue_question: index
+				}));
+			}
+
+			function startQuestion(index) {
+				game.currentQuestionIndex = index;
+
+				var question = game.questions[index];
+
+				// Set the question and remove old answer
+				game.question = question;
+				game.answered = false;
+				
+				// Set progress bar to 0 and start loading bar
+				var bar = document.querySelector('.progress-bar');
+				resetProgress(bar);
+
+				setTimeout(function() {
+					if (game.isGame()) {
+						howls[game.currentQuestionIndex].play();
+					}
+					
+					startProgress(bar);
+				}, 100);
+			}
+
+			function validateAnswer(answer) {
+				if (game.isGame()) {
+					if (answer.success) {
+						beginQuestion(game.currentQuestionIndex+1);
+					} else {
+						broadcastContinueQuestion(game.currentQuestionIndex);
+					}
+				}		
+			}
+
+			function resetProgress(bar) {
+				//bar.style.width = '0%';
+				
+				bar.style.animationName = 'none';
+				bar.style.webkitAnimationName = 'none';
+				setTimeout(function() {
+					console.log('set animation');
+					bar.style.animationName = '';
+					bar.style.webkitAnimationName = '';
+				}, 100);
+			}
+
+			function startProgress(bar) {
+				/*bar.classList.add('animated');
+				bar.style.width = '100%';*/
+				
+				bar.style.webkitAnimationPlayState = 'running';
+				bar.style.animationPlayState = 'running';
+			}
+
+			function pauseProgress(bar) {
+				// Get the current value in the animation and set the style
+				/*var computedStyle = window.getComputedStyle(bar),
+				width = computedStyle.getPropertyValue('width');
+				bar.style.width = width;
+
+				// Stop any animation
+				bar.classList.remove('animated');*/
+
+				bar.style.webkitAnimationPlayState = 'paused';
+				bar.style.animationPlayState = 'paused';
+			}
+
+			function continueProgress(bar) {
+				/*bar.classList.add('animated');
+				bar.style.width = '100%';*/
+				bar.style.webkitAnimationPlayState = 'running';
+				bar.style.animationPlayState = 'running';
+			}
 		}],
 		templateUrl: 'template/teams.html'
 	});

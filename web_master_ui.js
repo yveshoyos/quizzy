@@ -41,9 +41,9 @@ var WebMasterUI = (function (_super) {
                 if ('set_mode' in data) {
                     _this.game.setMode(data.set_mode);
                 }
-                if ('add_points' in data) {
+                if ('validate_answer' in data) {
                     console.log('add points');
-                    _this.game.addPoints(data.add_points);
+                    _this.game.validateAnswer(data.validate_answer);
                 }
             });
             conn.on("error", function () {

@@ -35,5 +35,7 @@ export interface GameUI {
 
 	startQuestion(index: number): void;
 
+	continueQuestion(index: number): void;
+
 	validateAnswer(points: number): void;
 }

@@ -50,6 +50,9 @@ var WebGameUI = (function (_super) {
                 if ('start_question' in data) {
                     _this.game.startQuestion(data.start_question);
                 }
+                if ('continue_question' in data) {
+                    _this.game.continueQuestion(data.continue_question);
+                }
             });
             conn.on("close", function (code, reason) {
                 //this.game.unregister('game');

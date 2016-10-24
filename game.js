@@ -178,10 +178,12 @@ var Game = (function () {
         this.gameUI.setStep(3);
         this.masterUI.setStep(3);
         this.buzzer.onPress(function (controllerIndex, buttonIndex) {
+            console.log('onPress : ', controllerIndex, buttonIndex, _this.questionIndex, _this.answerWaitingForValidation);
             if (_this.questionIndex == -1 || _this.answerWaitingForValidation != null) {
                 return;
             }
             var qAnswers = _this.answers[_this.questionIndex];
+            console.log('anwser : ', qAnswers[controllerIndex]);
             if (qAnswers[controllerIndex] == -1) {
                 sounds.play('answer');
                 _this.buzzed(controllerIndex);
@@ -203,20 +205,29 @@ var Game = (function () {
         this.masterUI.startQuestion(questionIndex);
         this.gameUI.startQuestion(questionIndex);
     };
+    Game.prototype.continueQuestion = function (questionIndex) {
+        //this.questionIndex = questionIndex;
+        this.answerWaitingForValidation = null;
+        this.masterUI.continueQuestion(questionIndex);
+        this.gameUI.continueQuestion(questionIndex);
+    };
     //
     // Question step
     //
-    Game.prototype.addPoints = function (points) {
+    Game.prototype.validateAnswer = function (answer) {
         console.log('addPoints');
         var controllerIndex = this.answerWaitingForValidation;
         var team = this.teams[controllerIndex];
-        team.points += points;
+        team.points += answer.points;
         team.active = false;
         team.flash = true;
+        this.answers[this.questionIndex][controllerIndex] = (answer.success) ? 1 : 0;
         this.gameUI.updateTeam(team);
         this.masterUI.updateTeam(team);
         team.flash = false;
-        this.nextQuestion();
+        answer.teamIndex = controllerIndex;
+        this.gameUI.validateAnswer(answer);
+        this.masterUI.validateAnswer(answer);
     };
     //
     // Steps

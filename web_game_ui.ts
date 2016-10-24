@@ -52,6 +52,10 @@ export class WebGameUI extends WebUI {
 					this.game.startQuestion(data.start_question);
 				}
 
+				if ('continue_question' in data) {
+					this.game.continueQuestion(data.continue_question);
+				}
+
 				
 			});
 

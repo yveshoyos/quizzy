@@ -333,15 +333,46 @@ h2.counter {
     box-shadow: inset 0 -1px 0 rgba(0,0,0,.15);
     -webkit-transition: none;
     transition: none;
+    /* animation: progressbar 60s infinite;
+    -webkit-animation: progressbar 60s infinite;*/
+    
+    animation-duration: 60s;
+    animation-name: progressbar;
+    animation-iteration-count: infinite;
+    animation-timing-function: linear;
+
+    -webkit-animation-duration: 60s;
+    -webkit-animation-name: progressbar;
+    -webkit-animation-iteration-count: infinite;
+    -webkit-animation-timing-function: linear;
+
+     animation-play-state: paused;
+    -webkit-animation-play-state: paused;
 }
 
 .progress-bar.animated {
-    -webkit-transition: width 30s ease;
-    transition: width 30s linear;
+    //-webkit-transition: width 100s ease;
+    //transition: width 100s linear;
+}
+
+/*.progress-bar.paused {
+    animation-play-state: paused;
+   -webkit-animation-play-state: paused;
 }
 
 .progress-bar.start {
-    width: 100%;
+    animation-play-state: running;
+   -webkit-animation-play-state: running;
+}*/
+
+@keyframes progressbar {
+    from { width: 0%; }
+    to { width: 100%; }
+}
+
+@-webkit-keyframes progressbar {
+    from { width: 0%; }
+    to { width: 100%; }
 }
 
 .sr-only {

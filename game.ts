@@ -230,10 +230,12 @@ export class Game {
 		this.masterUI.setStep(3);
 
 		this.buzzer.onPress((controllerIndex:number, buttonIndex:number) => {
+			console.log('onPress : ', controllerIndex, buttonIndex, this.questionIndex, this.answerWaitingForValidation);
 			if (this.questionIndex == -1 || this.answerWaitingForValidation != null) {
 				return;
 			}
 			var qAnswers = this.answers[this.questionIndex];
+			console.log('anwser : ', qAnswers[controllerIndex]);
 			if (qAnswers[controllerIndex] == -1) {
 				sounds.play('answer');
 
@@ -257,33 +259,43 @@ export class Game {
 		this.gameUI.startQuestion(questionIndex);
 	}
 
+	continueQuestion(questionIndex: number) {
+		//this.questionIndex = questionIndex;
+		this.answerWaitingForValidation = null;
+		this.masterUI.continueQuestion(questionIndex);
+		this.gameUI.continueQuestion(questionIndex);
+	}
+
 	//
 	// Question step
 	//
 
-	addPoints(points:number) {
+	validateAnswer(answer) {
 		console.log('addPoints')
 		var controllerIndex = this.answerWaitingForValidation;
 		var team = this.teams[controllerIndex];
 
-		team.points += points;
+		team.points += answer.points;
 		team.active = false;
 		team.flash = true;
+
+		this.answers[this.questionIndex][controllerIndex] = (answer.success) ? 1 : 0;
 
 		this.gameUI.updateTeam(team);
 		this.masterUI.updateTeam(team);
 
 		team.flash = false;
 
-		this.nextQuestion();
+		answer.teamIndex = controllerIndex;
+
+		this.gameUI.validateAnswer(answer);
+		this.masterUI.validateAnswer(answer);
 	}
 
 
 	//
 	// Steps
 	//
-	
-	
 
 	activateTeam(controllerIndex: number) {
 		var team = this.teams[controllerIndex];

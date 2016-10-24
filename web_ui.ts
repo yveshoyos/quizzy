@@ -130,6 +130,12 @@ export abstract class WebUI implements GameUI {
 		});
 	}
 
+	continueQuestion(index: number): void {
+		this._send({
+			continue_question: index
+		});
+	}
+
 	validateAnswer(points: number): void {
 		this._send({
 			validate_answer: points

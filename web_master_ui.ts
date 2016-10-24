@@ -41,10 +41,11 @@ export class WebMasterUI extends WebUI {
 					this.game.setMode(data.set_mode);
 				}
 
-				if ('add_points' in data) {
+				if ('validate_answer' in data) {
 					console.log('add points')
-					this.game.addPoints(data.add_points);
+					this.game.validateAnswer(data.validate_answer);
 				}
+
 			});
 
 			conn.on("error", function() {

@@ -89,6 +89,11 @@ var WebUI = (function () {
             start_question: index
         });
     };
+    WebUI.prototype.continueQuestion = function (index) {
+        this._send({
+            continue_question: index
+        });
+    };
     WebUI.prototype.validateAnswer = function (points) {
         this._send({
             validate_answer: points
