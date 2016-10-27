@@ -72,6 +72,14 @@
 				if (game.sounds.playing('actors')) {
 					game.sounds.fade('actors', 1000);
 				}
+
+				if (game.currentQuestionIndex >= 0) {
+					howls[game.currentQuestionIndex].on('fade', function onfade() {
+						howls[game.currentQuestionIndex].stop();
+						howls[game.currentQuestionIndex].off('fade', onfade);
+					});
+					howls[game.currentQuestionIndex].fade(1, 0, 1000);
+				}
 			}
 
 			websocket.onopen = function (event) {
