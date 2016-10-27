@@ -52,15 +52,16 @@ var game = new game_1.Game(buzzer, gameUI, masterUI);
 //buzzer.leave();
 process.stdin.resume();
 process.on('exit', function (code) {
-    console.log('process exit');
-    buzzer.leave();
     process.exit(code);
+    console.log('process exit');
 });
 process.on('SIGINT', function () {
     console.log('\nCTRL+C...');
+    buzzer.leave();
     process.exit(0);
 });
 process.on('uncaughtException', function (err) {
     console.dir(err, { depth: null });
+    buzzer.leave();
     process.exit(1);
 });

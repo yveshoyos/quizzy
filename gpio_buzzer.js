@@ -109,10 +109,18 @@ function closePins() {
     for (var i = 0; i < this.buttons.length; i++) {
         var pin = this.buttons[i];
         console.log('close : ', pin);
-        rpio.write(pin.led, rpio.LOW);
+        //setTimeout(function() {
+        rpio.poll(pin.button, null);
+        console.log('close');
+        //rpio.write(pin.led, rpio.LOW);
+        this.lightOff(i);
         rpio.close(pin.led);
-        console.log('close ??');
         rpio.close(pin.button);
+        //})
+        //
+        //this.lightOff(i);
+        //rpio.close(pin.led);
+        console.log('close ??');
     }
     console.log('endclose');
 }

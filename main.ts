@@ -65,18 +65,19 @@ var game = new Game(buzzer, gameUI, masterUI);
 
 //buzzer.leave();
 
-process.stdin.resume ();
+process.stdin.resume();
 process.on('exit', (code:number) => {
-	console.log('process exit');
-	buzzer.leave();
 	process.exit(code);
+	console.log('process exit');
 });
 process.on('SIGINT', () => {
 	console.log('\nCTRL+C...');
+	buzzer.leave();
 	process.exit(0);
 });
 process.on('uncaughtException', (err) => {
 	console.dir(err, { depth: null });
+	buzzer.leave();
 	process.exit(1);
 });
 

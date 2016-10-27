@@ -215,8 +215,9 @@ export class Game {
 		}
 
 		// Turn off teams
-		this.teams.forEach((team) => {
+		this.teams.forEach((team, index) => {
 			team.active = false;
+			this.buzzer.lightOff(index);
 			this.gameUI.updateTeam(team);
 			this.masterUI.updateTeam(team);
 		});
@@ -281,6 +282,9 @@ export class Game {
 
 		this.answers[this.questionIndex][controllerIndex] = (answer.success) ? 1 : 0;
 
+		// Light the buzzer on
+		this.buzzer.lightOff(controllerIndex);
+
 		this.gameUI.updateTeam(team);
 		this.masterUI.updateTeam(team);
 
@@ -339,6 +343,9 @@ export class Game {
 		this.gameUI.updateTeam(team);
 		this.masterUI.updateTeam(team);
 		team.flash = false;
+
+		// Light the buzzer on
+		this.buzzer.lightOn(controllerIndex);
 
 		// Just pause the game
 		this.answerWaitingForValidation = controllerIndex;

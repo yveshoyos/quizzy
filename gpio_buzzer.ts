@@ -38,7 +38,7 @@ export class GPIOBuzzer implements Buzzer {
 	}
 
 	leave() {
-		closePins.call(this);
+		closePins.call(this);		
 	}
 
 	lightOn(controllerIndexes) {
@@ -128,10 +128,9 @@ function closePins() {
 	console.log('close pins : ', this.buttons);
 	for(var i=0; i < this.buttons.length; i++) {
 		var pin = this.buttons[i];
-		console.log('close : ', pin);
-		rpio.write(pin.led, rpio.LOW);
+		rpio.poll(pin.button, null);
+		this.lightOff(i);
 		rpio.close(pin.led);
-		console.log('close ??')
 		rpio.close(pin.button);
 	}
 	console.log('endclose')

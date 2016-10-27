@@ -166,8 +166,9 @@ var Game = (function () {
             clearTimeout(this.stopTeamActivationTimeout);
         }
         // Turn off teams
-        this.teams.forEach(function (team) {
+        this.teams.forEach(function (team, index) {
             team.active = false;
+            _this.buzzer.lightOff(index);
             _this.gameUI.updateTeam(team);
             _this.masterUI.updateTeam(team);
         });
@@ -222,6 +223,8 @@ var Game = (function () {
         team.active = false;
         team.flash = true;
         this.answers[this.questionIndex][controllerIndex] = (answer.success) ? 1 : 0;
+        // Light the buzzer on
+        this.buzzer.lightOff(controllerIndex);
         this.gameUI.updateTeam(team);
         this.masterUI.updateTeam(team);
         team.flash = false;
@@ -263,6 +266,8 @@ var Game = (function () {
         this.gameUI.updateTeam(team);
         this.masterUI.updateTeam(team);
         team.flash = false;
+        // Light the buzzer on
+        this.buzzer.lightOn(controllerIndex);
         // Just pause the game
         this.answerWaitingForValidation = controllerIndex;
         this.gameUI.setAnswered(controllerIndex, true);
