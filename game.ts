@@ -4,7 +4,7 @@ import * as sounds from './sounds';
 import * as mm from 'musicmetadata';
 import * as fs from 'fs';
 import * as mp3Duration from 'mp3-duration';
-import { Buzzer } from './buzzer';
+import { Buzzer } from 'node-buzzer';
 import { WebGameUI } from './web_game_ui';
 import { WebMasterUI } from './web_master_ui';
 import { GameUI } from './game_ui';
