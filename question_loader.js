@@ -1,4 +1,3 @@
-/// <reference path="node_modules/definitely-typed/glob/glob.d.ts" />
 "use strict";
 var glob = require('glob');
 var fs = require('fs');

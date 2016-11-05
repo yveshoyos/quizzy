@@ -1,5 +1,3 @@
-/// <reference path="node_modules/definitely-typed/glob/glob.d.ts" />
-
 
 import * as glob from 'glob';
 import * as fs from 'fs';

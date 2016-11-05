@@ -1,4 +1,3 @@
-/// <reference path="node_modules/definitely-typed/node/node.d.ts" />
 /// <reference path="play.d.ts" />
 "use strict";
 var play_1 = require('play');

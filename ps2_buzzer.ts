@@ -1,5 +1,3 @@
-/// <reference path="node_modules/definitely-typed/node/node.d.ts" />
-/// <reference path="node_modules/definitely-typed/underscore/underscore.d.ts" />
 /// <reference path="node-hid.d.ts" />
 
 'use strict';

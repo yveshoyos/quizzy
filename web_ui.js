@@ -1,4 +1,3 @@
-/// <reference path="node_modules/definitely-typed/express/express.d.ts" />
 /// <reference path="nodejs-websocket.d.ts" />
 'use strict';
 var WebUI = (function () {

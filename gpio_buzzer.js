@@ -1,4 +1,3 @@
-/// <reference path="rpio.d.ts" />
 "use strict";
 var rpio = require('rpio');
 ;

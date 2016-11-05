@@ -1,5 +1,3 @@
-/// <reference path="node_modules/definitely-typed/node/node.d.ts" />
-/// <reference path="node_modules/definitely-typed/ip/ip.d.ts" />
 /// <reference path="qrcode-js.d.ts" />
 /// <reference path="nodejs-websocket.d.ts" />
 

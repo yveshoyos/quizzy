@@ -1,4 +1,3 @@
-/// <reference path="node_modules/definitely-typed/mime/mime.d.ts" />
 import * as path from 'path';
 import * as mime from 'mime';
 

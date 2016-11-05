@@ -1,13 +1,13 @@
-/// <reference path="node_modules/definitely-typed/node/node.d.ts" />
-/// <reference path="node_modules/definitely-typed/minimist/minimist.d.ts" />
 "use strict";
 var webserver = require('./webserver');
 var game_1 = require('./game');
 var web_game_ui_1 = require('./web_game_ui');
 var web_master_ui_1 = require('./web_master_ui');
-var ps2_buzzer_1 = require('./ps2_buzzer');
-var web_buzzer_1 = require('./web_buzzer');
-var gpio_buzzer_1 = require('./gpio_buzzer');
+//import { Ps2Buzzer } from './ps2_buzzer';
+//import { Buzzer } from './buzzer';
+//import { WebBuzzer } from './web_buzzer';
+//import { GPIOBuzzer, GPIODomePushButton } from './gpio_buzzer';
+var node_buzzer_1 = require('node-buzzer');
 var process = require('process');
 var minimist = require('minimist');
 var PORT = 8080;
@@ -24,7 +24,7 @@ switch (argv.buzzer) {
         try {
             var HID = require('node-hid');
             device = new HID.HID(0x054c, 0x1000);
-            buzzer = new ps2_buzzer_1.Ps2Buzzer(device);
+            buzzer = new node_buzzer_1.Ps2Buzzer(device);
         }
         catch (e) {
             throw new Error("No buzzer found : " + e.message);
@@ -39,10 +39,10 @@ switch (argv.buzzer) {
                 led: b[i][1]
             });
         }
-        buzzer = new gpio_buzzer_1.GPIOBuzzer(buttons);
+        buzzer = new node_buzzer_1.GPIOBuzzer(buttons);
         break;
     case 'web':
-        buzzer = new web_buzzer_1.WebBuzzer(webapp, 8083);
+        buzzer = new node_buzzer_1.WebBuzzer(webapp, 8083);
         break;
 }
 // web server used by the gameUI and masterUI webapps

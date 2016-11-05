@@ -1,14 +1,11 @@
-/// <reference path="node_modules/definitely-typed/node/node.d.ts" />
-/// <reference path="node_modules/definitely-typed/minimist/minimist.d.ts" />
-
 import * as webserver from './webserver';
 import { Game } from './game';
 import { WebGameUI } from './web_game_ui';
 import { WebMasterUI } from './web_master_ui';
-import { Ps2Buzzer } from './ps2_buzzer';
-import { Buzzer } from './buzzer';
-import { WebBuzzer } from './web_buzzer';
-import { GPIOBuzzer, GPIODomePushButton } from './gpio_buzzer';
+
+import { Buzzer, Ps2Buzzer, WebBuzzer, GPIOBuzzer, GPIODomePushButton } from 'node-buzzer';
+
+
 import * as process from 'process';
 import * as minimist from 'minimist';
 

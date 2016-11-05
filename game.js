@@ -1,5 +1,3 @@
-/// <reference path="node_modules/definitely-typed/node/node.d.ts" />
-/// <reference path="node_modules/definitely-typed/musicmetadata/musicmetadata.d.ts" />
 /// <reference path="mp3-duration.d.ts" />
 "use strict";
 var sounds = require('./sounds');

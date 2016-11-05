@@ -4,7 +4,6 @@ var __extends = (this && this.__extends) || function (d, b) {
     function __() { this.constructor = d; }
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
-/// <reference path="node_modules/definitely-typed/mime/mime.d.ts" />
 var path = require('path');
 var mime = require('mime');
 var Category = (function () {
