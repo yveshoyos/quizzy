@@ -18,7 +18,6 @@
     "@types/musicmetadata": "^2.0.1",
     "@types/rpio": "0.0.1",
     "@types/underscore": "^1.7.33",
-    "definitely-typed": "git+https://github.com/DefinitelyTyped/DefinitelyTyped.git",
     "express": "^4.14.0",
     "express-handlebars": "^3.0.0",
     "glob": "^7.1.1",
@@ -28,7 +27,6 @@
     "node-buzzer": "git@github.com:vincentdieltiens/node-buzzer.git#master",
     "open": "0.0.5",
     "path": "^0.12.7",
-    "play": "https://github.com/Marak/play.js.git",
     "rpi-gpio": "^0.7.0",
     "rpio": "^0.9.12",
     "ts-node": "^1.3.0"

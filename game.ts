@@ -1,6 +1,4 @@
-/// <reference path="mp3-duration.d.ts" />
 
-import * as sounds from './sounds';
 import * as mm from 'musicmetadata';
 import * as fs from 'fs';
 import * as mp3Duration from 'mp3-duration';
@@ -60,7 +58,6 @@ export class Game {
 		});
 
 		this.gameUI.addEventListener('ready', () => {
-			sounds.play('actors')
 			this.actors.game = true;
 			this.gameUI.setGame(this);
 			this.ready();
@@ -176,7 +173,6 @@ export class Game {
 	}
 
 	activationStep() {
-		sounds.stop('actors')
 		this.step = 2;
 
 		this.gameUI.setTeamActivationDuration(this.teamActivationDuration);
@@ -236,8 +232,6 @@ export class Game {
 			var qAnswers = this.answers[this.questionIndex];
 			console.log('anwser : ', qAnswers[controllerIndex]);
 			if (qAnswers[controllerIndex] == -1) {
-				sounds.play('answer');
-
 				this.buzzed(controllerIndex);
 			} else {
 				console.log('already answered :(')
@@ -308,8 +302,6 @@ export class Game {
 		if (team.active) {
 			return;
 		}
-
-		sounds.play('activate_team');
 
 		// Count the activated teams
 		this.activatedTeams++;

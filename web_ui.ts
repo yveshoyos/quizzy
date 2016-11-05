@@ -1,4 +1,3 @@
-/// <reference path="nodejs-websocket.d.ts" />
 
 'use strict';
 

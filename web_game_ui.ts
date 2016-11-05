@@ -1,5 +1,3 @@
-/// <reference path="qrcode-js.d.ts" />
-/// <reference path="nodejs-websocket.d.ts" />
 
 'use strict';
 

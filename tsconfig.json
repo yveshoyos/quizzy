@@ -1,20 +1,23 @@
 {
     "compilerOptions": {
         "module": "commonjs",
-        "noImplicitAny": true,
+        "noImplicitAny": false,
         "removeComments": true,
         "preserveConstEnums": true,
-        "target": "es6",
+        "target": "es5",
         "sourceMap": true,
         "typeRoots": [
-            "./node_modules/@types"
+            "./node_modules/@types",
+            "./@types"
         ],
+        "outDir": "build"
     },
     "compileOnSave": true,
     "exclude": [
         "node_modules",
         "/node_modules",
         "/node_modules*",
-        "node_modules/@types/rpio/index.d.ts"
+        "node_modules/@types/es6-promise/index.d.ts",
+        "node_modules/@types/musicmetadata/musicmetadata.d.ts"
     ]
 }
