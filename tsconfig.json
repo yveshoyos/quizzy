@@ -4,14 +4,15 @@
         "noImplicitAny": false,
         "removeComments": true,
         "preserveConstEnums": true,
-        "target": "es5",
+        "target": "es6",
         "sourceMap": true,
         "typeRoots": [
             "./node_modules/@types",
             "./@types"
         ],
-        "outDir": "build"
+         "outDir": "build"
     },
+
     "compileOnSave": true,
     "exclude": [
         "node_modules",
