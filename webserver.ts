@@ -11,11 +11,11 @@ export function create(PORT: number) {
 	app.engine('.hbs', exphbs({  
 		defaultLayout: 'main',
 		extname: '.hbs',
-		layoutsDir: path.join(__dirname, 'views/layouts')
+		layoutsDir: path.join(__dirname, '../views/layouts')
 	}));
 	app.use(express.static('public'));
 	app.set('view engine', '.hbs');
-	app.set('views', path.join(__dirname, 'views'));
+	app.set('views', path.join(__dirname, '../views'));
 
 	app.listen(PORT, (err) => {  
 		if (err) {

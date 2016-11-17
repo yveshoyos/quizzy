@@ -240,6 +240,7 @@ export class Game {
 	}
 
 	startQuestion(questionIndex: number) {
+		console.log('startQuestion : ', questionIndex)
 		this.questionIndex = questionIndex;
 		this.answers[this.questionIndex] = new Array(this.buzzer.controllersCount())
 			.join()
@@ -254,6 +255,7 @@ export class Game {
 
 	continueQuestion(questionIndex: number) {
 		//this.questionIndex = questionIndex;
+		console.log('CONTINUE')
 		this.answerWaitingForValidation = null;
 		this.masterUI.continueQuestion(questionIndex);
 		this.gameUI.continueQuestion(questionIndex);
@@ -335,6 +337,7 @@ export class Game {
 		team.flash = false;
 
 		// Light the buzzer on
+		console.log('light on controller : ', controllerIndex);
 		this.buzzer.lightOn(controllerIndex);
 
 		// Just pause the game

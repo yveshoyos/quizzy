@@ -64,6 +64,20 @@
 				}));
 			};
 
+			this.continueQuestion = function() {
+				if (!game.isMaster()) {
+					return;
+				}
+				broadcastContinueQuestion(game.currentQuestionIndex);
+			}
+
+			this.goNextQuestion = function() {
+				if (!game.isMaster()) {
+					return;
+				}
+				beginQuestion(game.currentQuestionIndex+1);
+			}
+
 			this.reload = function() {
 				window.location.reload();
 			};
@@ -146,18 +160,6 @@
 				if (angular.isDefined(data.set_mode)) {
 					setMode(data.set_mode);
 				}
-
-				/*if (angular.isDefined(data.set_question)) {
-					game.question = data.set_question;
-					game.answered = false;
-					var bar = document.querySelector('.progress-bar');
-					bar.style.width = '0%';
-
-					setTimeout(function() {
-						bar.classList.add('animated');
-						bar.style.width = '100%';
-					}, 100);
-				}*/
 
 				if (angular.isDefined(data.set_answered)) {
 					setAnswered(data.set_answered);
@@ -278,6 +280,7 @@
 					preload: true,
 					html5: true,
 					onload: function() {
+						console.log('loaded')
 						deferred.resolve(howls[index]);
 						scope.$digest();
 					}
@@ -317,12 +320,16 @@
 				var bar = document.querySelector('.progress-bar');
 				continueProgress(bar);
 
-				howls[index].play();
-				howls[index].fade(0, 1, 1000);
+				if (game.isGame()) {
+					howls[index].play();
+					howls[index].fade(0, 1, 1000);
+				}
+				
 				scope.$digest();
 			}
 
 			function broadcastStartQuestion(index) {
+				console.log('broadcastStartQuestion : ', index)
 				websocket.send(JSON.stringify({
 					start_question: index
 				}));
@@ -335,12 +342,19 @@
 			}
 
 			function startQuestion(index) {
+				if (game.isGame()) {
+					preloadQuestion(index+1);
+				}
+
 				game.currentQuestionIndex = index;
 
 				var question = game.questions[index];
+				var nextQuestion = (index < game.questions.length) ? game.questions[index+1] : null;
+				console.log('howls : ', howls)
 
 				// Set the question and remove old answer
 				game.question = question;
+				game.nextQuestion = nextQuestion;
 				game.answered = false;
 				
 				// Set progress bar to 0 and start loading bar
@@ -357,13 +371,14 @@
 			}
 
 			function validateAnswer(answer) {
-				if (game.isGame()) {
+				/*if (game.isGame()) {
 					if (answer.success) {
 						beginQuestion(game.currentQuestionIndex+1);
 					} else {
 						broadcastContinueQuestion(game.currentQuestionIndex);
 					}
-				}		
+				}*/
+
 			}
 
 			function resetProgress(bar) {

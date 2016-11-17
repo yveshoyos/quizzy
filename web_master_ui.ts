@@ -43,6 +43,14 @@ export class WebMasterUI extends WebUI {
 					this.game.validateAnswer(data.validate_answer);
 				}
 
+				if ('start_question' in data) {
+					this.game.startQuestion(data.start_question);
+				}
+
+				if ('continue_question' in data) {
+					this.game.continueQuestion(data.continue_question);
+				}
+
 			});
 
 			conn.on("error", function() {

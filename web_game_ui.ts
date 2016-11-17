@@ -27,6 +27,7 @@ export class WebGameUI extends WebUI {
 		this.ws = ws.createServer((conn) => {
 			this.conn = conn;
 			conn.on("text", (str:string) => {
+				console.log('game receive : ', str)
 				var data = JSON.parse(str);
 
 				if ('register' in data) {
@@ -51,7 +52,6 @@ export class WebGameUI extends WebUI {
 				if ('continue_question' in data) {
 					this.game.continueQuestion(data.continue_question);
 				}
-
 				
 			});
 

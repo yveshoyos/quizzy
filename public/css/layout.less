@@ -146,6 +146,26 @@ body, html {
     color: #ccc;
     font-size: 24px;
     width: 100%;
+    height: 100%;
+    .display-flex();
+    .flex-direction(column);
+    
+    div.answer {
+        flex: 1;
+        -webkit-flex: 1;
+    }
+
+    .full {
+        .display-flex();
+        .flex-direction(column);
+        .justify-content(center);
+        flex: 1;
+        -webkit-flex: 1;
+
+        .progress {
+            
+        }
+    }
 }
 
 .vertical-align {
@@ -157,7 +177,7 @@ body, html {
 }
 
 .step3 {
-    height: calc(~"100% - 130px");
+    height: calc(~"100% - 110px");
 }
 
 #qrCode {
@@ -416,6 +436,16 @@ h2.counter {
     -moz-user-select: none;
     -ms-user-select: none;
     user-select: none;
+}
+
+.answer {
+    .btn {
+        padding: 10px;
+    }
+
+    .btn-container {
+        padding: 20px;
+    }
 }
 
 .btn-group-lg>.btn, .btn-lg {

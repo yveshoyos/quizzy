@@ -1,10 +1,11 @@
+
 import * as webserver from './webserver';
 import { Game } from './game';
 import { WebGameUI } from './web_game_ui';
 import { WebMasterUI } from './web_master_ui';
 
 import { Buzzer, Ps2Buzzer, WebBuzzer, GPIOBuzzer, GPIODomePushButton } from 'node-buzzer';
-
+import { HIDBuzzer } from './hid_buzzer';
 
 import * as process from 'process';
 import * as minimist from 'minimist';
@@ -37,6 +38,35 @@ switch(argv.buzzer) {
 		} catch(e) {
         		throw new Error("No buzzer found : "+e.message);
 		}								
+		break;
+	case 'hid':
+		var HID = require('node-hid');
+		var devices = HID.devices();
+		console.log('==>', devices);
+		var deviceInfo = devices.find( function(d) {
+			console.log('##', d.usagePage);
+			console.log('##', d.usage);
+ 			return d.vendorId===0x16C0 
+ 				&& d.productId===0x0486 
+ 				&& d.usagePage===0xFFAB 
+ 				&& d.usage===0x200;
+ 		});
+
+		// Under linux, usagePage and usage is not working correctly 
+		// (see https://github.com/node-hid/node-hid/issues/168) so no device is found.
+		// We have to try without them
+ 		var device;
+		if (!deviceInfo) {
+			try {
+				device = new HID.HID(5824, 1158);
+			} catch(e) {
+				throw new Error("No buzzer found");
+			}
+		} else {
+			device = new HID.HID(deviceInfo.path);
+		}
+
+		buzzer = new HIDBuzzer(device);
 		break;
 	case 'gpio':
 		var buttons:Array<GPIODomePushButton> = [];
