@@ -3,5 +3,4 @@ npm-debug.log
 questions/*
 public/questions
 public/sounds
-sounds/*
 build/*
