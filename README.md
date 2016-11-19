@@ -1,11 +1,19 @@
 # blindpy
-A program in python to make blind tests using PS2 buzzers
+A program in python to make blind tests using external buzzers
 
 A blind/deaf test game in javascript+node. Available buzzers are :
 
     * PS2 Buzzers
     * GPIO Buzzers
+    * WebBuzzer
 
+
+INSTALL
+-------
+
+1. Have typescript installed : `$ npm install -g typescript`
+2. Compile the sources : `$ tsc`
+3. Launch the game server : `$ node build/main.js --buzzer TYPE` (replace TYPE with one of the available types : `web`, `gpio`, `ps2`, `hid`)
 
 TODO
 ----

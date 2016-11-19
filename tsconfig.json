@@ -10,6 +10,12 @@
             "./node_modules/@types",
             "./@types"
         ],
+        "paths": {
+            "node-buzzer/ps2": ["node_modules/node-buzzer/ps2"],
+            "node-buzzer/web": ["node_modules/node-buzzer/web"]
+        },
+        "moduleResolution": "node",
+        "baseUrl": ".",
          "outDir": "build"
     },
 

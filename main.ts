@@ -4,7 +4,11 @@ import { Game } from './game';
 import { WebGameUI } from './web_game_ui';
 import { WebMasterUI } from './web_master_ui';
 
-import { Buzzer, Ps2Buzzer, WebBuzzer, GPIOBuzzer, GPIODomePushButton } from 'node-buzzer';
+//import { Buzzer, Ps2Buzzer, WebBuzzer } from 'node-buzzer';
+import { Buzzer } from 'node-buzzer/buzzer';
+import { Ps2Buzzer } from 'node-buzzer/ps2/buzzer';
+import { WebBuzzer } from 'node-buzzer/web/buzzer';
+
 import { HIDBuzzer } from './hid_buzzer';
 
 import * as process from 'process';
@@ -69,7 +73,12 @@ switch(argv.buzzer) {
 		buzzer = new HIDBuzzer(device);
 		break;
 	case 'gpio':
-		var buttons:Array<GPIODomePushButton> = [];
+		var nodeBuzzer = require('node-buzzer');
+		
+		let GPIODomePushButton = nodeBuzzer.GPIODomePushButton;
+		let GPIOBuzzer = nodeBuzzer.GPIOBuzzer;
+
+		var buttons:Array<any> = [];
 		var b = JSON.parse(argv.buttons);
 		for(var i=0; i < b.length; i++) {
 			buttons.push({
