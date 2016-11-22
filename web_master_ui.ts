@@ -38,6 +38,10 @@ export class WebMasterUI extends WebUI {
 					this.game.setMode(data.set_mode);
 				}
 
+				if ('set_team_name' in data) {
+					this.game.setTeamName(data.set_team_name);
+				}
+
 				if ('validate_answer' in data) {
 					console.log('add points')
 					this.game.validateAnswer(data.validate_answer);
@@ -49,6 +53,10 @@ export class WebMasterUI extends WebUI {
 
 				if ('continue_question' in data) {
 					this.game.continueQuestion(data.continue_question);
+				}
+
+				if ('finish_game' in data) {
+					this.game.finishGame();
 				}
 
 			});

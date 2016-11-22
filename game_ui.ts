@@ -38,4 +38,6 @@ export interface GameUI {
 	continueQuestion(index: number): void;
 
 	validateAnswer(points: number): void;
+
+	finishGame(): void;
 }

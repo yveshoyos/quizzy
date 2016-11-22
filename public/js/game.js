@@ -75,17 +75,40 @@
 				if (!game.isMaster()) {
 					return;
 				}
-				beginQuestion(game.currentQuestionIndex+1);
+
+				if (game.currentQuestionIndex+1 < game.questions.length) {
+					beginQuestion(game.currentQuestionIndex+1);
+				} else {
+					initFinishGame();
+				}
 			}
 
 			this.reload = function() {
 				window.location.reload();
 			};
 
+			this.totalPoints = function() {
+				var points = 0;
+				angular.forEach(game.teams, function(team) {
+					points += team.points;
+				});
+				return points;
+			}
+
+			this.setTeamName = function(team) {
+				var name = prompt('Enter team name : ');
+				websocket.send(JSON.stringify({
+					set_team_name: {
+						id: team.id,
+						name: name
+					}
+				}));
+			}
+
 			function turnOffSounds() {
-				if (game.sounds.playing('actors')) {
+				//if (game.sounds.playing('actors')) {
 					game.sounds.fade('actors', 1000);
-				}
+				//}
 
 				if (game.currentQuestionIndex >= 0) {
 					howls[game.currentQuestionIndex].on('fade', function onfade() {
@@ -179,6 +202,10 @@
 
 				if (angular.isDefined(data.validate_answer)) {
 					validateAnswer(data.validate_answer);			
+				}
+
+				if (angular.isDefined(data.finish_game)) {
+					finishGame(data.finish_game);
 				}
 
 				scope.$digest();
@@ -342,15 +369,14 @@
 			}
 
 			function startQuestion(index) {
-				if (game.isGame()) {
-					preloadQuestion(index+1);
-				}
 
 				game.currentQuestionIndex = index;
 
 				var question = game.questions[index];
 				var nextQuestion = (index < game.questions.length) ? game.questions[index+1] : null;
-				console.log('howls : ', howls)
+				if (game.isGame() && nextQuestion) {
+					preloadQuestion(index+1);
+				}
 
 				// Set the question and remove old answer
 				game.question = question;
@@ -368,6 +394,18 @@
 					
 					startProgress(bar);
 				}, 100);
+			}
+
+			function initFinishGame() {
+				websocket.send(JSON.stringify({
+					finish_game: true
+				}));
+			}
+
+			function finishGame() {
+				console.log('turn off sound')
+				turnOffSounds();
+				game.finished = true;
 			}
 
 			function validateAnswer(answer) {
@@ -420,6 +458,8 @@
 				bar.style.webkitAnimationPlayState = 'running';
 				bar.style.animationPlayState = 'running';
 			}
+
+
 		}],
 		templateUrl: 'template/teams.html'
 	});

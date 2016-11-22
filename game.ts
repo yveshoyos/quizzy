@@ -27,6 +27,7 @@ export class Game {
 	answerWaitingForValidation: number;
 	actors: { buzzer: boolean, game: boolean, master: boolean };
 	teamActivationDuration: number;
+	finished: boolean;
 
 	constructor(buzzer:Buzzer, gameUI: GameUI, masterUI: GameUI) {
 		this.buzzer = buzzer;
@@ -46,7 +47,6 @@ export class Game {
 		 */
 		var buzzerReady = false, gameReady = false, masterReady = false;
 		this.buzzer.addEventListener('ready', () => {
-			console.log('buzzer ready...')
 			var max = this.buzzer.controllersCount();
 			// Make sur all buzzer are off
 			for (var i=0; i < max; i++) {
@@ -104,6 +104,11 @@ export class Game {
 					this.gameUI.setMode(this.mode);
 					this.masterUI.setMode(this.mode);
 				}
+
+				if (this.questions.length() && !this.finished) {
+					this.gameUI.setQuestions(this.questions.all());
+					this.masterUI.setQuestions(this.questions.all());
+				}
 				
 				this.teams.forEach(function(team) {
 					team.active = false;
@@ -111,7 +116,10 @@ export class Game {
 				this.gameUI.setTeams(this.teams);
 				this.masterUI.setTeams(this.teams);
 
-				if (this.questionIndex >= 0) {
+				if (this.finished) {
+					console.log('finished')
+					this.finishGame();
+				} else if (this.questionIndex >= 0) {
 					this.setQuestion(this.questions.get(this.questionIndex));
 				}
 			}
@@ -126,6 +134,7 @@ export class Game {
 	start() {
 		this.step = 0;
 		this.started = true;
+		this.finished = true;
 		this.activatedTeams = 0;
 		this.initTeam();
 		this.modeStep();
@@ -145,6 +154,17 @@ export class Game {
 					points: 0
 				}
 			});
+	}
+
+	setTeamName(data) {
+		this.teams.filter((team:Team, index:Number):boolean => {
+			console.log('===>', team.id, data.id, data.name)
+			return team.id == data.id;
+		}).map((team: Team) => {
+			team.name = data.name;
+			this.gameUI.updateTeam(team);
+			this.masterUI.updateTeam(team);
+		});
 	}
 
 	isStarted() {
@@ -225,12 +245,12 @@ export class Game {
 		this.masterUI.setStep(3);
 
 		this.buzzer.onPress((controllerIndex:number, buttonIndex:number) => {
-			console.log('onPress : ', controllerIndex, buttonIndex, this.questionIndex, this.answerWaitingForValidation);
+			console.log('Press on '+controllerIndex);
 			if (this.questionIndex == -1 || this.answerWaitingForValidation != null) {
+				console.log('Waiting for validation or no question');
 				return;
 			}
 			var qAnswers = this.answers[this.questionIndex];
-			console.log('anwser : ', qAnswers[controllerIndex]);
 			if (qAnswers[controllerIndex] == -1) {
 				this.buzzed(controllerIndex);
 			} else {
@@ -240,7 +260,6 @@ export class Game {
 	}
 
 	startQuestion(questionIndex: number) {
-		console.log('startQuestion : ', questionIndex)
 		this.questionIndex = questionIndex;
 		this.answers[this.questionIndex] = new Array(this.buzzer.controllersCount())
 			.join()
@@ -255,7 +274,6 @@ export class Game {
 
 	continueQuestion(questionIndex: number) {
 		//this.questionIndex = questionIndex;
-		console.log('CONTINUE')
 		this.answerWaitingForValidation = null;
 		this.masterUI.continueQuestion(questionIndex);
 		this.gameUI.continueQuestion(questionIndex);
@@ -266,13 +284,16 @@ export class Game {
 	//
 
 	validateAnswer(answer) {
-		console.log('addPoints')
 		var controllerIndex = this.answerWaitingForValidation;
 		var team = this.teams[controllerIndex];
 
 		team.points += answer.points;
 		team.active = false;
-		team.flash = true;
+
+		if (answer.points != 0) {
+			team.flash = true;
+		}
+		
 
 		this.answers[this.questionIndex][controllerIndex] = (answer.success) ? 1 : 0;
 
@@ -297,8 +318,6 @@ export class Game {
 
 	activateTeam(controllerIndex: number) {
 		var team = this.teams[controllerIndex];
-
-		console.log('activateTeam : ', controllerIndex, team);
 
 		// make sure a team can only be activated once
 		if (team.active) {
@@ -337,7 +356,6 @@ export class Game {
 		team.flash = false;
 
 		// Light the buzzer on
-		console.log('light on controller : ', controllerIndex);
 		this.buzzer.lightOn(controllerIndex);
 
 		// Just pause the game
@@ -353,12 +371,10 @@ export class Game {
 	}
 
 	nextQuestion() {
-		console.log('nextQuestion');
 		this.questionIndex++;
 
 		if (this.questionIndex == this.questions.length()) {
-			console.log('ennnnnnnd')
-			this.end();
+			//this.end();
 		}
 
 		this.answers[this.questionIndex] = new Array(this.buzzer.controllersCount())
@@ -371,10 +387,6 @@ export class Game {
 		// Send the next question to uis
 		var question:Question = this.questions.next();
 		this.setQuestion(question);
-	}
-
-	end() {
-		console.log('Finiiiiiiiiii');
 	}
 
 	loadQuestions(mode) {
@@ -391,17 +403,25 @@ export class Game {
 		});
 	}
 
+	finishGame() {
+		this.step = 4;
+		this.gameUI.setStep(this.step);
+		this.masterUI.setStep(this.step);
+
+		this.finished = true;
+		this.gameUI.finishGame();
+		this.masterUI.finishGame();
+	}
+
 }
 
 function loadMp3Informations(question: Question, callback: Function) {
 	var parser = mm(fs.createReadStream(question.file), (err, metadata) => {
 		if (err) {
-			console.log('errrrrr')
 			throw err;
 		}
 		mp3Duration(question.file, (err, duration) => {
 			if (err) {
-				console.log('errrrrr')
 				throw err;
 			}
 

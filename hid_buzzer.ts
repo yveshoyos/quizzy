@@ -23,7 +23,7 @@ export class HIDBuzzer implements Buzzer {
 
 		this.handlers = [];
 		this.device.on("data", (signal) => {
-			console.log('signal : ', signal)
+			console.log('data !');
 			var controllerIndex = signal[0];
 			callHandlers(this.handlers['c'+controllerIndex], controllerIndex, 0);
 			callHandlers(this.handlers['all'], controllerIndex, 0);

@@ -13,7 +13,11 @@ INSTALL
 
 1. Have typescript installed : `$ npm install -g typescript`
 2. Compile the sources : `$ tsc`
-3. Launch the game server : `$ node build/main.js --buzzer TYPE` (replace TYPE with one of the available types : `web`, `gpio`, `ps2`, `hid`)
+3. Links public files : ```
+$ ln -s ../sounds public/ 
+$ ln -s ../questions public/ .
+```
+4? Launch the game server : `$ node build/main.js --buzzer TYPE` (replace TYPE with one of the available types : `web`, `gpio`, `ps2`, `hid`)
 
 TODO
 ----

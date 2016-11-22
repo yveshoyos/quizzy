@@ -46,11 +46,8 @@ switch(argv.buzzer) {
 	case 'hid':
 		var HID = require('node-hid');
 		var devices = HID.devices();
-		console.log('==>', devices);
 		var deviceInfo = devices.find( function(d) {
-			console.log('##', d.usagePage);
-			console.log('##', d.usage);
- 			return d.vendorId===0x16C0 
+			return d.vendorId===0x16C0 
  				&& d.productId===0x0486 
  				&& d.usagePage===0xFFAB 
  				&& d.usage===0x200;

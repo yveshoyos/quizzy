@@ -284,13 +284,16 @@ h2.counter {
     animation-duration: 0.3s;
 }
 
-.widget-xs-a.active .widget-inner {
+.widget-xs-a.active .widget-inner,
+.finished > div.a {
 	background: #e27c08;
 }
 .widget-xs-a.active .info-container {
+
 	background: #f8a13f;
 }
-.widget-xs-b.active .widget-inner {
+.widget-xs-b.active .widget-inner,
+.finished > div.b {
     background: #179de2;
 }
 .widget-xs-b.active .info-container {
@@ -508,6 +511,36 @@ h2.counter {
         -webkit-animation: blinker 0.2s linear infinite;*/
     }
 
+}
+
+.finished {
+    position: absolute;
+    top: 0;
+    right: 5%;
+    bottom: 0;
+    left: 0;
+    background: #212121;
+    color: #fff;
+    .display-flex();
+    .flex-direction(column);
+
+    & > div {
+        flex: 1;
+        height: 50%;
+        .align-self(flex-start);
+        margin: 5%;
+        margin-left: 0;
+        overflow: visible;
+        padding-left: 1%;
+        padding-right: 2%;
+        font-size: 30px;
+        .display-flex();
+        .flex-direction(column);
+        .align-items(start);
+        .justify-content(center);
+        white-space: nowrap;
+
+    }
 }
 
 .blink_me {

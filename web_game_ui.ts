@@ -20,6 +20,8 @@ export class WebGameUI extends WebUI {
 				port: this.port,
 				qrCodeUrl: url
 			});
+		}, (err) => {
+			console.log('err : ', err)
 		});
 	}
 
@@ -62,6 +64,10 @@ export class WebGameUI extends WebUI {
 					f();
 				});
 			});
+
+			conn.on("error", () => {
+				console.log('errrror');
+			})
 		}).listen(this.port);
 	}
 }

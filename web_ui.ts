@@ -138,4 +138,10 @@ export abstract class WebUI implements GameUI {
 			validate_answer: points
 		});
 	}
+
+	finishGame(): void {
+		this._send({
+			finish_game: true
+		});
+	}
 }

@@ -96,7 +96,8 @@
 <div class="teams row" ng-show="game.step > 1">
 	<div class="team col-md-3" ng-repeat="team in game.teams">
 		<section class="widget widget-xs widget-xs-{{team.id}}" 
-		         ng-class="{ active: team.active, flash: team.flash }">
+		         ng-class="{ active: team.active, flash: team.flash }"
+		         ng-click="game.setTeamName(team)">
 			<div class="widget-inner">
 				<div class="chart-container">
 					<span class="sparkline-line-mini">
@@ -172,7 +173,7 @@
 				</div>
 			</div>
 			<div class="col-xs-6" ng-show="game.nextQuestion">
-				<h2>Theme : {{game.question.category}}</h2>
+				<h2>Theme : {{game.nextQuestion.category}}</h2>
 				
 				<div class="form-horizontal">
 					<div class="form-group">
@@ -234,5 +235,11 @@
 			</div>
 		</div>
 
+	</div>
+</div>
+
+<div class="finished" ng-show="game.step == 4">
+	<div ng-repeat="team in game.teams" class="{{team.id}}" ng-style="{ width: (team.points / game.totalPoints() * 100)+'%' }">
+		{{team.name}} : {{team.points}} points
 	</div>
 </div>
