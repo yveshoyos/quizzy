@@ -11,14 +11,28 @@ import { Question, BlindQuestion, DeafQuestion } from './question';
 import { Team } from './team';
 
 export class Game {
+	// The buzzer interface
 	buzzer: Buzzer;
+
+	// The UIs (game + master)
 	gameUI: GameUI;
 	masterUI: GameUI;
+
+	// Is the game started, i.e. all actors has been connected once
 	started: boolean;
+
+	// The number of activated teams. Used to prevent starting the questions if not enough participants or 
+	// to automatically go to the questions (desabled for now)
 	activatedTeams: number;
-	step: number;
-	teams: Array<Team>;
+
+	// The current step
+	step: string;
+
+	// The current mode (random order of questions or not)
 	mode: string;
+
+	// The teams
+	teams: Array<Team>;
 	stopTeamActivation: Function;
 	stopTeamActivationTimeout: any;
 	questions: QuestionList;
@@ -136,7 +150,7 @@ export class Game {
 	}
 
 	start() {
-		this.step = 0;
+		this.step = '';
 		this.started = true;
 		this.finished = false;
 		this.activatedTeams = 0;
@@ -190,13 +204,13 @@ export class Game {
 	}
 
 	modeStep() {
-		this.step = 1;
-		this.gameUI.setStep(1);
-		this.masterUI.setStep(1);
+		this.step = 'mode';
+		this.gameUI.setStep(this.step);
+		this.masterUI.setStep(this.step);
 	}
 
 	activationStep() {
-		this.step = 2;
+		
 
 		//this.gameUI.setTeamActivationDuration(this.teamActivationDuration);
 		//this.masterUI.setTeamActivationDuration(this.teamActivationDuration);
@@ -205,9 +219,10 @@ export class Game {
 		this.gameUI.setTeams(this.teams);
 		this.masterUI.setTeams(this.teams);
 
-		// Go to step 2
-		this.gameUI.setStep(2);
-		this.masterUI.setStep(2);
+		// Go to teams-activation step 
+		this.step = 'teams-activation';
+		this.gameUI.setStep(this.step);
+		this.masterUI.setStep(this.step);
 
 		this.stopTeamActivation = this.buzzer.onPress((controllerIndex:number, buttonIndex:number) => {
 			this.activateTeam(controllerIndex);
@@ -220,7 +235,7 @@ export class Game {
 	}
 
 	quizzStep() {
-		if (this.activatedTeams <= 0) {
+		if (this.activatedTeams < 2) {
 			this.modeStep();
 			return;
 		}
@@ -243,9 +258,9 @@ export class Game {
 		this.masterUI.setQuestions(this.questions.all());
 
 		// Go to step 3 : showing questions
-		this.step = 3;
-		this.gameUI.setStep(3);
-		this.masterUI.setStep(3);
+		this.step = 'questions';
+		this.gameUI.setStep(this.step);
+		this.masterUI.setStep(this.step);
 
 		this.buzzer.onPress((controllerIndex:number, buttonIndex:number) => {
 			console.log('Press on '+controllerIndex);
@@ -407,7 +422,7 @@ export class Game {
 	}
 
 	finishGame() {
-		this.step = 4;
+		this.step = 'scores';
 		this.gameUI.setStep(this.step);
 		this.masterUI.setStep(this.step);
 

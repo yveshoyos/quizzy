@@ -19,7 +19,7 @@ export interface GameUI {
 
 	setMode(teams: string): void;
 
-	setStep(step: number): void;
+	setStep(step: string): void;
 
 	activateTeam(team: Team, active: boolean): void;
 

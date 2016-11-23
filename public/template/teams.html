@@ -93,7 +93,7 @@
 </div>
 
 <!-- Teams -->
-<div class="teams row" ng-show="game.step > 1">
+<div class="teams row" ng-show="game.mode">
 	<div class="team col-md-3" ng-repeat="team in game.teams">
 		<section class="widget widget-xs widget-xs-{{team.id}}" 
 		         ng-class="{ active: team.active, flash: team.flash }"
@@ -115,7 +115,7 @@
 </div>
 
 <!-- Questions order -->
-<div class="step1" ng-show="game.step == 1">
+<div class="step1" ng-show="game.step == 'mode'">
 	<div class="row text-center vertical-align" 
 	     ng-click="game.setMode('theme')" 
 	     ng-class="{ flash: game.mode == 'theme' }">
@@ -129,7 +129,7 @@
 </div>
 
 <!-- Team activation -->
-<div class="step2" ng-show="game.step == 2">
+<div class="step2" ng-show="game.step == 'teams-activation'">
 	<div ng-show="false" class="radial-progress" data-progress="{{game.progress}}">
 		<div class="circle">
 			<div class="mask full">
@@ -156,7 +156,7 @@
 </div>
 
 <!-- Questions -->
-<div class="step3 vertical-align" ng-show="game.step == 3">
+<div class="step3 vertical-align" ng-show="game.step == 'questions'">
 	<div class="question">
 
 		<div class="row"  ng-show="game.isGame()">
@@ -249,7 +249,7 @@
 	</div>
 </div>
 
-<div class="scores-panel" ng-show="game.step == 4">
+<div class="scores-panel" ng-show="game.step == 'scores'">
 	<div ng-repeat="team in game.teams" class="{{team.id}}" ng-style="{ width: (team.points / game.totalPoints() * 100)+'%' }">
 		{{team.name}} : {{team.points}} points
 	</div>

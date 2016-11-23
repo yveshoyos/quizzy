@@ -42,7 +42,7 @@ export class WebGameUI extends WebUI {
 
 				if ('set_activation_step' in data) {
 					//this.game.setMode(data.set_mode)
-					if (this.game.step <= 1) {
+					if (this.game.step == 'mode') {
 						this.game.activationStep();
 					}
 				}

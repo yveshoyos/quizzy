@@ -81,7 +81,7 @@ export abstract class WebUI implements GameUI {
 		});
 	}
 
-	setStep(step: number) {
+	setStep(step: string) {
 		this._send({
 			set_step: step
 		});

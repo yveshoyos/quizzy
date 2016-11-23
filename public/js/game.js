@@ -40,6 +40,7 @@
 			game.sounds.add('buzz', '/sounds/buzz.mp3');
 
 			this.setMode = function(mode) {
+				game.mode = mode;
 				websocket.send(JSON.stringify({
 					set_mode: mode
 				}));
