@@ -249,7 +249,7 @@
 	</div>
 </div>
 
-<div class="finished" ng-show="game.step == 4">
+<div class="scores-panel" ng-show="game.step == 4">
 	<div ng-repeat="team in game.teams" class="{{team.id}}" ng-style="{ width: (team.points / game.totalPoints() * 100)+'%' }">
 		{{team.name}} : {{team.points}} points
 	</div>
