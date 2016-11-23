@@ -96,7 +96,7 @@
 <div class="teams row" ng-show="game.mode">
 	<div class="team col-md-3" ng-repeat="team in game.teams">
 		<section class="widget widget-xs widget-xs-{{team.id}}" 
-		         ng-class="{ active: team.active, flash: team.flash }"
+		         ng-class="{ active: team.lightOn, flash: team.flash, inactive: !team.active }"
 		         ng-click="game.setTeamName(team)">
 			<div class="widget-inner">
 				<div class="chart-container">
@@ -250,7 +250,10 @@
 </div>
 
 <div class="scores-panel" ng-show="game.step == 'scores'">
-	<div ng-repeat="team in game.teams" class="{{team.id}}" ng-style="{ width: (team.points / game.totalPoints() * 100)+'%' }">
+	<div ng-repeat="team in game.teams" 
+	     class="{{team.id}}" 
+	     ng-style="{ width: (team.points / game.totalPoints() * 100)+'%' }"
+	     ng-class="{ inactive: !team.active }">
 		{{team.name}} : {{team.points}} points
 	</div>
 </div>

@@ -129,7 +129,7 @@ export class Game {
 				
 				// Sets the teams and be sure that they are not active
 				this.teams.forEach(function(team) {
-					team.active = false;
+					team.lightOn = false;
 				});
 				this.gameUI.setTeams(this.teams);
 				this.masterUI.setTeams(this.teams);
@@ -168,6 +168,7 @@ export class Game {
 					name: letters[index],
 					id: letters[index].toLowerCase(),
 					active: false,
+					lightOn: false,
 					flash: false,
 					points: 0
 				}
@@ -248,7 +249,7 @@ export class Game {
 
 		// Turn off teams
 		this.teams.forEach((team, index) => {
-			team.active = false;
+			team.lightOn = false;
 			this.buzzer.lightOff(index);
 			this.gameUI.updateTeam(team);
 			this.masterUI.updateTeam(team);
@@ -306,7 +307,7 @@ export class Game {
 		var team = this.teams[controllerIndex];
 
 		team.points += answer.points;
-		team.active = false;
+		team.lightOn = false;
 
 		if (answer.points != 0) {
 			team.flash = true;
@@ -350,6 +351,7 @@ export class Game {
 
 		// Activate the team
 		team.active = true;
+		team.lightOn = true;
 		team.flash = true;
 		this.gameUI.activateTeam(team, true);
 		this.masterUI.activateTeam(team, true);
@@ -368,7 +370,7 @@ export class Game {
 
 		// Flash the team that has buzzed
 		team.flash = true;
-		team.active = true;
+		team.lightOn = true;
 		this.gameUI.updateTeam(team);
 		this.masterUI.updateTeam(team);
 		team.flash = false;
