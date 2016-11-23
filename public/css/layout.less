@@ -13,6 +13,12 @@ body, html {
     height: 99%;
 }
 
+ui {
+    .display-flex();
+    .flex-direction(column);
+    height: 100%;
+}
+
 /**
  *
  *
@@ -21,6 +27,7 @@ body, html {
     text-align: center;
     vertical-align: top;
     height: 100%;
+    
     width: 100%;
     top: 0;
     left: 0;
@@ -301,7 +308,8 @@ h2.counter {
     background: #74d674;
 }
 
-.widget-xs-c.active .widget-inner {
+.widget-xs-c.active .widget-inner ,
+.finished > div.c {
     background: #179de2;
 }
 .widget-xs-c.active .info-container {
@@ -309,7 +317,8 @@ h2.counter {
 }
 
 
-.widget-xs-d.active .widget-inner {
+.widget-xs-d.active .widget-inner,
+.finished > div.d {
     background: #5c2b70;
 }
 .widget-xs-d.active .info-container {
@@ -477,7 +486,7 @@ h2.counter {
 }
 
 .step1 {
-    height: 100%;
+    flex: 1;
 
     .btn.btn-default {
         color: #fff;
@@ -517,10 +526,26 @@ h2.counter {
 
 }
 
+.step2 {
+    flex: 1;
+    .display-flex();
+    .align-items(center);
+    .justify-content(center);
+
+    h1 {
+            flex: 1;
+            .align-self(center);
+    }
+
+    button {
+        padding: 30px;
+    }
+}
+
 .finished {
     position: absolute;
     top: 0;
-    right: 5%;
+    right: 0;
     bottom: 0;
     left: 0;
     background: #212121;
@@ -532,7 +557,7 @@ h2.counter {
         flex: 1;
         height: 50%;
         .align-self(flex-start);
-        margin: 5%;
+        margin: 20px;
         margin-left: 0;
         overflow: visible;
         padding-left: 1%;

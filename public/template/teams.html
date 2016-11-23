@@ -116,17 +116,21 @@
 
 <!-- Questions order -->
 <div class="step1" ng-show="game.step == 1">
-	<div class="row text-center vertical-align" ng-click="game.setMode('theme')" ng-class="{ flash: game.mode == 'theme' }">
+	<div class="row text-center vertical-align" 
+	     ng-click="game.setMode('theme')" 
+	     ng-class="{ flash: game.mode == 'theme' }">
 		Questions organisées par thème
 	</div>
-	<div class="row text-center vertical-align" ng-click="game.setMode('random')" ng-class="{ flash: game.mode == 'random' } ">
+	<div class="row text-center vertical-align" 
+	     ng-click="game.setMode('random')" 
+	     ng-class="{ flash: game.mode == 'random' } ">
 		Questions aléatoires
 	</div>
 </div>
 
 <!-- Team activation -->
 <div class="step2" ng-show="game.step == 2">
-	<div class="radial-progress" data-progress="{{game.progress}}">
+	<div ng-show="false" class="radial-progress" data-progress="{{game.progress}}">
 		<div class="circle">
 			<div class="mask full">
 				<div class="fill"></div>
@@ -141,7 +145,14 @@
 			{{game.secondsLeft}}
 		</div>
 	</div>
-	<h1 class="action">Appuyez sur l'un des boutons de votre buzzer pour l'activer</h1>
+	<h1 class="action" ng-show="game.isGame()">
+		Appuyez sur l'un des boutons de votre buzzer pour l'activer
+	</h1>
+	<button class="btn btn-success" 
+	        ng-show="game.isMaster()" 
+	        ng-click="game.startQuestions()">
+		Démarrer les questions
+	</button>
 </div>
 
 <!-- Questions -->

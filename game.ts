@@ -96,28 +96,32 @@ export class Game {
 			if (!this.isStarted()) {
 				this.start();
 			} else {
-				//this.restart();
+				
+				// Sets the right step
 				this.gameUI.setStep(this.step);
 				this.masterUI.setStep(this.step);
 
+				// If mode available, set it
 				if (this.mode) {
 					this.gameUI.setMode(this.mode);
 					this.masterUI.setMode(this.mode);
 				}
 
+				// Sets the questions
 				if (this.questions.length() && !this.finished) {
 					this.gameUI.setQuestions(this.questions.all());
 					this.masterUI.setQuestions(this.questions.all());
 				}
 				
+				// Sets the teams and be sure that they are not active
 				this.teams.forEach(function(team) {
 					team.active = false;
 				});
 				this.gameUI.setTeams(this.teams);
 				this.masterUI.setTeams(this.teams);
 
+				// Finish the game or set the question if questions were started
 				if (this.finished) {
-					console.log('finished')
 					this.finishGame();
 				} else if (this.questionIndex >= 0) {
 					this.setQuestion(this.questions.get(this.questionIndex));
@@ -134,7 +138,7 @@ export class Game {
 	start() {
 		this.step = 0;
 		this.started = true;
-		this.finished = true;
+		this.finished = false;
 		this.activatedTeams = 0;
 		this.initTeam();
 		this.modeStep();
@@ -158,7 +162,6 @@ export class Game {
 
 	setTeamName(data) {
 		this.teams.filter((team:Team, index:Number):boolean => {
-			console.log('===>', team.id, data.id, data.name)
 			return team.id == data.id;
 		}).map((team: Team) => {
 			team.name = data.name;
@@ -195,8 +198,8 @@ export class Game {
 	activationStep() {
 		this.step = 2;
 
-		this.gameUI.setTeamActivationDuration(this.teamActivationDuration);
-		this.masterUI.setTeamActivationDuration(this.teamActivationDuration);
+		//this.gameUI.setTeamActivationDuration(this.teamActivationDuration);
+		//this.masterUI.setTeamActivationDuration(this.teamActivationDuration);
 
 		// Send the teams to uis
 		this.gameUI.setTeams(this.teams);
@@ -212,7 +215,7 @@ export class Game {
 
 		// Go to next step after a timeout
 		this.stopTeamActivationTimeout = setTimeout(() => {
-			this.quizzStep();
+			//this.quizzStep();
 		}, this.teamActivationDuration * 1000);
 	}
 
@@ -339,7 +342,7 @@ export class Game {
 
 		// If all teams are activated, go to next step
 		if (this.activatedTeams == this.buzzer.controllersCount()) {
-			this.quizzStep();
+			//this.quizzStep();
 		}
 	}
 

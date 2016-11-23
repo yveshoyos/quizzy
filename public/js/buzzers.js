@@ -33,6 +33,10 @@
 				}
 			};
 
+			websocket.onerror = function(err) {
+
+			}
+
 			this.press = function(controllerIndex) {
 				websocket.send(JSON.stringify({
 					'press': controllerIndex

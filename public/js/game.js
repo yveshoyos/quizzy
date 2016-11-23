@@ -105,6 +105,12 @@
 				}));
 			}
 
+			this.startQuestions = function() {
+				websocket.send(JSON.stringify({
+					start_questions: 3
+				}));
+			}
+
 			function turnOffSounds() {
 				//if (game.sounds.playing('actors')) {
 					game.sounds.fade('actors', 1000);

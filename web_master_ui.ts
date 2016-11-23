@@ -38,6 +38,10 @@ export class WebMasterUI extends WebUI {
 					this.game.setMode(data.set_mode);
 				}
 
+				if ('start_questions' in data) {
+					this.game.quizzStep();
+				}
+
 				if ('set_team_name' in data) {
 					this.game.setTeamName(data.set_team_name);
 				}
