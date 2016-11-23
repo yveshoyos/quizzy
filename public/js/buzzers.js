@@ -19,7 +19,7 @@
 				on: false
 			}];
 
-			var websocket = new WebSocket("ws://vdraspi.local:"+window.port);
+			var websocket = new WebSocket("ws://"+window.ip+":"+window.port);
 			websocket.onopen = function (event) {
 
 			};

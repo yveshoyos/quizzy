@@ -17,6 +17,7 @@
     "@types/musicmetadata": "^2.0.1",
     "@types/rpio": "0.0.1",
     "@types/underscore": "^1.7.33",
+    "angular": "^1.5.8",
     "bootstrap": "^3.3.7",
     "express": "^4.14.0",
     "express-handlebars": "^3.0.0",
