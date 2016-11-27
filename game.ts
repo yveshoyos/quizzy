@@ -1,7 +1,4 @@
 
-import * as mm from 'musicmetadata';
-import * as fs from 'fs';
-import * as mp3Duration from 'mp3-duration';
 import { Buzzer } from 'node-buzzer';
 import { WebGameUI } from './web_game_ui';
 import { WebMasterUI } from './web_master_ui';
@@ -416,9 +413,11 @@ export class Game {
 		ql.load(directory, mode, (questions:QuestionList) => {
 			this.questions = questions;
 			this.questions.map((question: Question) => {
-				if (question.type == 'blind') {
-					loadMp3Informations(question, () => {});
-				}
+				/*if (question.type == 'blind') {
+					(question as BlindQuestion).loadInformations(() => {});
+					//loadMp3Informations(question, () => {});
+				}*/
+				question.loadInformations(() => {});
 			});
 		});
 	}
@@ -433,20 +432,4 @@ export class Game {
 		this.masterUI.finishGame();
 	}
 
-}
-
-function loadMp3Informations(question: Question, callback: Function) {
-	var parser = mm(fs.createReadStream(question.file), (err, metadata) => {
-		if (err) {
-			throw err;
-		}
-		mp3Duration(question.file, (err, duration) => {
-			if (err) {
-				throw err;
-			}
-
-			(question as BlindQuestion).duration = metadata.duration;
-			callback();
-		});
-	});	
 }

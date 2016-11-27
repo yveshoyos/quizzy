@@ -159,11 +159,20 @@
 <div class="step3 vertical-align" ng-show="game.step == 'questions'">
 	<div class="question">
 
-		<div class="row"  ng-show="game.isGame()">
+		<div class="row" ng-show="game.isGame()">
 			<h2>Theme : {{game.question.category}}</h2>
+			<div class="" ng-show="game.question.type == 'blind'">
+				<div class="progress">
+					<div class="progress-bar"></div>
+				</div>
+			</div>
+			<div class=""  ng-show="game.question.type == 'deaf'">
+				<img class="img-responsive" ng-src="{{game.question.file}}" />
+			</div>
 		</div>
+
 		<div class="row answer" ng-show="game.isMaster()">
-			<div class="col-xs-6">
+			<div>
 				<h2>Theme : {{game.question.category}}</h2>
 				
 				<div class="form-horizontal" ng-show="game.isMaster()">
@@ -182,8 +191,11 @@
 						<div class="col-sm-9 form-control-static">{{game.question.year}}</div>
 					</div>
 				</div>
+				<div class=""  ng-show="game.question.type == 'deaf'">
+					<img class="" ng-src="{{game.question.file}}" />
+				</div>
 			</div>
-			<div class="col-xs-6" ng-show="game.nextQuestion">
+			<div ng-show="game.nextQuestion">
 				<h2>Theme : {{game.nextQuestion.category}}</h2>
 				
 				<div class="form-horizontal">
@@ -202,16 +214,13 @@
 						<div class="col-sm-9 form-control-static">{{game.nextQuestion.year}}</div>
 					</div>
 				</div>
+				<div class=""  ng-show="game.nextQuestion.type == 'deaf'">
+					<img class="" ng-src="{{game.nextQuestion.file}}" />
+				</div>
 			</div>
 		</div>
 
-		<div class="" ng-class="{ full: game.isGame() }" ng-show="game.question.type == 'blind'">
-			<div class="progress">
-				<div class="progress-bar"></div>
-			</div>
-		</div>
-
-		<div class="row answer" ng-show="game.isMaster()">
+		<div class="row" ng-show="game.isMaster()">
 			<div class="row">
 				<div class="col-xs-3 text-center btn-container">
 					<button class="btn btn-default btn-point btn-danger" 

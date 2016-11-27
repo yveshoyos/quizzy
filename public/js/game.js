@@ -39,6 +39,7 @@
 			game.sounds.add('actors', '/sounds/Cinema_Sins_Background_Song.mp3');
 			game.sounds.add('buzz', '/sounds/buzz.mp3');
 
+
 			this.setMode = function(mode) {
 				game.mode = mode;
 				websocket.send(JSON.stringify({
@@ -117,13 +118,13 @@
 					game.sounds.fade('actors', 1000);
 				//}
 
-				if (game.currentQuestionIndex >= 0) {
+				//if (game.currentQuestionIndex >= 0) {
 					howls[game.currentQuestionIndex].on('fade', function onfade() {
 						howls[game.currentQuestionIndex].stop();
 						howls[game.currentQuestionIndex].off('fade', onfade);
 					});
 					howls[game.currentQuestionIndex].fade(1, 0, 1000);
-				}
+				//}
 			}
 
 			websocket.onopen = function (event) {
@@ -287,7 +288,9 @@
 				// Only the master plays the songs
 				if (!game.isMaster()) {
 					// Pauses the music
-					howls[game.currentQuestionIndex].pause();
+					if (game.questions[game.currentQuestionIndex]) {
+						howls[game.currentQuestionIndex].pause();
+					}
 				}
 
 				// Play the buzz
@@ -309,16 +312,31 @@
 				console.log('preloadQuestion : ', index, game.questions[index])
 				var deferred = $q.defer();
 
-				howls[index] = new Howl({
-					src: game.questions[index].file,
-					preload: true,
-					html5: true,
-					onload: function() {
-						console.log('loaded')
-						deferred.resolve(howls[index]);
-						scope.$digest();
-					}
-				});
+				if (game.questions[index].type == 'blind') {
+					howls[index] = new Howl({
+						src: game.questions[index].file,
+						preload: true,
+						html5: true,
+						onload: function() {
+							console.log('loaded')
+							deferred.resolve(howls[index]);
+							scope.$digest();
+						}
+					});
+				} else { // deaf
+					howls[index] = new Howl({
+						src: '/sounds/image_background_0'+(Math.floor(Math.random() * 5) + 1)+'.mp3',
+						preload: true,
+						html5: true,
+						onload: function() {
+							var img = new Image();
+							img.onload = function() {
+								deferred.resolve(this);
+							}
+							img.src = game.questions[index].file;
+						}
+					});
+				}
 
 				return deferred.promise;
 			}
@@ -355,8 +373,12 @@
 				continueProgress(bar);
 
 				if (game.isGame()) {
-					howls[index].play();
-					howls[index].fade(0, 1, 1000);
+					//if (game.questions[index].type == 'blind') {
+						howls[index].play();
+						howls[index].fade(0, 1, 1000);
+					//} else { //deaf 
+					//}
+					
 				}
 				
 				scope.$digest();
@@ -396,7 +418,11 @@
 
 				setTimeout(function() {
 					if (game.isGame()) {
-						howls[game.currentQuestionIndex].play();
+						//if (game.questions[game.currentQuestionIndex].type == 'blind') {
+							howls[game.currentQuestionIndex].play();
+						/*} else {
+
+						}*/
 					}
 					
 					startProgress(bar);

@@ -40,13 +40,15 @@
   },
   "scripts": {
     "game": "sudo ts-node main.ts --buzzer=web",
-    "e2e": ""
+    "e2e": "",
+    "start": "electron ./electron"
   },
   "engine": [
     "node >=0.1.90"
   ],
-  "main": "main.js",
+  "main": "electron.js",
   "devDependencies": {
-    "@types/node": "^6.0.41"
+    "@types/node": "^6.0.41",
+    "electron": "^1.4.8"
   }
 }

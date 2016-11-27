@@ -19,6 +19,14 @@ ui {
     height: 100%;
 }
 
+.question img {
+    display: block;
+    max-width: 100%;
+    max-height: calc(~"100vh - 330px");
+    margin-left: auto;
+    margin-right: auto;
+}
+
 /**
  *
  *
@@ -160,6 +168,15 @@ ui {
     div.answer {
         flex: 1;
         -webkit-flex: 1;
+        .display-flex();
+
+        & > div {
+            flex: 1;
+        }
+
+        img {
+            width: calc(~"100vh - 370px - 70px");
+        }
     }
 
     .full {
