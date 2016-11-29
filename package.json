@@ -8,6 +8,7 @@
     "url": "http://github.com/vincentdieltiens/quizzgame.git"
   },
   "dependencies": {
+    "@types/electron": "^1.4.27",
     "@types/express": "^4.0.33",
     "@types/express-handlebars": "0.0.29",
     "@types/glob": "^5.0.30",
@@ -21,6 +22,7 @@
     "bootstrap": "^3.3.7",
     "express": "^4.14.0",
     "express-handlebars": "^3.0.0",
+    "font-awesome": "^4.7.0",
     "glob": "^7.1.1",
     "howler": "^2.0.1",
     "http": "0.0.0",
@@ -41,12 +43,12 @@
   "scripts": {
     "game": "sudo ts-node main.ts --buzzer=web",
     "e2e": "",
-    "start": "electron ./electron"
+    "start": "electron ."
   },
   "engine": [
     "node >=0.1.90"
   ],
-  "main": "electron.js",
+  "main": "build/electron.js",
   "devDependencies": {
     "@types/node": "^6.0.41",
     "electron": "^1.4.8"

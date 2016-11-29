@@ -1,0 +1,36 @@
+<!-- STARTING -->
+<div class="starting-screen" ng-show="ui.screen == 'starting'">
+
+  <header>
+    <a href="#" ng-click="ui.openPreferences()"><i class="fa fa-cog"></i></a>
+  </header>
+  <div class="body">
+  	<img src="public/images/quizzy.png" />
+    <button class="btn btn-success" ng-click="ui.initStartGame()">Start game</button>
+  </div>
+
+</div>
+
+<div class="preference-screen" ng-show="ui.screen == 'preferences'">
+	<preferences preferences="ui.preferences" show="ui.screen == 'preferences'" on-close="ui.preferencesClose(preferences)"></preferences> 
+</div>
+
+<div class="devices-screen" ng-show="ui.screen == 'devices'">
+	<devices></devices>
+</div>
+
+<div class="mode-select-screen" ng-show="ui.screen == 'mode-select'">
+	
+</div>
+
+<div class="team-activation-screen" ng-show="ui.screen == 'team-activation'">
+
+</div>
+
+<div class="questions-screen" ng-show="ui.screen == 'questions'">
+
+</div>
+
+<div class="scores-screen" ng-show="ui.screen == 'score'">
+
+</div>

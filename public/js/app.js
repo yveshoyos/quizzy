@@ -1,4 +1,4 @@
 (function(angular) {
-	var apps = ['game', 'buzzers'];
+	var apps = ['game'];
 	angular.module('app', apps);
 })(angular)
