@@ -1,43 +1,26 @@
-import { Game } from './game';
-import { Team } from './team';
-import { Question } from './question';
+import * as ws from 'nodejs-websocket';
 
-export interface GameUI {
-	addEventListener(event: string, callback: Function): void;
+export abstract class GameUI {
+	ws: ws.Server
+	conn: ws.Connection
 
-	removeEventListener(event: string, callback: Function): void;
+	constructor(port: number) {
+		console.log('create ws server')
+		this.ws = ws.createServer((conn) => {
+			this.conn = conn
 
-	leave(): void;
+			conn.on("text", (str: string) => {
+				var data = JSON.parse(str);
+				this.receive(data);
+			})
 
-	setActors(actors: { buzzer: boolean, game: boolean, master: boolean }): void;
+			conn.on("close", (code: number, reason: string) => {
+				this.conn = null
+			})
+		}).listen(port)
+	}
 
-	setGame(game: Game): void;
-
-	setTeams(teams: Array<Team>): void;
-
-	setTeamActivationDuration(duration: number): void
-
-	setMode(teams: string): void;
-
-	setStep(step: string): void;
-
-	activateTeam(team: Team, active: boolean): void;
-
-	updateTeam(team: Team): void;
-
-	setQuestion(question: Question): void;
-
-	setAnswered(controllerIndex: number, answered: boolean): void;
+	abstract receive(data);
 
 
-	//
-	setQuestions(questions: Array<Question>): void;
-
-	startQuestion(index: number): void;
-
-	continueQuestion(index: number): void;
-
-	validateAnswer(points: number): void;
-
-	finishGame(): void;
 }

@@ -10,13 +10,19 @@
 		},
 		controllerAs: 'ui',
 		controller: ['$scope', '$element', '$q', 'Sounds', function(scope, $element, $q, Sounds) {
+			var ui = this;
+			var ws = null;
+
 			this.screen = "starting";
 			this.preferences = { 
 				websocket_port: 8081,
 				questions_directory: __dirname + '/questions',
 				buzzer_type: 'hid'
 			};
-			console.log()
+
+			ui.sounds = new Sounds(true);
+			ui.sounds.add('actors', __dirname + '/sounds/Cinema_Sins_Background_Song.mp3');
+			ui.sounds.add('buzz', __dirname + '/sounds/buzz.mp3');
 
 			/**
 			 * Preferences
@@ -35,6 +41,11 @@
 
 			this.initStartGame = function() {
 				this.screen = 'devices';
+				ws = new WebSocket("ws://localhost:8081");
+				ws.onopen = () => {
+					console.log('open')
+					ui.sounds.play('actors', 500);
+				}
 			}
 		}],
 		templateUrl: 'public/template/game.html'
@@ -49,13 +60,13 @@
 		controller: ['$scope', function(scope) {
 			
 
-			scope.$watch(function() {
+			scope.$watch(() => {
 				return this.show
-			}.bind(this), function(show) {
+			}, (show) => {
 				if (show) {
 					this.preferences = angular.copy(this.appPreferences) || {};
 				}
-			}.bind(this))
+			});
 
 			this.browseQuestionsDirectory = function() {
 				this.preferences.questions_directory = dialog.showOpenDialog({properties: ['openDirectory']})[0];
