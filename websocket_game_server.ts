@@ -2,16 +2,15 @@ import { WebGameUI } from './web_game_ui'
 import { WebMasterUI } from './web_master_ui'
 import { Game } from './game'
 
-import { HIDBuzzer } from './hid_buzzer'
+import { TeensyBuzzer } from './teensy_buzzer'
 import { Buzzer } from 'node-buzzer/buzzer'
 import { Ps2Buzzer } from 'node-buzzer/ps2'
 
 export function start(buzzer_type, websocket_port) {
 	var buzzer;
 	switch(buzzer_type) {
-		case 'hid':
-			
-			buzzer = get_hid_buzzer();
+		case 'teensy':
+			buzzer = get_teensy_buzzer();
 			break;
 		case 'ps2':
 			buzzer = get_ps2_buzzer();
@@ -39,27 +38,7 @@ function get_ps2_buzzer() {
 	return buzzer;
 }
 
-function get_hid_buzzer() {
-	// HID Buzzer
-	var HID = require('node-hid')
-	var devices = HID.devices()
-	var deviceInfo = devices.find( function(d) {
-		return d.vendorId===0x16C0 
-				&& d.productId===0x0486 
-				&& d.usagePage===0xFFAB 
-				&& d.usage===0x200;
-	});
-	var device;
-	if (!deviceInfo) {
-		try {
-			device = new HID.HID(5824, 1158);
-		} catch(e) {
-			throw new Error("No buzzer found");
-		}
-	} else {
-		device = new HID.HID(deviceInfo.path);
-	}
-
-	var buzzer = new HIDBuzzer(device);
+function get_teensy_buzzer() {
+	var buzzer = new TeensyBuzzer();
 	return buzzer
 }

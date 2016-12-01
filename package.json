@@ -16,7 +16,6 @@
     "@types/mime": "0.0.29",
     "@types/minimist": "^1.1.29",
     "@types/musicmetadata": "^2.0.1",
-    "@types/rpio": "0.0.1",
     "@types/underscore": "^1.7.33",
     "angular": "^1.5.8",
     "bootstrap": "^3.3.7",
@@ -43,7 +42,8 @@
   "scripts": {
     "game": "sudo ts-node main.ts --buzzer=web",
     "e2e": "",
-    "start": "electron ."
+    "start": "electron .",
+    "rebuild": "./node_modules/.bin/electron-rebuild"
   },
   "engine": [
     "node >=6.9.0"

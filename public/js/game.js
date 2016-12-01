@@ -29,7 +29,7 @@
 			this.preferences = { 
 				websocket_port: 8081,
 				questions_directory: __dirname + '/questions',
-				buzzer_type: 'hid'
+				buzzer_type: 'teensy'
 			};
 			this.devices = {
 				game: false,
@@ -62,7 +62,7 @@
 					this.preferences.buzzer_type, 
 					this.preferences.websocket_port
 				);
-
+				console.log('===>', this.preferences.websocket_port)
 				this.screen = 'devices';
 				ws = new WebSocket("ws://localhost:"+this.preferences.websocket_port);
 				ws.onopen = () => {

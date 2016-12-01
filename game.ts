@@ -87,6 +87,9 @@ export class Game {
 	}
 
 	leave() {
+		if (this.devices.game) {
+			this.gameUI.sendDevices(this.devices)
+		}
 		//this.gameUI.setDevices(this.devices)
 		//this.masterUI.setDevices(this.devices)
 	}
