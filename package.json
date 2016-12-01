@@ -46,11 +46,12 @@
     "start": "electron ."
   },
   "engine": [
-    "node >=0.1.90"
+    "node >=6.9.0"
   ],
   "main": "build/electron.js",
   "devDependencies": {
     "@types/node": "^6.0.41",
-    "electron": "^1.4.8"
+    "electron": "^1.4.8",
+    "electron-rebuild": "^1.4.0"
   }
 }

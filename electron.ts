@@ -1,8 +1,6 @@
 import * as electron from 'electron';
 import * as path from 'path';
 import * as url from 'url';
-import * as webserver from 'webserver';
-
 
 //const electron = require('electron')
 // Module to control application life.
@@ -18,17 +16,12 @@ function createWindow () {
 	// Create the browser window.
 	mainWindow = new BrowserWindow({width: 1400, height: 800})
 
-	//webserver.create(8080);
-
 	// and load the index.html of the app.
 	mainWindow.loadURL(url.format({
 		pathname: path.resolve(path.join(__dirname, '../index.html')),
 		protocol: 'file:',
 		slashes: true
 	}))
-
-	const {dialog} = require('electron');
-	console.log('dialog : ', dialog);
 
 	// Open the DevTools.
 	mainWindow.webContents.openDevTools()

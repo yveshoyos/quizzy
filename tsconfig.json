@@ -26,6 +26,6 @@
         "/node_modules*",
         "node_modules/@types/es6-promise/index.d.ts",
         "node_modules/@types/musicmetadata/musicmetadata.d.ts",
-	"node_modules/@types/rpio/index.d.ts"
+	   "node_modules/@types/rpio/index.d.ts"
     ]
 }
