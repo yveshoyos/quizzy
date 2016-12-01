@@ -2,7 +2,7 @@ import { WebGameUI } from './web_game_ui'
 import { WebMasterUI } from './web_master_ui'
 import { Game } from './game'
 
-import { TeensyBuzzer } from './teensy_buzzer'
+import { TeensyBuzzer } from 'node-buzzer/teensy'
 import { Buzzer } from 'node-buzzer/buzzer'
 import { Ps2Buzzer } from 'node-buzzer/ps2'
 
