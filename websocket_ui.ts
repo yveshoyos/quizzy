@@ -2,15 +2,15 @@ import * as ws from 'nodejs-websocket'
 import { Game, Devices, Screen, Mode, PlayState } from './game'
 import { Team } from './team'
 import { Question } from './question'
+import { GameUI } from './game_ui'
 
-export abstract class WebsocketUI {
+export class WebsocketUI implements GameUI {
 	ws: ws.Server
 	conn: ws.Connection
 	eventListeners: {}
 	game: Game
 
 	constructor(port: number) {
-		console.log('create ws server')
 		this.eventListeners = { 'ready': [], 'leave': [] };
 
 		this.ws = ws.createServer((conn) => {
@@ -31,7 +31,13 @@ export abstract class WebsocketUI {
 				this.triggerEvent('error', {})
 			})
 
-		}).listen(port)
+		}).listen(port);
+
+		this.addEventListener('register', this.register.bind(this))
+		this.addEventListener('start_question', this.startQuestion.bind(this))
+		this.addEventListener('continue_question', this.continueQuestion.bind(this))
+		this.addEventListener('set_activation_step', this.continueQuestion.bind(this))
+		this.addEventListener('error', this.error.bind(this))
 	}
 
 	addEventListener(event: string, callback: Function) {
@@ -68,6 +74,9 @@ export abstract class WebsocketUI {
 		this.conn.send(JSON.stringify(data))
 	}
 
+	/**
+	 *
+	 */
 	setGame(game: Game) {
 		this.game = game;
 	}
@@ -108,6 +117,31 @@ export abstract class WebsocketUI {
 			'questionIndex': questionIndex,
 			'correct': correct
 		})
+	}
+
+	/**
+	 *
+	 */
+	register() {
+		this.eventListeners['ready'].forEach((f) => {
+			f();
+		});
+	}
+
+	setActivationStep() {
+		//this.game.activationStep();
+	}
+
+	startQuestion() {
+		//this.game.startQuestion();
+	}
+
+	continueQuestion() {
+		//this.game.continueQuestion();
+	}
+
+	error() {
+
 	}
 
 }

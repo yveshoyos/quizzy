@@ -14,7 +14,8 @@
         "paths": {
             "node-buzzer/ps2": ["node_modules/node-buzzer/ps2"],
             "node-buzzer/teensy": ["node_modules/node-buzzer/teensy"],
-            "node-buzzer/web": ["node_modules/node-buzzer/web"]
+            "node-buzzer/web": ["node_modules/node-buzzer/web"],
+            "node-buzzer/websocket": ["node_modules/node-buzzer/websocket"]
         },
         "moduleResolution": "node",
         "baseUrl": ".",

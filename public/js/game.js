@@ -26,11 +26,18 @@
 			var ws = null;
 
 			this.screen = "starting";
-			this.preferences = { 
-				websocket_port: 8081,
-				questions_directory: __dirname + '/questions',
-				buzzer_type: 'teensy'
-			};
+			this.preferences = {
+				game: {
+					port: 8081,
+					questions_directory: __dirname + '/questions'
+				},
+				master: {
+					port: 8082
+				},
+				buzzer: {
+					type: 'teensy'
+				}
+			}
 			this.devices = {
 				game: false,
 				master: false,
@@ -40,6 +47,14 @@
 			ui.sounds = new Sounds(true);
 			ui.sounds.add('actors', __dirname + '/sounds/Cinema_Sins_Background_Song.mp3');
 			ui.sounds.add('buzz', __dirname + '/sounds/buzz.mp3');
+
+			this.isGame = function() {
+				return this.type == 'game';
+			}
+
+			this.isMaster = function() {
+				return this.type == 'master';
+			}
 
 			/**
 			 * Preferences
@@ -58,22 +73,26 @@
 			}
 
 			this.initStartGame = function() {
-				start(
-					this.preferences.buzzer_type, 
-					this.preferences.websocket_port
-				);
-				console.log('===>', this.preferences.websocket_port)
+				start(this.preferences);
+
 				this.screen = 'devices';
-				ws = new WebSocket("ws://localhost:"+this.preferences.websocket_port);
+
+				var port = this.preferences.game.port;
+				if (this.isMaster()) {
+					port = this.preferences.master.port;
+				}
+				ws = new WebSocket("ws://localhost:"+port);
 				ws.onopen = () => {
-					console.log('open')
-					ui.sounds.play('actors', 500);
-					this.send('register', 'game')
+					if (this.isMaster()) {
+						ui.sounds.play('actors', 500);
+					}
+					
+					this.send('register', this.type)
 				}
 
 				ws.onmessage = (event) => {
 					var data = JSON.parse(event.data)
-					console.log('game : ', data)
+					console.log(this.type,' : ', data)
 
 					for(var property in data) {
 						if (data.hasOwnProperty(property)) {
@@ -125,7 +144,7 @@
 			});
 
 			this.browseQuestionsDirectory = function() {
-				this.preferences.questions_directory = dialog.showOpenDialog({properties: ['openDirectory']})[0];
+				this.preferences.game.questions_directory = dialog.showOpenDialog({properties: ['openDirectory']})[0];
 			}
 
 			this.cancel = function() {

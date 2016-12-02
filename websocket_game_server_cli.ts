@@ -1,4 +1,4 @@
-import { start } from './websocket_game_server'
+import { start, Preferences, BuzzerType, BuzzerPreferences } from './websocket_game_server'
 
 import * as process from 'process';
 import * as minimist from 'minimist';
@@ -14,7 +14,21 @@ interface Args extends minimist.ParsedArgs {
 var argv:Args = minimist(process.argv.slice(2)) as Args
 argv.buzzer = argv.buzzer || 'ps2'
 
-start(argv.buzzer, 8081)
+var preferences: Preferences = {
+	game: {
+		port: 8081,
+		questions_directory: __dirname + '/questions'
+	},
+	master: {
+		type: 'websocket',
+		port: 8082
+	},
+	buzzer: {
+		type: argv.buzzer as BuzzerType
+	} as BuzzerPreferences
+}
+
+start(preferences)
 
 process.stdin.resume();
 process.on('exit', (code:number) => {

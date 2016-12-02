@@ -1,7 +1,5 @@
 import { Buzzer } from 'node-buzzer'
-
 import { GameUI } from './game_ui'
-import { MasterUI } from './master_ui'
 
 export type Screen = "starting" | "devices" | "mode-select" | "team-activation" | "questions" | "score"
 export type Devices = { buzzer: boolean, game: boolean, master: boolean }
@@ -12,12 +10,12 @@ export type PlayState = "play" | "continue" | "stop" | "pause"
 export class Game {
 	buzzer: Buzzer
 	gameUI: GameUI
-	masterUI: MasterUI
+	masterUI: GameUI
 	devices: Devices
 	started: boolean
 	screen: Screen
 
-	constructor(buzzer: Buzzer, gameUI: GameUI, masterUI: MasterUI ) {
+	constructor(buzzer: Buzzer, gameUI: GameUI, masterUI: GameUI ) {
 		this.buzzer = buzzer
 		this.gameUI = gameUI
 		this.masterUI = masterUI
@@ -26,7 +24,6 @@ export class Game {
 		this.screen = 'starting'
 
 		this.buzzer.addEventListener('ready', () => {
-			console.log('buzzer ready')
 			var max = this.buzzer.controllersCount()
 			for(var i=0; i < max; i++) {
 				this.buzzer.lightOff(i)
@@ -65,10 +62,11 @@ export class Game {
 	}
 
 	checkReady() {
-		console.log('checkReady : ', this.devices)
 		if (this.devices.game) {
-			console.log('send devices to game')
 			this.gameUI.sendDevices(this.devices)
+		}
+		if (this.devices.master) {
+			this.masterUI.sendDevices(this.devices);
 		}
 		
 		//this.masterUI.sendDevices(this.devices)

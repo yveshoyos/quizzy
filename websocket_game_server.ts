@@ -1,28 +1,62 @@
-import { WebGameUI } from './web_game_ui'
+import * as webserver from './webserver';
+
+import { WebsocketUI } from './websocket_ui'
 import { WebMasterUI } from './web_master_ui'
 import { Game } from './game'
 
 import { TeensyBuzzer } from 'node-buzzer/teensy'
 import { Buzzer } from 'node-buzzer/buzzer'
 import { Ps2Buzzer } from 'node-buzzer/ps2'
+import { WebsocketBuzzer } from 'node-buzzer/websocket'
 
-export function start(buzzer_type, websocket_port) {
+export interface Preferences {
+	game: {
+		port: number,
+		questions_directory: string
+	},
+	master: WebsocketMasterPreferences,
+	buzzer: BuzzerPreferences
+}
+
+export interface WebsocketMasterPreferences {
+	port: number,
+	type: 'websocket'
+}
+export type MasterPreference = WebsocketMasterPreferences
+
+export type BuzzerType = 'teensy' | 'websocket' | 'ps2'
+export interface WebsocketBuzzerPreferences {
+	type: 'websocket',
+	port: number
+}
+
+export interface TeensyBuzzerPreferences {
+	type: 'teensy'
+}
+
+export interface  Ps2BuzzerPreferences {
+	type: 'ps2'
+}
+export type BuzzerPreferences = WebsocketBuzzerPreferences | TeensyBuzzerPreferences | Ps2BuzzerPreferences
+
+export function start(preferences: Preferences) {
 	var buzzer;
-	switch(buzzer_type) {
+	switch(preferences.buzzer.type) {
 		case 'teensy':
 			buzzer = get_teensy_buzzer();
 			break;
 		case 'ps2':
 			buzzer = get_ps2_buzzer();
 			break;
-		case 'web':
+		case 'websocket':
+			buzzer = get_websocket_buzzer(preferences.buzzer as WebsocketBuzzerPreferences);
 			break;
 		default:
 			console.log('error');
 	}
 	
-	var gameUI = new WebGameUI(websocket_port)
-	var masterUI = new WebMasterUI(8082);
+	var gameUI = new WebsocketUI(preferences.game.port)
+	var masterUI = new WebsocketUI(preferences.master.port)
 	var game = new Game(buzzer, gameUI, masterUI)
 }
 
@@ -39,6 +73,9 @@ function get_ps2_buzzer() {
 }
 
 function get_teensy_buzzer() {
-	var buzzer = new TeensyBuzzer();
-	return buzzer
+	return new TeensyBuzzer();
+}
+
+function get_websocket_buzzer(prefs: WebsocketBuzzerPreferences) {
+	return new WebsocketBuzzer(prefs.port);
 }
