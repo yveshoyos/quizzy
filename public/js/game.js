@@ -2,6 +2,7 @@
 	const electron = require('electron');
 	const dialog = electron.remote.dialog;
 	const path = require('path');
+	//const BuzzerNotFoundError = require('node-buzzer/build')
 
 	function camelCase(str) {
 		return str.replace(/-([a-z])/g, function (m, w) {
@@ -73,41 +74,48 @@
 			}
 
 			this.initStartGame = function() {
-				start(this.preferences);
+				try {
+					start(this.preferences);
 
-				this.screen = 'devices';
+					this.screen = 'devices';
 
-				var port = this.preferences.game.port;
-				if (this.isMaster()) {
-					port = this.preferences.master.port;
-				}
-				ws = new WebSocket("ws://localhost:"+port);
-				ws.onopen = () => {
+					var port = this.preferences.game.port;
 					if (this.isMaster()) {
-						ui.sounds.play('actors', 500);
+						port = this.preferences.master.port;
 					}
-					
-					this.send('register', this.type)
-				}
+					ws = new WebSocket("ws://localhost:"+port);
+					ws.onopen = () => {
+						if (this.isGame()) {
+							ui.sounds.play('actors', 500);
+						}
+						
+						this.send('register', this.type)
+					}
 
-				ws.onmessage = (event) => {
-					var data = JSON.parse(event.data)
-					console.log(this.type,' : ', data)
+					ws.onmessage = (event) => {
+						var data = JSON.parse(event.data)
+						console.log(this.type,' : ', data)
 
-					for(var property in data) {
-						if (data.hasOwnProperty(property)) {
-							var method = 'receive'+capitalize(camelCase(property));
-							this[method].call(this, data[property])
+						for(var property in data) {
+							if (data.hasOwnProperty(property)) {
+								var method = 'receive'+capitalize(camelCase(property));
+								this[method].call(this, data[property])
+							}
 						}
 					}
-				}
 
-				ws.onerror = () => {
-					console.log('ws error')
-				}
+					ws.onerror = () => {
+						console.log('ws error')
+					}
 
-				ws.onclose = () => {
-					console.log('ws close')
+					ws.onclose = () => {
+						console.log('ws close')
+					}
+
+				} catch(e) {
+					if (e.name == 'BuzzerNotFoundError') {
+						dialog.showErrorBox('Buzzer not found', e.message)
+					}
 				}
 			}
 
