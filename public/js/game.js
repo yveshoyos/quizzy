@@ -30,7 +30,7 @@
 			this.preferences = {
 				game: {
 					port: 8081,
-					questions_directory: __dirname + '/questions'
+					questions_directory: __dirname + '/../questions'
 				},
 				master: {
 					port: 8082
@@ -46,8 +46,8 @@
 			}
 
 			ui.sounds = new Sounds(true);
-			ui.sounds.add('actors', __dirname + '/sounds/Cinema_Sins_Background_Song.mp3');
-			ui.sounds.add('buzz', __dirname + '/sounds/buzz.mp3');
+			ui.sounds.add('actors', __dirname + '/../sounds/Cinema_Sins_Background_Song.mp3');
+			ui.sounds.add('buzz', __dirname + '/../sounds/buzz.mp3');
 
 			this.isGame = function() {
 				return this.type == 'game';
@@ -131,7 +131,7 @@
 				scope.$digest();
 			}
 		}],
-		templateUrl: 'public/template/game.html'
+		templateUrl: '../public/template/game.html'
 	})
 	.component('preferences', {
 		bindings: {
@@ -165,7 +165,7 @@
 				});
 			}
 		}],
-		templateUrl: 'public/template/preferences.html'
+		templateUrl: '../public/template/preferences.html'
 	})
 	.component('devices', {
 		bindings: {
@@ -181,7 +181,7 @@
 			}
 			
 		}],
-		templateUrl: 'public/template/devices.html'
+		templateUrl: '../public/template/devices.html'
 	});
 
 })(angular)

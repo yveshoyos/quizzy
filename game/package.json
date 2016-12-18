@@ -41,14 +41,14 @@
   },
   "scripts": {
     "e2e": "",
-    "game": "electron game",
-    "master": "electron master",
+    "game": "electron ./game",
+    "master": "electron ./master",
     "rebuild": "./node_modules/.bin/electron-rebuild"
   },
   "engine": [
     "node >=6.9.0"
   ],
-  "main": "build/electron.js",
+  "main": "../build/game/electron.js",
   "devDependencies": {
     "@types/node": "^6.0.41",
     "electron": "^1.4.8",
