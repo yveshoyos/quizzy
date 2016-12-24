@@ -68,7 +68,6 @@ export class DeafQuestion extends Question {
 		var regex = /^(\d+)\.\s*(.*?)\s*--\s*(.*?)(?:\s*\((\d+)\))?$/i
 		var infos:Array<any> = filename.match(regex);
 		
-		console.log('==>', infos)
 		this.name = infos[3].trim();
 		this.author = infos[2].trim();
 		this.year = (infos[4]) ? infos[4].trim() : '';

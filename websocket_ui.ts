@@ -14,11 +14,11 @@ export class WebsocketUI implements GameUI {
 		this.eventListeners = { 'ready': [], 'leave': [] };
 
 		this.ws = ws.createServer((conn) => {
-			console.log('set conn')
 			this.conn = conn
 
 			conn.on("text", (str: string) => {
 				var data = JSON.parse(str)
+				console.log('receive ', data)
 				this.receive(data)
 			})
 
@@ -34,9 +34,14 @@ export class WebsocketUI implements GameUI {
 		}).listen(port);
 
 		this.addEventListener('register', this.register.bind(this))
+		this.addEventListener('mode', this.setMode.bind(this))
+		this.addEventListener('mode_ok', this.setModeOK.bind(this))
+		this.addEventListener('team_name', this.updateTeamName.bind(this))
+		this.addEventListener('start_questions', this.startQuestions.bind(this))
 		this.addEventListener('start_question', this.startQuestion.bind(this))
+		this.addEventListener('points', this.addPoints.bind(this))
 		this.addEventListener('continue_question', this.continueQuestion.bind(this))
-		this.addEventListener('set_activation_step', this.continueQuestion.bind(this))
+		this.addEventListener('finish_game', this.finishGame.bind(this))
 		this.addEventListener('error', this.error.bind(this))
 	}
 
@@ -112,6 +117,13 @@ export class WebsocketUI implements GameUI {
 		})
 	}
 
+	sendAnswered(questionIndex: number, answered: boolean) {
+		this.send('answered', {
+			'questionIndex': questionIndex,
+			'answer': answered
+		})
+	}
+
 	sendAnswer(questionIndex: number, correct: boolean) {
 		this.send('answer', {
 			'questionIndex': questionIndex,
@@ -128,20 +140,40 @@ export class WebsocketUI implements GameUI {
 		});
 	}
 
-	setActivationStep() {
-		//this.game.activationStep();
+	setMode(mode: Mode) {
+		this.game.setMode(mode, true)
 	}
 
-	startQuestion() {
-		//this.game.startQuestion();
+	setModeOK() {
+		this.game.setTeamsActivation()
+	}
+
+	updateTeamName(data) {
+		this.game.updateTeamName(data.index, data.name)
+	}
+
+	startQuestions() {
+		this.game.startQuestions()
+	}
+
+	startQuestion(index) {
+		this.game.startQuestion(index);
+	}
+
+	addPoints(points) {
+		this.game.setPoints(points)
 	}
 
 	continueQuestion() {
-		//this.game.continueQuestion();
+		this.game.continueQuestion();
 	}
 
 	error() {
 
+	}
+
+	finishGame() {
+		this.game.finishGame()
 	}
 
 }

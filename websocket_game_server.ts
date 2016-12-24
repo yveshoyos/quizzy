@@ -56,7 +56,7 @@ export function start(preferences: Preferences) {
 	
 	var gameUI = new WebsocketUI(preferences.game.port)
 	var masterUI = new WebsocketUI(preferences.master.port)
-	var game = new Game(buzzer, gameUI, masterUI)
+	var game = new Game(buzzer, gameUI, masterUI, preferences.game.questions_directory)
 }
 
 function get_ps2_buzzer() {

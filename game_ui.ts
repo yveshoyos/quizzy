@@ -37,6 +37,9 @@ export interface GameUI {
 	// Plays or continue a question
 	sendPlayQuestion(questionIndex: number, state: PlayState)
 
+	// Sent that someone buzz to answer or not
+	sendAnswered(questionIndex: number, answered: boolean)
+
 	// Accepts or refuse an answer
 	sendAnswer(questionIndex: number, correct: boolean)
 

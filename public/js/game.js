@@ -21,7 +21,7 @@
 		},
 		controllerAs: 'ui',
 		controller: ['$scope', '$element', '$q', 'Sounds', function(scope, $element, $q, Sounds) {
-			console.log('game angular app')
+			console.log('game angular app : ', __dirname)
 
 			var ui = this;
 			var ws = null;
@@ -46,8 +46,8 @@
 			}
 
 			ui.sounds = new Sounds(true);
-			ui.sounds.add('actors', __dirname + '/../sounds/Cinema_Sins_Background_Song.mp3');
-			ui.sounds.add('buzz', __dirname + '/../sounds/buzz.mp3');
+			ui.sounds.add('actors', __dirname + '/sounds/Cinema_Sins_Background_Song.mp3');
+			ui.sounds.add('buzz', __dirname + '/sounds/buzz.mp3');
 
 			this.isGame = function() {
 				return this.type == 'game';
@@ -131,7 +131,7 @@
 				scope.$digest();
 			}
 		}],
-		templateUrl: '../public/template/game.html'
+		templateUrl: 'public/template/game.html'
 	})
 	.component('preferences', {
 		bindings: {
