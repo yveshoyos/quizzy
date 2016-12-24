@@ -4,3 +4,5 @@ questions/*
 public/questions
 public/sounds
 build/*
+.ts-old
+.DS_STORE
