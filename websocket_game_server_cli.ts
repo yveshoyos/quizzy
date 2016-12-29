@@ -17,7 +17,7 @@ argv.buzzer = argv.buzzer || 'ps2'
 var preferences: Preferences = {
 	game: {
 		port: 8081,
-		questions_directory: __dirname + '/questions'
+		questions_directory: getUserHome()+'/quizzy/questions'
 	},
 	master: {
 		type: 'websocket',
@@ -43,3 +43,7 @@ process.on('uncaughtException', (err) => {
 	console.dir(err, { depth: null });
 	process.exit(1);
 });
+
+function getUserHome() {
+  return process.env[(process.platform == 'win32') ? 'USERPROFILE' : 'HOME'];
+}
