@@ -28,7 +28,7 @@ var preferences: Preferences = {
 	} as BuzzerPreferences
 }
 
-start(preferences)
+start(preferences, 'start')
 
 process.stdin.resume();
 process.on('exit', (code:number) => {

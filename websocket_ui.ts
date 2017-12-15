@@ -106,8 +106,11 @@ export class WebsocketUI implements GameUI {
 		this.send('mode', mode)
 	}
 
-	sendQuestions(questions: Array<Question>) {
-		this.send('questions', questions)
+	sendQuestions(questions: Array<Question>, startQuestionIndex: number=-1) {
+		this.send('questions', {
+			questions: questions,
+			startQuestionIndex: startQuestionIndex
+		})
 	}
 
 	sendPlayQuestion(questionIndex: number, state: PlayState) {

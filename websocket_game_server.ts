@@ -38,7 +38,7 @@ export interface  Ps2BuzzerPreferences {
 }
 export type BuzzerPreferences = WebsocketBuzzerPreferences | TeensyBuzzerPreferences | Ps2BuzzerPreferences
 
-export function start(preferences: Preferences) {
+export function start(preferences: Preferences, startOrContinue: string) {
 	var buzzer;
 	switch(preferences.buzzer.type) {
 		case 'teensy':
@@ -56,7 +56,7 @@ export function start(preferences: Preferences) {
 	
 	var gameUI = new WebsocketUI(preferences.game.port)
 	var masterUI = new WebsocketUI(preferences.master.port)
-	var game = new Game(buzzer, gameUI, masterUI, preferences.game.questions_directory)
+	var game = new Game(buzzer, gameUI, masterUI, preferences.game.questions_directory, startOrContinue)
 }
 
 function get_ps2_buzzer() {

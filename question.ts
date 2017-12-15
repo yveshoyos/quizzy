@@ -75,7 +75,8 @@ export class DeafQuestion extends Question {
 }
 
 export class BlindQuestion extends Question {
-	duration: number;
+	duration: number
+	album: string
 	constructor() {
 		super();
 		this.type = 'blind';
@@ -85,12 +86,16 @@ export class BlindQuestion extends Question {
 		var extension = path.extname(this.file);
 		var filename = path.basename(this.file, extension);
 
-		var regex = /^(\d+)\.\s*(.*?)\s*--\s*(.*?)(?:\s*\((\d+)\))?$/i
+				//   (N°). (author) -- (music) -- (album)? (year)?
+		var regex = /^(\d+)\.\s*(.*?)\s*--\s*(.*?)(?:\s*--\s*(.*?))?(?:\s*\((\d+)\))?$/i
 		var infos:Array<any> = filename.match(regex);
+
+		console.log(filename, infos)
 		
-		this.name = infos[3].trim();
 		this.author = infos[2].trim();
-		this.year = (infos[4]) ? infos[4].trim() : '';
+		this.name = infos[3].trim();
+		this.album = (infos[4]) ? infos[4].trim() : '';
+		this.year = (infos[5]) ? infos[5].trim() : '';
 
 		var parser = mm(fs.createReadStream(this.file), (err, metadata) => {
 			if (err) {

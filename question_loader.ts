@@ -50,6 +50,12 @@ export class QuestionList {
 		return this.questions;
 	}
 
+	fromArray(questions: Array<Question>) {
+		questions.map((question) => {
+			this.add(question)
+		})
+	}
+
 	map(callback: (value:Question) => void) {
 		this.questions.forEach(callback);
 	}
@@ -69,7 +75,7 @@ export class QuestionLoader {
 		glob(directory+"/**/*", (err, files) => {
 			files.forEach((file) => {
 				var f = fs.lstatSync(file);
-				if (f.isFile()) {
+				if (f.isFile() && path.basename(file) != 'game.json') {
 					var q = Question.fromFile(file);
 
 					this.questions.add(q);

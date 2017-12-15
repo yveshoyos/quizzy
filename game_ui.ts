@@ -32,7 +32,7 @@ export interface GameUI {
 	sendPlayMode(mode: Mode)
 
 	// Sets the questions
-	sendQuestions(questions: Array<Question>)
+	sendQuestions(questions: Array<Question>, startQuestionIndex?: number)
 
 	// Plays or continue a question
 	sendPlayQuestion(questionIndex: number, state: PlayState)

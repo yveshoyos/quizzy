@@ -3,6 +3,8 @@ import { GameUI } from './game_ui'
 import { Team } from './team'
 import { Question, BlindQuestion, DeafQuestion } from './question'
 import { QuestionLoader, QuestionList } from './question_loader'
+import * as jsonfile from 'jsonfile'
+import * as path from 'path'
 
 export type Screen = "starting" | "devices" | "mode-select" | "team-activation" | "questions" | "score"
 export type Devices = { buzzer: boolean, game: boolean, master: boolean }
@@ -24,8 +26,9 @@ export class Game {
 	currentQuestionIndex: number
 	answerWaitingForValidation: number
 	questionsDirectory: string
+	startOrContinue: string
 
-	constructor(buzzer: Buzzer, gameUI: GameUI, masterUI: GameUI, questionsDirectory: string) {
+	constructor(buzzer: Buzzer, gameUI: GameUI, masterUI: GameUI, questionsDirectory: string, startOrContinue: string) {
 		this.buzzer = buzzer
 		this.gameUI = gameUI
 		this.masterUI = masterUI
@@ -40,6 +43,11 @@ export class Game {
 		this.currentQuestionIndex = -1
 		this.answerWaitingForValidation = null
 		this.answers = []
+		this.startOrContinue = startOrContinue;
+
+		if (startOrContinue == 'continue') {
+			this.recoverFromSave();
+		}
 
 		this.buzzer.addEventListener('ready', () => {
 			var max = this.buzzer.controllersCount()
@@ -58,7 +66,6 @@ export class Game {
 		})
 
 		this.masterUI.addEventListener('ready', () => {
-			console.log('master ready')
 			this.devices.master = true
 			this.masterUI.setGame(this)
 			this.checkReady()
@@ -136,15 +143,56 @@ export class Game {
 			this.sendTeams(this.teams);
 		}
 
-		if (this.questions) {
-			this.gameUI.sendQuestions(this.questions.all())
-			this.masterUI.sendQuestions(this.questions.all())
+		if (this.questions && this.screen != 'score') {
+			//this.gameUI.sendQuestions(this.questions.all(), this.currentQuestionIndex)
+			//this.masterUI.sendQuestions(this.questions.all(), this.currentQuestionIndex)
+			this.startQuestions()
 		}
 
-		if (this.currentQuestionIndex && this.screen != 'score') {
+		/*if (this.currentQuestionIndex && this.screen != 'score') {
 			console.log('currentQuestionIndex  : ', this.currentQuestionIndex)
 			this.startQuestion(this.currentQuestionIndex);
-		}
+		}*/
+	}
+
+	save() {
+		var file = path.join(this.questionsDirectory, 'game.json')
+
+		var data = {
+			mode: this.mode,
+			teams: this.teams,
+			started: this.started,
+			screen: this.screen,
+			currentQuestionIndex: this.currentQuestionIndex,
+			answerWaitingForValidation: this.answerWaitingForValidation,
+			answers: this.answers,
+			questions: this.questions && this.questions.all()
+		};
+
+		var promise = new Promise((resolve, reject) => {
+			jsonfile.writeFile(file, data, () => {
+				resolve()
+			})
+		});
+
+		return promise
+	}
+
+	recoverFromSave() {
+		var file = path.join(this.questionsDirectory, 'game.json')
+
+		var save = jsonfile.readFileSync(file)
+		console.log('save : ', save)
+		this.mode = save.mode
+		this.teams = save.teams
+		this.started = save.started
+		this.screen = save.screen
+		this.oldScreen = save.screen
+		this.currentQuestionIndex = save.currentQuestionIndex
+		this.answerWaitingForValidation = save.answerWaitingForValidation
+		this.answers = save.answers
+		this.questions = new QuestionList(this.mode)
+		this.questions.fromArray(save.questions)
 	}
 
 	setScreen(screen: Screen) {
@@ -157,10 +205,11 @@ export class Game {
 	 * MODE SCREEN
 	 ********************************************/
 	setMode(mode: Mode, setScreenMode: boolean = true) {
-		this.mode = mode;
+		this.mode = mode
+		this.save()
 		if(setScreenMode) {
-			this.gameUI.sendPlayMode(mode);
-			this.masterUI.sendPlayMode(mode);
+			this.gameUI.sendPlayMode(mode)
+			this.masterUI.sendPlayMode(mode)
 		}
 	}
 
@@ -184,6 +233,12 @@ export class Game {
 			})
 	}
 
+	/*cleanTeams() {
+		this.teams = this.teams.filter((team) => {
+			return this.
+		})
+	}*/
+
 	sendTeams(teams) {
 		this.gameUI.sendTeams(teams)
 		this.masterUI.sendTeams(teams)
@@ -196,7 +251,6 @@ export class Game {
 	}
 
 	sendTeam(team, lightOn: boolean = true, flash: boolean = true) {
-		team.active = true
 		team.lightOn = lightOn
 		team.flash = flash
 		this.gameUI.sendUpdateTeam(team)
@@ -209,15 +263,19 @@ export class Game {
 		this.initTeams();
 		this.sendTeams(this.teams)
 
-		this.loadQuestions(this.mode);
+		this.loadQuestions(this.mode)
 
 		this.setScreen('team-activation')
 		this.buzzer.onPress((controllerIndex: number, buttonIndex: number) => {
+			console.log('buzz : ', controllerIndex)
 			this.activateTeam(controllerIndex)
 		})
+
+		this.save()
 	}
 
 	activateTeam(controllerIndex: number) {
+		console.log('activateTeam', controllerIndex, this.teams.length)
 		var team = this.teams[controllerIndex]
 
 		// Make sure a team can only be activated once
@@ -229,7 +287,10 @@ export class Game {
 		this.buzzer.lightOn(controllerIndex)
 
 		// Update the team
+		team.active = true
 		this.sendTeam(team)
+
+		this.save()
 	}
 
 	/********************************************
@@ -238,9 +299,13 @@ export class Game {
 	startQuestions() {
 		this.setScreen('questions')
 
+		//this.cleanTeams(this.teams)
+		//this.gameUI.sendTeams(this.teams)
+		//this.masterUI.sendTeams(this.teams)
+
 		// Send questions list to UI's
-		this.gameUI.sendQuestions(this.questions.all())
-		this.masterUI.sendQuestions(this.questions.all())
+		this.gameUI.sendQuestions(this.questions.all(), this.currentQuestionIndex)
+		this.masterUI.sendQuestions(this.questions.all(), this.currentQuestionIndex)
 
 		// Light of all teams and theirs buzzers
 		this.teams.map((team, index) => {
@@ -254,6 +319,8 @@ export class Game {
 			// Buzz
 			this.buzzed(controllerIndex)
 		})
+
+		this.save()
 	}
 
 	loadQuestions(mode: Mode) {
@@ -276,7 +343,6 @@ export class Game {
 
 		var answer = this.answers[this.currentQuestionIndex]
 		if (answer[controllerIndex] != -1) {
-			console.log('already answered')
 			return
 		}
 
@@ -319,6 +385,8 @@ export class Game {
 
 		this.gameUI.sendPlayQuestion(index, "play")
 		this.masterUI.sendPlayQuestion(index, "play")
+
+		this.save()
 	}
 
 	continueQuestion() {
@@ -327,6 +395,8 @@ export class Game {
 		this.resetBuzzers();
 		this.gameUI.sendPlayQuestion(this.currentQuestionIndex, "continue")
 		this.masterUI.sendPlayQuestion(this.currentQuestionIndex, "continue")
+
+		this.save()
 	}
 
 	setPoints(points: number) {
@@ -339,6 +409,8 @@ export class Game {
 
 		this.buzzer.lightOff(controllerIndex)
 		this.sendTeam(team, false, false);
+
+		this.save()
 	}
 
 	/********************************************
@@ -346,5 +418,7 @@ export class Game {
 	 ********************************************/
 	finishGame() {
 		this.setScreen('score')
+
+		this.save()
 	}
 }
