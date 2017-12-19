@@ -50,6 +50,7 @@ export class Game {
 		}
 
 		this.buzzer.addEventListener('ready', () => {
+			console.log('ready ???')
 			var max = this.buzzer.controllersCount()
 			for(var i=0; i < max; i++) {
 				this.buzzer.lightOff(i)

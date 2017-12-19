@@ -5,7 +5,7 @@
   "author": "Vincent Dieltiens",
   "repository": {
     "type": "git",
-    "url": "http://github.com/vincentdieltiens/quizzgame.git"
+    "url": "http://github.com/vincentdieltiens/quizzy.git"
   },
   "dependencies": {
     "@types/electron": "^1.4.27",

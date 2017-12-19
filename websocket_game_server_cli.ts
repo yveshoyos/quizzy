@@ -28,6 +28,7 @@ var preferences: Preferences = {
 	} as BuzzerPreferences
 }
 
+console.log('start cli')
 start(preferences, 'start')
 
 process.stdin.resume();

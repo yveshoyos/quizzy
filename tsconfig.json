@@ -12,10 +12,10 @@
             "./node_modules/node-buzzer/@types"
         ],
         "paths": {
-            "node-buzzer/ps2": ["node_modules/node-buzzer/ps2"],
-            "node-buzzer/teensy": ["node_modules/node-buzzer/teensy"],
-            "node-buzzer/web": ["node_modules/node-buzzer/web"],
-            "node-buzzer/websocket": ["node_modules/node-buzzer/websocket"]
+            "node-buzzer/ps2": ["node_modules/node-buzzer/ps2/"],
+            "node-buzzer/teensy": ["node_modules/node-buzzer/teensy/"],
+            "node-buzzer/web": ["node_modules/node-buzzer/web/"],
+            "node-buzzer/websocket": ["node_modules/node-buzzer/websocket/"]
         },
         "moduleResolution": "node",
         "baseUrl": ".",
@@ -29,6 +29,6 @@
         "/node_modules*",
         "node_modules/@types/es6-promise/index.d.ts",
         "node_modules/@types/musicmetadata/musicmetadata.d.ts",
-	   "node_modules/@types/rpio/index.d.ts"
+	    "node_modules/@types/rpio/index.d.ts"
     ]
 }

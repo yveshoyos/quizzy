@@ -39,10 +39,13 @@ export interface  Ps2BuzzerPreferences {
 export type BuzzerPreferences = WebsocketBuzzerPreferences | TeensyBuzzerPreferences | Ps2BuzzerPreferences
 
 export function start(preferences: Preferences, startOrContinue: string) {
+	
 	var buzzer;
 	switch(preferences.buzzer.type) {
 		case 'teensy':
+			console.log('teeeeeensy')
 			buzzer = get_teensy_buzzer();
+			console.log('got')
 			break;
 		case 'ps2':
 			buzzer = get_ps2_buzzer();
@@ -54,9 +57,11 @@ export function start(preferences: Preferences, startOrContinue: string) {
 			console.log('error');
 	}
 	
+	console.log('uis...')
 	var gameUI = new WebsocketUI(preferences.game.port)
 	var masterUI = new WebsocketUI(preferences.master.port)
 	var game = new Game(buzzer, gameUI, masterUI, preferences.game.questions_directory, startOrContinue)
+	console.log('Server started...')
 }
 
 function get_ps2_buzzer() {
@@ -72,6 +77,7 @@ function get_ps2_buzzer() {
 }
 
 function get_teensy_buzzer() {
+	console.log('build TeensyBuzzer object...')
 	return new TeensyBuzzer();
 }
 
