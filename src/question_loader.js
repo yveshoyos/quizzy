@@ -1,3 +1,4 @@
+'use strict';
 
 import * as glob from 'glob';
 import * as fs from 'fs';
@@ -9,17 +10,17 @@ import { Question, Category } from './question';
 }*/
 
 export class QuestionList {
-	mode: string;
-	questions: Array<Question>;
-	index: number;
+	//mode: string;
+	//questions: Array<Question>;
+	//index: number;
 		
-	constructor(mode: string) {
+	constructor(mode) {
 		this.mode = mode;
 		this.questions = [];
 		this.index = 0;
 	}
 	
-	add(question: Question) {
+	add(question) {
 		this.questions.push(question);	
 	}
 	
@@ -33,43 +34,43 @@ export class QuestionList {
 		}
 	}
 
-	get(index: number) {
+	get(index) {
 		return this.questions[index];
 	}
 	
-	next():Question {
+	next() {
 		this.index++;
 		return this.questions[this.index]; 
 	}
 
-	length():number {
+	length() {
 		return this.questions.length;
 	}
 
-	all():Array<Question> {
+	all() {
 		return this.questions;
 	}
 
-	fromArray(questions: Array<Question>) {
+	fromArray(questions) {
 		questions.map((question) => {
 			this.add(question)
 		})
 	}
 
-	map(callback: (value:Question) => void) {
+	map(callback) {
 		this.questions.forEach(callback);
 	}
 }
 
 export class QuestionLoader {
 
-	questions: QuestionList;
+	//questions: QuestionList;
 
 	constructor() {
 		this.questions = null;
 	}
 
-	load(directory:string, mode:string, callback: Function) {
+	load(directory, mode, callback) {
 		this.questions = new QuestionList(mode);
 
 		glob(directory+"/**/*", (err, files) => {
@@ -88,7 +89,7 @@ export class QuestionLoader {
 	}
 }
 
-function shuffle(array:Array<any>): Array<any> {
+function shuffle(array) {
 	let counter = array.length;
 
 	// While there are elements in the array

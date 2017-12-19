@@ -1,36 +1,6 @@
-# blindpy
-A program in python to make blind tests using external buzzers
+# Quizzy
 
-A blind/deaf test game in javascript+node. Available buzzers are :
+Quizzy is a quizz game that can work with multiples buzzers.
+It uses the the [node-buzzer library](https://github.com/vincentdieltiens/node-buzzer) to interact with the buzzers.
 
-    * PS2 Buzzers
-    * GPIO Buzzers
-    * WebBuzzer
-
-
-INSTALL
--------
-
-1. Have typescript installed : `$ npm install -g typescript`
-2. Install dependencies : `$ npm install`
-2. Compile the sources : `$ tsc`
-
-TODO
-----
-
-3. reload or quit of master/game/buzzer
-5. Really playing music :)
-8. make master button disabled if no answers
-9. timeout music play.
-10. does not go to next music if points are <= 
-11. Sound on buzz for answer
-12. Wrong buzz answer sound
-
-DONE
-----
-
-1. merge angularjs game & master apps in one app
-2. show answers in master
-4. waiting for buzzer to be ready
-6. Best QRCode position
-7. Display icons for game, master and buzzer and highlight when available
+This is the repository for the game server. It can handle 

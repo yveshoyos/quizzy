@@ -1,20 +1,18 @@
-import { start, Preferences, BuzzerType, BuzzerPreferences } from './websocket_game_server'
+'use strict';
 
-import * as process from 'process';
-import * as minimist from 'minimist';
+import { start } from './websocket_game_server'
+
+import process from 'process';
+import minimist from 'minimist';
 
 //
 // Possible arguments :
 // 	- buzzer : "web" or "ps2"
 //
-interface Args extends minimist.ParsedArgs {
-	buzzer:string,
-	buttons:string
-}
-var argv:Args = minimist(process.argv.slice(2)) as Args
+var argv = minimist(process.argv.slice(2))
 argv.buzzer = argv.buzzer || 'ps2'
 
-var preferences: Preferences = {
+var preferences = {
 	game: {
 		port: 8081,
 		questions_directory: getUserHome()+'/quizzy/questions'
@@ -24,20 +22,21 @@ var preferences: Preferences = {
 		port: 8082
 	},
 	buzzer: {
-		type: argv.buzzer as BuzzerType
-	} as BuzzerPreferences
+		type: argv.buzzer
+	}
 }
 
 console.log('start cli')
-start(preferences, 'start')
+let game = start(preferences, 'start')
 
 process.stdin.resume();
-process.on('exit', (code:number) => {
+process.on('exit', (code) => {
 	process.exit(code);
 	console.log('process exit');
 });
 process.on('SIGINT', () => {
 	console.log('\nCTRL+C...');
+	game.buzzer.leave();
 	process.exit(0);
 });
 process.on('uncaughtException', (err) => {

@@ -1,3 +1,5 @@
+'use strict';
+
 import * as path from 'path';
 import * as mime from 'mime';
 
@@ -6,29 +8,27 @@ import * as mm from 'musicmetadata';
 import * as fs from 'fs';
 import * as mp3Duration from 'mp3-duration';
 
-export type QuestionType = BlindQuestion | DeafQuestion;
-
 export class Category {
-	name: string;
-	questionsCount: number;
-	constructor(name:string) {
+	//name: string;
+	//questionsCount: number;
+	constructor(name) {
 		this.name = name;
 		this.questionsCount = 0;
 	}
 }
 
-export abstract class Question {
-	file: string;
-	name: string;
-	author: string;
-	year: string;
-	type: string;
-	category: string;
+export class Question {
+	//file: string;
+	//name: string;
+	//author: string;
+	//year: string;
+	//type: string;
+	//category: string;
 	
 	constructor() {
 	}
 
-	static fromFile(file:string): Question {
+	static fromFile(file)/*: Question*/ {
 		var extension = path.extname(file);
 		var filename = path.basename(file, extension);
 		var dir = path.basename(path.dirname(file));
@@ -52,7 +52,9 @@ export abstract class Question {
 		return q;
 	}
 
-	abstract loadInformations(callback: Function): void;
+	loadInformations(callback) {
+		throw new Error("you have to implement loadInformations method")
+	}
 }
 
 export class DeafQuestion extends Question {
@@ -61,12 +63,12 @@ export class DeafQuestion extends Question {
 		this.type = 'deaf';
 	}
 
-	loadInformations(callback: Function) {
+	loadInformations(callback) {
 		var extension = path.extname(this.file);
 		var filename = path.basename(this.file, extension);
 
 		var regex = /^(\d+)\.\s*(.*?)\s*--\s*(.*?)(?:\s*\((\d+)\))?$/i
-		var infos:Array<any> = filename.match(regex);
+		var infos= filename.match(regex);
 		
 		this.name = infos[3].trim();
 		this.author = infos[2].trim();
@@ -75,20 +77,20 @@ export class DeafQuestion extends Question {
 }
 
 export class BlindQuestion extends Question {
-	duration: number
-	album: string
+	//duration: number
+	//album: string
 	constructor() {
 		super();
 		this.type = 'blind';
 	}
 
-	loadInformations(callback: Function) {
+	loadInformations(callback) {
 		var extension = path.extname(this.file);
 		var filename = path.basename(this.file, extension);
 
 				//   (N°). (author) -- (music) -- (album)? (year)?
 		var regex = /^(\d+)\.\s*(.*?)\s*--\s*(.*?)(?:\s*--\s*(.*?))?(?:\s*\((\d+)\))?$/i
-		var infos:Array<any> = filename.match(regex);
+		var infos = filename.match(regex);
 
 		console.log(filename, infos)
 		

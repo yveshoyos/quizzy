@@ -1,34 +1,34 @@
-import { Buzzer } from 'node-buzzer'
-import { GameUI } from './game_ui'
-import { Team } from './team'
+"use strict";
+
+import { Buzzer } from 'node-buzzer/es5'
 import { Question, BlindQuestion, DeafQuestion } from './question'
 import { QuestionLoader, QuestionList } from './question_loader'
 import * as jsonfile from 'jsonfile'
 import * as path from 'path'
 
-export type Screen = "starting" | "devices" | "mode-select" | "team-activation" | "questions" | "score"
-export type Devices = { buzzer: boolean, game: boolean, master: boolean }
-export type Mode = "random" | "normal"
-export type PlayState = "play" | "continue" | "stop" | "pause"
+//type Screen = "starting" | "devices" | "mode-select" | "team-activation" | "questions" | "score"
+//type Devices = { buzzer: boolean, game: boolean, master: boolean }
+//type Mode = "random" | "normal"
+//type PlayState = "play" | "continue" | "stop" | "pause"
 
 export class Game {
-	buzzer: Buzzer
-	gameUI: GameUI
-	masterUI: GameUI
-	devices: Devices
-	started: boolean
-	screen: Screen
-	oldScreen: Screen
-	mode: Mode
-	teams: Array<Team>
-	questions: QuestionList
-	answers: Array<Array<number>>
-	currentQuestionIndex: number
-	answerWaitingForValidation: number
-	questionsDirectory: string
-	startOrContinue: string
+	// buzzer: Buzzer
+	// gameUI: GameUI
+	// masterUI: GameUI
+	// devices: Devices
+	// started: boolean
+	// screen: Screen
+	// oldScreen: Screen
+	// mode: Mode
+	// teams: Array<Team>
+	// questions: QuestionList
+	// answers: Array<Array<number>>
+	// currentQuestionIndex: number
+	// answerWaitingForValidation: number
+	// questionsDirectory: string
+	// startOrContinue: string
 
-	constructor(buzzer: Buzzer, gameUI: GameUI, masterUI: GameUI, questionsDirectory: string, startOrContinue: string) {
+	constructor(buzzer, gameUI, masterUI, questionsDirectory, startOrContinue) {
 		this.buzzer = buzzer
 		this.gameUI = gameUI
 		this.masterUI = masterUI
@@ -196,7 +196,7 @@ export class Game {
 		this.questions.fromArray(save.questions)
 	}
 
-	setScreen(screen: Screen) {
+	setScreen(screen) {
 		this.screen = screen
 		this.gameUI.sendScreen(this.screen)
 		this.masterUI.sendScreen(this.screen)
@@ -205,7 +205,7 @@ export class Game {
 	/********************************************
 	 * MODE SCREEN
 	 ********************************************/
-	setMode(mode: Mode, setScreenMode: boolean = true) {
+	setMode(mode, setScreenMode = true) {
 		this.mode = mode
 		this.save()
 		if(setScreenMode) {
@@ -251,7 +251,7 @@ export class Game {
 		this.sendTeam(team)
 	}
 
-	sendTeam(team, lightOn: boolean = true, flash: boolean = true) {
+	sendTeam(team, lightOn=true, flash=true) {
 		team.lightOn = lightOn
 		team.flash = flash
 		this.gameUI.sendUpdateTeam(team)
@@ -267,7 +267,7 @@ export class Game {
 		this.loadQuestions(this.mode)
 
 		this.setScreen('team-activation')
-		this.buzzer.onPress((controllerIndex: number, buttonIndex: number) => {
+		this.buzzer.onPress((controllerIndex, buttonIndex) => {
 			console.log('buzz : ', controllerIndex)
 			this.activateTeam(controllerIndex)
 		})
@@ -275,7 +275,7 @@ export class Game {
 		this.save()
 	}
 
-	activateTeam(controllerIndex: number) {
+	activateTeam(controllerIndex) {
 		console.log('activateTeam', controllerIndex, this.teams.length)
 		var team = this.teams[controllerIndex]
 
@@ -316,7 +316,7 @@ export class Game {
 			this.masterUI.sendUpdateTeam(team)
 		})
 
-		this.buzzer.onPress((controllerIndex: number, buttonIndex: number) => {
+		this.buzzer.onPress((controllerIndex, buttonIndex) => {
 			// Buzz
 			this.buzzed(controllerIndex)
 		})
@@ -324,19 +324,19 @@ export class Game {
 		this.save()
 	}
 
-	loadQuestions(mode: Mode) {
+	loadQuestions(mode) {
 		var ql = new QuestionLoader()
 
 		this.questions = null
-		ql.load(this.questionsDirectory, mode, (questions:QuestionList) => {
+		ql.load(this.questionsDirectory, mode, (questions) => {
 			this.questions = questions;
-			this.questions.map((question: Question) => {
+			this.questions.map((question) => {
 				question.loadInformations(() => {});
 			})
 		})
 	}
 
-	buzzed(controllerIndex: number) {
+	buzzed(controllerIndex) {
 		console.log('Press on '+controllerIndex)
 		if (this.currentQuestionIndex == -1 || this.answerWaitingForValidation != null) {
 			return
@@ -369,7 +369,7 @@ export class Game {
 		})
 	} 
 
-	startQuestion(index: number) {
+	startQuestion(index) {
 		this.answerWaitingForValidation = null;
 		this.currentQuestionIndex = index;
 
@@ -400,7 +400,7 @@ export class Game {
 		this.save()
 	}
 
-	setPoints(points: number) {
+	setPoints(points) {
 		var controllerIndex = this.answerWaitingForValidation;
 		var team = this.teams[controllerIndex]
 
