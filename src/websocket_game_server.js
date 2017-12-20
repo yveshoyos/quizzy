@@ -8,7 +8,7 @@ import { Ps2Buzzer } from 'node-buzzer/es5/ps2'
 import { WebsocketBuzzer } from 'node-buzzer/es5/websocket'
 
 export function start(preferences, startOrContinue) {
-	
+	console.log('start game : ', preferences);
 	var buzzer;
 	switch(preferences.buzzer.type) {
 		case 'teensy':

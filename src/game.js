@@ -1,6 +1,5 @@
 "use strict";
 
-import { Buzzer } from 'node-buzzer/es5'
 import { Question, BlindQuestion, DeafQuestion } from './question'
 import { QuestionLoader, QuestionList } from './question_loader'
 import * as jsonfile from 'jsonfile'

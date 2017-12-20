@@ -10,6 +10,7 @@
   "dependencies": {
     "fs": "0.0.1-security",
     "glob": "^7.1.2",
+    "inherits": "^2.0.3",
     "jsonfile": "^4.0.0",
     "mime": "^2.0.3",
     "minimist": "^1.2.0",
@@ -21,7 +22,6 @@
     "process": "^0.11.10"
   },
   "scripts": {
-    "postinstall": "npm run build",
     "build": "gulp es6",
     "dev": "gulp"
   },

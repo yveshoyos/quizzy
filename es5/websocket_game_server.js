@@ -16,7 +16,7 @@ var _ps = require('node-buzzer/es5/ps2');
 var _websocket = require('node-buzzer/es5/websocket');
 
 function start(preferences, startOrContinue) {
-
+	console.log('start game : ', preferences);
 	var buzzer;
 	switch (preferences.buzzer.type) {
 		case 'teensy':

@@ -5,3 +5,4 @@ public/sounds
 build/*
 .ts-old
 .DS_STORE
+package-lock.json
