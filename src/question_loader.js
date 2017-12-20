@@ -1,8 +1,8 @@
 'use strict';
 
-import * as glob from 'glob';
-import * as fs from 'fs';
-import * as path from 'path';
+import glob from 'glob';
+import fs from 'fs';
+import path from 'path';
 import { Question, Category } from './question';
 
 /*export interface QuestionList {
