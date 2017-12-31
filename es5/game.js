@@ -19,6 +19,10 @@ var _path = require('path');
 
 var path = _interopRequireWildcard(_path);
 
+var _fs = require('fs');
+
+var fs = _interopRequireWildcard(_fs);
+
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -56,7 +60,7 @@ var Game = exports.Game = function () {
 		this.questionsDirectory = questionsDirectory;
 		this.devices = { buzzer: false, game: false, master: false };
 		this.started = false;
-		this.screen = 'starting';
+		//this.screen = 'starting'
 		this.oldScreen = null;
 		this.mode = null;
 		this.teams = [];
@@ -65,13 +69,16 @@ var Game = exports.Game = function () {
 		this.answerWaitingForValidation = null;
 		this.answers = [];
 		this.startOrContinue = startOrContinue;
+		this.buzzOnPressUnregister = null;
 
 		if (startOrContinue == 'continue') {
 			this.recoverFromSave();
+			console.log('RESEST TEAMS');
+			//this.resetTeams();
 		}
 
 		this.buzzer.addEventListener('ready', function () {
-			console.log('ready ???');
+
 			var max = _this.buzzer.controllersCount();
 			for (var i = 0; i < max; i++) {
 				_this.buzzer.lightOff(i);
@@ -107,6 +114,8 @@ var Game = exports.Game = function () {
 			_this.devices.master = false;
 			_this.leave();
 		});
+
+		this.buzzer.connect();
 	}
 
 	_createClass(Game, [{
@@ -134,16 +143,16 @@ var Game = exports.Game = function () {
 	}, {
 		key: 'leave',
 		value: function leave() {
-			this.oldScreen = this.screen;
-			this.screen = 'devices';
+			//this.oldScreen = this.screen;
+			//this.screen = 'devices'
 
 			if (this.devices.game) {
 				this.gameUI.sendDevices(this.devices);
-				this.gameUI.sendScreen(this.screen);
+				//this.gameUI.sendScreen(this.screen)
 			}
 			if (this.devices.master) {
 				this.masterUI.sendDevices(this.devices);
-				this.masterUI.sendScreen(this.screen);
+				//this.masterUI.sendScreen(this.screen)
 			}
 		}
 	}, {
@@ -154,24 +163,38 @@ var Game = exports.Game = function () {
 	}, {
 		key: 'start',
 		value: function start() {
+			var _this2 = this;
+
 			this.started = true;
-			this.setScreen('mode-select');
+			console.log('start....');
+			this.initTeams();
+			this.sendTeams(this.teams);
+			if (this.buzzOnPressUnregister) {
+				this.buzzOnPressUnregister();
+			}
+			this.buzzOnPressUnregister = this.buzzer.onPress(function (controllerIndex, buttonIndex) {
+				console.log('Server -- buzz1 : ', controllerIndex);
+				_this2.activateTeam(controllerIndex);
+			});
+			//this.setScreen('mode-select')
 		}
 	}, {
 		key: 'continue',
 		value: function _continue() {
-			this.setScreen(this.oldScreen);
+			//this.setScreen(this.oldScreen)
 
 			// Send the mode if already one
+			console.log('SERVER -- CONTINUE : ', this.mode, this.questions.length());
 			if (this.mode) {
-				this.setMode(this.mode, false);
+				this.setMode(this.mode, false, false);
 			}
 
 			if (this.teams) {
 				this.sendTeams(this.teams);
 			}
 
-			if (this.questions && this.screen != 'score') {
+			console.log(this.currentQuestionIndex, this.questions.length() - 1);
+			if (this.questions && this.currentQuestionIndex < this.questions.length() - 1) {
 				//this.gameUI.sendQuestions(this.questions.all(), this.currentQuestionIndex)
 				//this.masterUI.sendQuestions(this.questions.all(), this.currentQuestionIndex)
 				this.startQuestions();
@@ -191,7 +214,7 @@ var Game = exports.Game = function () {
 				mode: this.mode,
 				teams: this.teams,
 				started: this.started,
-				screen: this.screen,
+				//screen: this.screen,
 				currentQuestionIndex: this.currentQuestionIndex,
 				answerWaitingForValidation: this.answerWaitingForValidation,
 				answers: this.answers,
@@ -212,12 +235,12 @@ var Game = exports.Game = function () {
 			var file = path.join(this.questionsDirectory, 'game.json');
 
 			var save = jsonfile.readFileSync(file);
-			console.log('save : ', save);
+			console.log('Server -- save : ', save);
 			this.mode = save.mode;
 			this.teams = save.teams;
 			this.started = save.started;
-			this.screen = save.screen;
-			this.oldScreen = save.screen;
+			//this.screen = save.screen
+			//this.oldScreen = save.screen
 			this.currentQuestionIndex = save.currentQuestionIndex;
 			this.answerWaitingForValidation = save.answerWaitingForValidation;
 			this.answers = save.answers;
@@ -225,12 +248,17 @@ var Game = exports.Game = function () {
 			this.questions.fromArray(save.questions);
 		}
 	}, {
-		key: 'setScreen',
-		value: function setScreen(screen) {
-			this.screen = screen;
-			this.gameUI.sendScreen(this.screen);
-			this.masterUI.sendScreen(this.screen);
+		key: 'removeSave',
+		value: function removeSave() {
+			var file = path.join(this.questionsDirectory, 'game.json');
+			fs.unlink(file);
 		}
+
+		/*setScreen(screen) {
+  	this.screen = screen
+  	this.gameUI.sendScreen(this.screen)
+  	this.masterUI.sendScreen(this.screen)
+  }*/
 
 		/********************************************
    * MODE SCREEN
@@ -240,12 +268,16 @@ var Game = exports.Game = function () {
 		key: 'setMode',
 		value: function setMode(mode) {
 			var setScreenMode = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
+			var loadQuestions = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : true;
 
 			this.mode = mode;
 			this.save();
 			if (setScreenMode) {
 				this.gameUI.sendPlayMode(mode);
 				this.masterUI.sendPlayMode(mode);
+			}
+			if (loadQuestions) {
+				this.loadQuestions(this.mode);
 			}
 		}
 
@@ -264,7 +296,8 @@ var Game = exports.Game = function () {
 					lightOn: false,
 					active: false,
 					flash: false,
-					points: 0
+					points: 0,
+					answered: false
 				};
 			});
 		}
@@ -286,43 +319,36 @@ var Game = exports.Game = function () {
 		value: function updateTeamName(teamIndex, newName) {
 			var team = this.teams[teamIndex];
 			team.name = newName;
+			team.lightOn = true;
+			team.flash = true;
+			team.answered = false;
 			this.sendTeam(team);
 		}
 	}, {
 		key: 'sendTeam',
 		value: function sendTeam(team) {
-			var lightOn = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
-			var flash = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : true;
-
-			team.lightOn = lightOn;
-			team.flash = flash;
 			this.gameUI.sendUpdateTeam(team);
 			this.masterUI.sendUpdateTeam(team);
 			team.flash = false;
 		}
-	}, {
-		key: 'setTeamsActivation',
-		value: function setTeamsActivation() {
-			var _this2 = this;
 
-			// Initialize the teams
-			this.initTeams();
-			this.sendTeams(this.teams);
+		/*setTeamsActivation() {
+  	// Initialize the teams
+  	//this.initTeams();
+  	//this.sendTeams(this.teams)
+  		//this.loadQuestions(this.mode)
+  		this.setScreen('team-activation')
+  	this.buzzer.onPress((controllerIndex, buttonIndex) => {
+  		console.log('Server -- buzz2 : ', controllerIndex)
+  		this.activateTeam(controllerIndex)
+  	})
+  		this.save()
+  }*/
 
-			this.loadQuestions(this.mode);
-
-			this.setScreen('team-activation');
-			this.buzzer.onPress(function (controllerIndex, buttonIndex) {
-				console.log('buzz : ', controllerIndex);
-				_this2.activateTeam(controllerIndex);
-			});
-
-			this.save();
-		}
 	}, {
 		key: 'activateTeam',
 		value: function activateTeam(controllerIndex) {
-			console.log('activateTeam', controllerIndex, this.teams.length);
+			console.log('Server -- activateTeam', controllerIndex, this.teams.length);
 			var team = this.teams[controllerIndex];
 
 			// Make sure a team can only be activated once
@@ -335,6 +361,9 @@ var Game = exports.Game = function () {
 
 			// Update the team
 			team.active = true;
+			team.lightOn = true;
+			team.flash = true;
+			team.answered = false;
 			this.sendTeam(team);
 
 			this.save();
@@ -349,15 +378,23 @@ var Game = exports.Game = function () {
 		value: function startQuestions() {
 			var _this3 = this;
 
-			this.setScreen('questions');
+			//this.setScreen('questions')
 
 			//this.cleanTeams(this.teams)
 			//this.gameUI.sendTeams(this.teams)
 			//this.masterUI.sendTeams(this.teams)
 
 			// Send questions list to UI's
-			this.gameUI.sendQuestions(this.questions.all(), this.currentQuestionIndex);
-			this.masterUI.sendQuestions(this.questions.all(), this.currentQuestionIndex);
+			//this.gameUI.sendQuestions(this.questions.all(), this.currentQuestionIndex)
+			//this.masterUI.sendQuestions(this.questions.all(), this.currentQuestionIndex)
+
+			var start = {
+				currentQuestionIndex: this.currentQuestionIndex,
+				questionsCount: this.questions.length()
+			};
+			console.log('######', start);
+			this.gameUI.send('start', start);
+			this.masterUI.send('start', start);
 
 			// Light of all teams and theirs buzzers
 			this.teams.map(function (team, index) {
@@ -367,12 +404,27 @@ var Game = exports.Game = function () {
 				_this3.masterUI.sendUpdateTeam(team);
 			});
 
-			this.buzzer.onPress(function (controllerIndex, buttonIndex) {
+			//console.log('Server -- start questions')
+			if (this.buzzOnPressUnregister) {
+				this.buzzOnPressUnregister();
+			}
+
+			this.buzzOnPressUnregister = this.buzzer.onPress(function (controllerIndex, buttonIndex) {
 				// Buzz
 				_this3.buzzed(controllerIndex);
 			});
 
 			this.save();
+		}
+	}, {
+		key: 'sendQuestion',
+		value: function sendQuestion(index) {
+			var question = {
+				question: this.questions.get(index),
+				index: index
+			};
+			this.gameUI.send('question', question);
+			this.masterUI.send('question', question);
 		}
 	}, {
 		key: 'loadQuestions',
@@ -392,12 +444,15 @@ var Game = exports.Game = function () {
 	}, {
 		key: 'buzzed',
 		value: function buzzed(controllerIndex) {
-			console.log('Press on ' + controllerIndex);
+			console.log('Server -- Press on ' + controllerIndex);
+			console.log('Server -- currentQuestionIndex : ', this.currentQuestionIndex);
+			console.log('Server -- answerWaitingForValidation : ', this.answerWaitingForValidation);
 			if (this.currentQuestionIndex == -1 || this.answerWaitingForValidation != null) {
 				return;
 			}
 
 			var answer = this.answers[this.currentQuestionIndex];
+			console.log('Server -- answer : ', answer);
 			if (answer[controllerIndex] != -1) {
 				return;
 			}
@@ -405,19 +460,31 @@ var Game = exports.Game = function () {
 			// Buzz accepted
 			var team = this.teams[controllerIndex];
 			this.buzzer.lightOn(controllerIndex);
+			team.lightOn = true;
+			team.flash = true;
+			team.answered = true;
 			this.sendTeam(team);
 			this.answerWaitingForValidation = controllerIndex;
 
-			this.gameUI.sendAnswered(controllerIndex, true);
-			this.masterUI.sendAnswered(controllerIndex, true);
+			this.gameUI.sendAnswered(this.currentQuestionIndex, true, controllerIndex);
+			this.masterUI.sendAnswered(this.currentQuestionIndex, true, controllerIndex);
 		}
 	}, {
 		key: 'resetTeams',
 		value: function resetTeams() {
 			var _this5 = this;
 
+			this.answers[this.currentQuestionIndex] = new Array(this.buzzer.controllersCount()).join().split(',').map(function () {
+				return -1;
+			});
+
 			this.teams.map(function (team) {
-				_this5.sendTeam(team, false, false);
+				if (team.lightOn || team.answered) {
+					team.lightOn = false;
+					team.flash = false;
+					team.answered = false;
+					_this5.sendTeam(team);
+				}
 			});
 		}
 	}, {
@@ -431,28 +498,37 @@ var Game = exports.Game = function () {
 		}
 	}, {
 		key: 'startQuestion',
-		value: function startQuestion(index) {
+		value: function startQuestion(data) {
 			this.answerWaitingForValidation = null;
-			this.currentQuestionIndex = index;
+			this.currentQuestionIndex = data.index;
+
+			if (this.currentQuestionIndex >= this.questions.length()) {
+				// end of game, no more questions :(
+				console.log('ici ???');
+				this.started = false;
+				this.removeSave();
+				this.gameUI.send('EOG', true);
+				this.masterUI.send('EOG', true);
+				return;
+			}
 
 			this.resetTeams();
 			this.resetBuzzers();
 
 			// Set answers for the questions => [-1, -1, -1, -1]
-			this.answers[this.currentQuestionIndex] = new Array(this.buzzer.controllersCount()).join().split(',').map(function () {
-				return -1;
-			});
 
-			this.gameUI.sendPlayQuestion(index, "play");
-			this.masterUI.sendPlayQuestion(index, "play");
+
+			this.gameUI.sendPlayQuestion(data.index, "play");
+			this.masterUI.sendPlayQuestion(data.index, "play");
 
 			this.save();
 		}
 	}, {
 		key: 'continueQuestion',
 		value: function continueQuestion() {
+			console.log('continue question....');
 			this.answerWaitingForValidation = null;
-			this.resetTeams();
+			//this.resetTeams();
 			this.resetBuzzers();
 			this.gameUI.sendPlayQuestion(this.currentQuestionIndex, "continue");
 			this.masterUI.sendPlayQuestion(this.currentQuestionIndex, "continue");
@@ -462,6 +538,10 @@ var Game = exports.Game = function () {
 	}, {
 		key: 'setPoints',
 		value: function setPoints(points) {
+			if (this.answerWaitingForValidation == null) {
+				return;
+			}
+
 			var controllerIndex = this.answerWaitingForValidation;
 			var team = this.teams[controllerIndex];
 
@@ -470,7 +550,9 @@ var Game = exports.Game = function () {
 			this.answers[this.currentQuestionIndex][controllerIndex] = 1;
 
 			this.buzzer.lightOff(controllerIndex);
-			this.sendTeam(team, false, false);
+			team.lightOn = points > 0;
+			team.flash = true;
+			this.sendTeam(team);
 
 			this.save();
 		}
@@ -482,7 +564,7 @@ var Game = exports.Game = function () {
 	}, {
 		key: 'finishGame',
 		value: function finishGame() {
-			this.setScreen('score');
+			//this.setScreen('score')
 
 			this.save();
 		}

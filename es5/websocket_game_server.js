@@ -16,13 +16,10 @@ var _ps = require('node-buzzer/es5/ps2');
 var _websocket = require('node-buzzer/es5/websocket');
 
 function start(preferences, startOrContinue) {
-	console.log('start game : ', preferences);
 	var buzzer;
 	switch (preferences.buzzer.type) {
 		case 'teensy':
-			console.log('teeeeeensy');
 			buzzer = get_teensy_buzzer();
-			console.log('got');
 			break;
 		case 'ps2':
 			buzzer = get_ps2_buzzer();
@@ -34,11 +31,9 @@ function start(preferences, startOrContinue) {
 			console.log('error');
 	}
 
-	console.log('uis...');
 	var gameUI = new _websocket_ui.WebsocketUI(preferences.game.port);
 	var masterUI = new _websocket_ui.WebsocketUI(preferences.master.port);
 	var game = new _game.Game(buzzer, gameUI, masterUI, preferences.game.questions_directory, startOrContinue);
-	console.log('Server started...');
 	return game;
 }
 
@@ -55,7 +50,6 @@ function get_ps2_buzzer() {
 }
 
 function get_teensy_buzzer() {
-	console.log('build TeensyBuzzer object...');
 	return new _teensy.TeensyBuzzer();
 }
 

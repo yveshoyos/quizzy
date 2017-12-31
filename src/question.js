@@ -1,12 +1,12 @@
 'use strict';
 
-import * as path from 'path';
-import * as mime from 'mime';
+import path from 'path';
+import mime from 'mime';
 
 // Mp3
-import * as mm from 'musicmetadata';
-import * as fs from 'fs';
-import * as mp3Duration from 'mp3-duration';
+import mm from 'musicmetadata';
+import fs from 'fs';
+import mp3Duration from 'mp3-duration';
 
 export class Category {
 	//name: string;
@@ -37,7 +37,7 @@ export class Question {
 		//var infos:Array<any> = filename.match(regex);
 		
 		//var infos:Array<string> = filename.split('--');
-		var m = mime.lookup(file).split('/');
+		var m = mime.getType(file).split('/');
 
 		var q;
 		if (m[0] == 'audio') {
@@ -101,7 +101,7 @@ export class BlindQuestion extends Question {
 
 		var parser = mm(fs.createReadStream(this.file), (err, metadata) => {
 			if (err) {
-				throw err;
+				throw filename+":"+err;
 			}
 			mp3Duration(this.file, (err, duration) => {
 				if (err) {

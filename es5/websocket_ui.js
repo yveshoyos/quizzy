@@ -37,7 +37,7 @@ var WebsocketUI = exports.WebsocketUI = function () {
 
 			conn.on("text", function (str) {
 				var data = JSON.parse(str);
-				console.log('receive ', data);
+				console.log('Server -- receive ', data);
 				_this.receive(data);
 			});
 
@@ -55,10 +55,12 @@ var WebsocketUI = exports.WebsocketUI = function () {
 		this.addEventListener('mode', this.setMode.bind(this));
 		this.addEventListener('mode_ok', this.setModeOK.bind(this));
 		this.addEventListener('team_name', this.updateTeamName.bind(this));
-		this.addEventListener('start_questions', this.startQuestions.bind(this));
-		this.addEventListener('start_question', this.startQuestion.bind(this));
+		this.addEventListener('start', this.startQuestions.bind(this));
+		this.addEventListener('question', this.sendQuestion.bind(this));
+		this.addEventListener('play_question', this.startQuestion.bind(this));
 		this.addEventListener('points', this.addPoints.bind(this));
 		this.addEventListener('continue_question', this.continueQuestion.bind(this));
+		this.addEventListener('reset_teams', this.resetTeams.bind(this));
 		this.addEventListener('finish_game', this.finishGame.bind(this));
 		this.addEventListener('error', this.error.bind(this));
 	}
@@ -127,11 +129,11 @@ var WebsocketUI = exports.WebsocketUI = function () {
 		value: function sendUpdateTeam(team) {
 			this.send('team', team);
 		}
-	}, {
-		key: 'sendScreen',
-		value: function sendScreen(screen) {
-			this.send('screen', screen);
-		}
+
+		/*sendScreen(screen) {
+  	this.send('screen', screen)
+  }*/
+
 	}, {
 		key: 'sendPlayMode',
 		value: function sendPlayMode(mode) {
@@ -157,7 +159,7 @@ var WebsocketUI = exports.WebsocketUI = function () {
 		}
 	}, {
 		key: 'sendAnswered',
-		value: function sendAnswered(questionIndex, answered) {
+		value: function sendAnswered(questionIndex, answered, controllerIndex) {
 			this.send('answered', {
 				'questionIndex': questionIndex,
 				'answer': answered
@@ -204,6 +206,11 @@ var WebsocketUI = exports.WebsocketUI = function () {
 			this.game.startQuestions();
 		}
 	}, {
+		key: 'sendQuestion',
+		value: function sendQuestion(data) {
+			this.game.sendQuestion(data.index);
+		}
+	}, {
 		key: 'startQuestion',
 		value: function startQuestion(index) {
 			this.game.startQuestion(index);
@@ -217,6 +224,11 @@ var WebsocketUI = exports.WebsocketUI = function () {
 		key: 'continueQuestion',
 		value: function continueQuestion() {
 			this.game.continueQuestion();
+		}
+	}, {
+		key: 'resetTeams',
+		value: function resetTeams() {
+			this.game.resetTeams();
 		}
 	}, {
 		key: 'error',

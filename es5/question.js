@@ -9,25 +9,25 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 var _path = require('path');
 
-var path = _interopRequireWildcard(_path);
+var _path2 = _interopRequireDefault(_path);
 
 var _mime = require('mime');
 
-var mime = _interopRequireWildcard(_mime);
+var _mime2 = _interopRequireDefault(_mime);
 
 var _musicmetadata = require('musicmetadata');
 
-var mm = _interopRequireWildcard(_musicmetadata);
+var _musicmetadata2 = _interopRequireDefault(_musicmetadata);
 
 var _fs = require('fs');
 
-var fs = _interopRequireWildcard(_fs);
+var _fs2 = _interopRequireDefault(_fs);
 
 var _mp3Duration = require('mp3-duration');
 
-var mp3Duration = _interopRequireWildcard(_mp3Duration);
+var _mp3Duration2 = _interopRequireDefault(_mp3Duration);
 
-function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 
@@ -68,15 +68,15 @@ var Question = exports.Question = function () {
 	}], [{
 		key: 'fromFile',
 		value: function fromFile(file) /*: Question*/{
-			var extension = path.extname(file);
-			var filename = path.basename(file, extension);
-			var dir = path.basename(path.dirname(file));
+			var extension = _path2.default.extname(file);
+			var filename = _path2.default.basename(file, extension);
+			var dir = _path2.default.basename(_path2.default.dirname(file));
 
 			//var regex = /^(\d+)\.\s*(.*?)\s*--\s*(.*?)(?:\s*\((\d+)\))?$/i
 			//var infos:Array<any> = filename.match(regex);
 
 			//var infos:Array<string> = filename.split('--');
-			var m = mime.lookup(file).split('/');
+			var m = _mime2.default.getType(file).split('/');
 
 			var q;
 			if (m[0] == 'audio') {
@@ -110,8 +110,8 @@ var DeafQuestion = exports.DeafQuestion = function (_Question) {
 	_createClass(DeafQuestion, [{
 		key: 'loadInformations',
 		value: function loadInformations(callback) {
-			var extension = path.extname(this.file);
-			var filename = path.basename(this.file, extension);
+			var extension = _path2.default.extname(this.file);
+			var filename = _path2.default.basename(this.file, extension);
 
 			var regex = /^(\d+)\.\s*(.*?)\s*--\s*(.*?)(?:\s*\((\d+)\))?$/i;
 			var infos = filename.match(regex);
@@ -144,8 +144,8 @@ var BlindQuestion = exports.BlindQuestion = function (_Question2) {
 		value: function loadInformations(callback) {
 			var _this3 = this;
 
-			var extension = path.extname(this.file);
-			var filename = path.basename(this.file, extension);
+			var extension = _path2.default.extname(this.file);
+			var filename = _path2.default.basename(this.file, extension);
 
 			//   (N°). (author) -- (music) -- (album)? (year)?
 			var regex = /^(\d+)\.\s*(.*?)\s*--\s*(.*?)(?:\s*--\s*(.*?))?(?:\s*\((\d+)\))?$/i;
@@ -158,11 +158,11 @@ var BlindQuestion = exports.BlindQuestion = function (_Question2) {
 			this.album = infos[4] ? infos[4].trim() : '';
 			this.year = infos[5] ? infos[5].trim() : '';
 
-			var parser = mm(fs.createReadStream(this.file), function (err, metadata) {
+			var parser = (0, _musicmetadata2.default)(_fs2.default.createReadStream(this.file), function (err, metadata) {
 				if (err) {
-					throw err;
+					throw filename + ":" + err;
 				}
-				mp3Duration(_this3.file, function (err, duration) {
+				(0, _mp3Duration2.default)(_this3.file, function (err, duration) {
 					if (err) {
 						throw err;
 					}

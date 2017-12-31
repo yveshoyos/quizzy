@@ -9,19 +9,19 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 var _glob = require('glob');
 
-var glob = _interopRequireWildcard(_glob);
+var _glob2 = _interopRequireDefault(_glob);
 
 var _fs = require('fs');
 
-var fs = _interopRequireWildcard(_fs);
+var _fs2 = _interopRequireDefault(_fs);
 
 var _path = require('path');
 
-var path = _interopRequireWildcard(_path);
+var _path2 = _interopRequireDefault(_path);
 
 var _question = require('./question');
 
-function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -115,10 +115,10 @@ var QuestionLoader = exports.QuestionLoader = function () {
 
 			this.questions = new QuestionList(mode);
 
-			glob(directory + "/**/*", function (err, files) {
+			(0, _glob2.default)(directory + "/**/*", function (err, files) {
 				files.forEach(function (file) {
-					var f = fs.lstatSync(file);
-					if (f.isFile() && path.basename(file) != 'game.json') {
+					var f = _fs2.default.lstatSync(file);
+					if (f.isFile() && _path2.default.basename(file) != 'game.json') {
 						var q = _question.Question.fromFile(file);
 
 						_this2.questions.add(q);

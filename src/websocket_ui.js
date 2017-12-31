@@ -18,7 +18,7 @@ export class WebsocketUI {
 
 			conn.on("text", (str) => {
 				var data = JSON.parse(str)
-				console.log('receive ', data)
+				console.log('Server -- receive ', data)
 				this.receive(data)
 			})
 
@@ -37,10 +37,12 @@ export class WebsocketUI {
 		this.addEventListener('mode', this.setMode.bind(this))
 		this.addEventListener('mode_ok', this.setModeOK.bind(this))
 		this.addEventListener('team_name', this.updateTeamName.bind(this))
-		this.addEventListener('start_questions', this.startQuestions.bind(this))
-		this.addEventListener('start_question', this.startQuestion.bind(this))
+		this.addEventListener('start', this.startQuestions.bind(this))
+		this.addEventListener('question', this.sendQuestion.bind(this))
+		this.addEventListener('play_question', this.startQuestion.bind(this))
 		this.addEventListener('points', this.addPoints.bind(this))
 		this.addEventListener('continue_question', this.continueQuestion.bind(this))
+		this.addEventListener('reset_teams', this.resetTeams.bind(this))
 		this.addEventListener('finish_game', this.finishGame.bind(this))
 		this.addEventListener('error', this.error.bind(this))
 	}
@@ -98,9 +100,9 @@ export class WebsocketUI {
 		this.send('team', team)
 	}
 
-	sendScreen(screen) {
+	/*sendScreen(screen) {
 		this.send('screen', screen)
-	}
+	}*/
 
 	sendPlayMode(mode) {
 		this.send('mode', mode)
@@ -120,7 +122,7 @@ export class WebsocketUI {
 		})
 	}
 
-	sendAnswered(questionIndex, answered) {
+	sendAnswered(questionIndex, answered, controllerIndex) {
 		this.send('answered', {
 			'questionIndex': questionIndex,
 			'answer': answered
@@ -159,6 +161,10 @@ export class WebsocketUI {
 		this.game.startQuestions()
 	}
 
+	sendQuestion(data) {
+		this.game.sendQuestion(data.index)
+	}
+
 	startQuestion(index) {
 		this.game.startQuestion(index);
 	}
@@ -169,6 +175,10 @@ export class WebsocketUI {
 
 	continueQuestion() {
 		this.game.continueQuestion();
+	}
+
+	resetTeams() {
+		this.game.resetTeams();
 	}
 
 	error() {
