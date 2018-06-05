@@ -30,7 +30,7 @@
     "minimist": "^1.2.0",
     "mp3-duration": "^1.0.10",
     "musicmetadata": "^2.0.4",
-    "node-buzzer": "git+https://github.com/vincentdieltiens/node-buzzer.git#master",
+    "node-buzzer": "git+https://github.com/yveshoyos/node-buzzer.git#master",
     "node-hid": "^0.7.2",
     "npm": "^3.10.9",
     "open": "0.0.5",
